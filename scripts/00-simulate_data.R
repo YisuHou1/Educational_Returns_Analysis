@@ -11,42 +11,65 @@
 
 #### Workspace setup ####
 library(tidyverse)
-set.seed(853)
-
+library(lubridate)
 
 #### Simulate data ####
-# State names
-states <- c(
-  "New South Wales",
-  "Victoria",
-  "Queensland",
-  "South Australia",
-  "Western Australia",
-  "Tasmania",
-  "Northern Territory",
-  "Australian Capital Territory"
+set.seed(114514)
+
+# define the range of pollsters
+pollster_options <- c(
+  "Siena/NYT", 
+  "YouGov", 
+  "CES / YouGov", 
+  "Marquette Law School", 
+  "The Washington Post", 
+  "McCourtney Institute/YouGov"
 )
 
-# Political parties
-parties <- c("Labor", "Liberal", "Greens", "National", "Other")
+# Define US states
+us_states <- state.name
 
-# Create a dataset by randomly assigning states and parties to divisions
-analysis_data <- tibble(
-  division = paste("Division", 1:151),  # Add "Division" to make it a character
-  state = sample(
-    states,
-    size = 151,
-    replace = TRUE,
-    prob = c(0.25, 0.25, 0.15, 0.1, 0.1, 0.1, 0.025, 0.025) # Rough state population distribution
+# Define number of rows
+n <- 300
+
+# For the state variable, have half of the values "National"
+n_national <- n / 2  # 50
+n_states <- n - n_national  # 50
+# Create a vector with 50 "National" and 50 random state names
+state_vector <- c(
+  rep("National", n_national),
+  sample(us_states, n_states, replace = TRUE)
+)
+# Shuffle the state_vector to randomize the order
+state_vector <- sample(state_vector, n, replace = FALSE)
+
+# Generate national simulated dataset
+simulated_data <- tibble(
+  # pollster randomly assigned from the pollsters with 3.0 numeric grade
+  pollster = sample(pollster_options, n, replace = TRUE),
+  # has_sponsor is either 0 or 1
+  has_sponsor = sample(0:1, n, replace = TRUE),
+  # pollscore between -1.1 and -1.5 to mimic the actual dataset
+  pollscore = round(runif(n, min = -1.5, max = -1.1), 1),
+  # transparency_score between 6.5 and 10.0 with 0.5 increments
+  # to mimic the actual dataset
+  transparency_score = sample(seq(6.5, 10.0, by = 0.5), n, replace = TRUE),
+  sample_size = sample(500:5000, n, replace = TRUE),
+  # end date between the day Harris announced and the last day of polls
+  # recorded in the polls dataset
+  end_date = sample(
+    seq.Date(from = as.Date("2024-07-21"), 
+    to = as.Date("2024-10-26"), by = "day"), n, replace = TRUE
   ),
-  party = sample(
-    parties,
-    size = 151,
-    replace = TRUE,
-    prob = c(0.40, 0.40, 0.05, 0.1, 0.05) # Rough party distribution
-  )
+  # percent support assigned with a normal distribution
+  pct_support = round(rnorm(n, mean = 50, sd = 2))
 )
 
+# state is 50% National and 50% randomly selected from US states
+simulated_data <- simulated_data %>% mutate(
+  state = state_vector
+)
 
-#### Save data ####
-write_csv(analysis_data, "data/00-simulated_data/simulated_data.csv")
+#### Write_csv
+write_csv(simulated_data, file = "data/00-simulated_data/simulated_polls.csv")
+

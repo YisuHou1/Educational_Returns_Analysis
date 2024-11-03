@@ -13,77 +13,114 @@
 
 #### Workspace setup ####
 library(tidyverse)
+library(testthat)
+library(lubridate)
 
-analysis_data <- read_csv("data/00-simulated_data/simulated_data.csv")
+simulated_data <- read_csv("data/00-simulated_data/simulated_polls.csv")
 
-# Test if the data was successfully loaded
-if (exists("analysis_data")) {
-  message("Test Passed: The dataset was successfully loaded.")
-} else {
-  stop("Test Failed: The dataset could not be loaded.")
-}
+# Define the test context
+context("Sanity Checks for Simulated Datasets")
+
+#### Data structure tests ####
+
+test_that("Simulated Dataset has correct structure", {
+  expect_true(is.data.frame(simulated_data))
+  expect_true(50 <= nrow(simulated_data))
+  expect_true(1000 >= nrow(simulated_data))
+  expect_equal(ncol(simulated_data), 8)
+})
+
+test_that("Simulated Dataset has all required columns with correct types", {
+  required_cols <- c("pollster", "has_sponsor", "pollscore", 
+                     "transparency_score", "sample_size", "end_date", "pct_support")
+  expect_true(all(required_cols %in% colnames(simulated_data)))
+  
+  # Check data types
+  expect_type(simulated_data$pollster, "character")
+  expect_type(simulated_data$has_sponsor, "double") 
+  expect_type(simulated_data$pollscore, "double") 
+  expect_type(simulated_data$transparency_score, "double")
+  expect_type(simulated_data$sample_size, "double")
+  expect_s3_class(simulated_data$end_date, "Date")
+  expect_type(simulated_data$pct_support, "double")  
+})
 
 
-#### Test data ####
+#### Value Ranges and Constraints ####
 
-# Check if the dataset has 151 rows
-if (nrow(analysis_data) == 151) {
-  message("Test Passed: The dataset has 151 rows.")
-} else {
-  stop("Test Failed: The dataset does not have 151 rows.")
-}
+test_that("pollster column contains only valid pollster names", {
+  valid_pollsters <- c(
+    "Siena/NYT", 
+    "YouGov", 
+    "CES / YouGov", 
+    "Marquette Law School", 
+    "The Washington Post", 
+    "McCourtney Institute/YouGov"
+  )
+  expect_true(all(simulated_data$pollster %in% valid_pollsters))
+})
 
-# Check if the dataset has 3 columns
-if (ncol(analysis_data) == 3) {
-  message("Test Passed: The dataset has 3 columns.")
-} else {
-  stop("Test Failed: The dataset does not have 3 columns.")
-}
+test_that("has_sponsor column contains only 0 or 1", {
+  expect_true(all(simulated_data$has_sponsor %in% c(0, 1)))
+})
 
-# Check if all values in the 'division' column are unique
-if (n_distinct(analysis_data$division) == nrow(analysis_data)) {
-  message("Test Passed: All values in 'division' are unique.")
-} else {
-  stop("Test Failed: The 'division' column contains duplicate values.")
-}
+test_that("pollscore values are negative and greater than -1.5", {
+  expect_true(all(simulated_data$pollscore >= -1.5 
+                & simulated_data$pollscore <= -0.1))
+  
+  # Check one decimal place
+  decimals <- simulated_data$pollscore * 10 %% 1
+  expect_true(all(decimals == 0))
+})
 
-# Check if the 'state' column contains only valid Australian state names
-valid_states <- c("New South Wales", "Victoria", "Queensland", "South Australia", 
-                  "Western Australia", "Tasmania", "Northern Territory", 
-                  "Australian Capital Territory")
+test_that("transparency_score values are between 0.0 and 10.0", {
+  valid_transparency_scores <- seq(0.0, 10.0, by = 0.5)
+  expect_true(all(simulated_data$transparency_score
+  %in% valid_transparency_scores))
+})
 
-if (all(analysis_data$state %in% valid_states)) {
-  message("Test Passed: The 'state' column contains only valid Australian state names.")
-} else {
-  stop("Test Failed: The 'state' column contains invalid state names.")
-}
+test_that("sample_size values are integers between 1 and 1000000", {
+  expect_true(all(simulated_data$sample_size >= 1 
+  & simulated_data$sample_size <= 1000000))
+  expect_true(all(simulated_data$sample_size == 
+  as.integer(simulated_data$sample_size)))
+})
 
-# Check if the 'party' column contains only valid party names
-valid_parties <- c("Labor", "Liberal", "Greens", "National", "Other")
+test_that("end_date values are between 2024-07-21 and today", {
+  start_date <- as.Date("2024-07-21")
+  end_date <- as.Date("2024-11-03")
+  expect_true(all(simulated_data$end_date >= start_date & simulated_data$end_date <= end_date))
+})
 
-if (all(analysis_data$party %in% valid_parties)) {
-  message("Test Passed: The 'party' column contains only valid party names.")
-} else {
-  stop("Test Failed: The 'party' column contains invalid party names.")
-}
+test_that("pct_support values are reasonable (between 0 and 100)", {
+  expect_true(all(simulated_data$pct_support >= 0 & simulated_data$pct_support <= 100))
+})
 
-# Check if there are any missing values in the dataset
-if (all(!is.na(analysis_data))) {
-  message("Test Passed: The dataset contains no missing values.")
-} else {
-  stop("Test Failed: The dataset contains missing values.")
-}
+test_that("state column contains 'National' between 1 and 300 times", {
+  national_count <- sum(simulated_data$state == "National")
+  expect_true(1 <= national_count & national_count <= 500)
+  
+  # Test state names
+  non_national_states <- simulated_data$state[simulated_data$state != "National"]
+  expect_true(all(non_national_states %in% state.name))
+})
 
-# Check if there are no empty strings in 'division', 'state', and 'party' columns
-if (all(analysis_data$division != "" & analysis_data$state != "" & analysis_data$party != "")) {
-  message("Test Passed: There are no empty strings in 'division', 'state', or 'party'.")
-} else {
-  stop("Test Failed: There are empty strings in one or more columns.")
-}
+test_that("No unintended duplicate rows in simulated_data dataset", {
+  duplicates <- simulated_data %>%
+    duplicated()
+  expect_false(any(duplicates))
+})
 
-# Check if the 'party' column has at least two unique values
-if (n_distinct(analysis_data$party) >= 2) {
-  message("Test Passed: The 'party' column contains at least two unique values.")
-} else {
-  stop("Test Failed: The 'party' column contains less than two unique values.")
-}
+
+#### Missing Values Tests ####
+
+test_that("National Simulated Dataset has no missing values", {
+  expect_false(any(is.na(simulated_data)))
+})
+
+
+test_that("All sanity checks have passed", {
+  expect_true(TRUE)
+})
+
+

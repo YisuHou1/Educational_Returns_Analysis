@@ -1,144 +1,106 @@
-pollster,sponsors,pollscore,transparency_score,sample_size,end_date,state,candidate_name,pct,cycle
-YouGov,Economist,-1.1,9,1363,2020-11-02,National,Joe Biden,53,2020
-YouGov,Yahoo News,-1.1,8,1360,2020-11-01,National,Joe Biden,53,2020
-Siena/NYT,NA,-1.5,8,1451,2020-10-31,Florida,Joe Biden,47,2020
-Siena/NYT,NA,-1.5,8,1862,2020-10-31,Pennsylvania,Joe Biden,49,2020
-Siena/NYT,NA,-1.5,8,1252,2020-10-30,Arizona,Joe Biden,49,2020
-Siena/NYT,NA,-1.5,8,1253,2020-10-30,Wisconsin,Joe Biden,52,2020
-ABC/Washington Post,NA,-1.2,9,824,2020-10-29,Florida,Joe Biden,48,2020
-ABC/Washington Post,NA,-1.2,9,810,2020-10-29,Pennsylvania,Joe Biden,51,2020
-YouGov,Economist,-1.1,9,1365,2020-10-27,National,Joe Biden,54,2020
-Siena/NYT,NA,-1.5,8,1034,2020-10-27,North Carolina,Joe Biden,48,2020
-CES / YouGov,NA,-1.1,10,50908,2020-10-27,National,Joe Biden,51,2020
-CES / YouGov,NA,-1.1,10,3755,2020-10-27,Florida,Joe Biden,49,2020
-CES / YouGov,NA,-1.1,10,1456,2020-10-27,Georgia,Joe Biden,48,2020
-CES / YouGov,NA,-1.1,10,1627,2020-10-27,North Carolina,Joe Biden,49,2020
-CES / YouGov,NA,-1.1,10,2703,2020-10-27,Pennsylvania,Joe Biden,52,2020
-CES / YouGov,NA,-1.1,10,2947,2020-10-27,Texas,Joe Biden,47,2020
-Siena/NYT,NA,-1.5,8,809,2020-10-26,Nevada,Joe Biden,49,2020
-Siena/NYT,NA,-1.5,8,856,2020-10-26,Michigan,Joe Biden,49,2020
-YouGov,Hofstra University Kalikow Center for the Study of the American Presidency,-1.1,9,2000,2020-10-26,National,Joe Biden,53.9,2020
-YouGov,Florida State University,-1.1,9,1200,2020-10-26,Florida,Joe Biden,48,2020
-YouGov,George Washington University,-1.1,9,2500,2020-10-26,National,Joe Biden,52,2020
-YouGov,Yahoo News,-1.1,8,1350,2020-10-25,National,Joe Biden,54,2020
-Marquette Law School,NA,-1.1,10,749,2020-10-25,Wisconsin,Joe Biden,48,2020
-Siena/NYT,NA,-1.5,8,802,2020-10-25,Texas,Joe Biden,43,2020
-ABC/Washington Post,NA,-1.2,9,789,2020-10-25,Michigan,Joe Biden,51,2020
-ABC/Washington Post,NA,-1.2,9,809,2020-10-25,Wisconsin,Joe Biden,57,2020
-YouGov,CBS News,-1.1,9,1228,2020-10-23,Florida,Joe Biden,50,2020
-YouGov,CBS News,-1.1,9,1090,2020-10-23,Georgia,Joe Biden,49,2020
-YouGov,CBS News,-1.1,9,1022,2020-10-23,North Carolina,Joe Biden,51,2020
-YouGov,University of Wisconsin–Madison,-1.1,9,681,2020-10-21,Michigan,Joe Biden,52,2020
-YouGov,University of Wisconsin–Madison,-1.1,9,669,2020-10-21,Pennsylvania,Joe Biden,52,2020
-YouGov,University of Wisconsin–Madison | Wisconsin State Journal,-1.1,9,647,2020-10-21,Wisconsin,Joe Biden,53,2020
-YouGov,Economist,-1.1,9,1344,2020-10-20,National,Joe Biden,52,2020
-Siena/NYT,NA,-1.5,8,753,2020-10-20,Iowa,Joe Biden,46,2020
-Siena/NYT,NA,-1.5,8,755,2020-10-20,Kansas,Joe Biden,41,2020
-Siena/NYT,NA,-1.5,8,758,2020-10-20,Montana,Joe Biden,43,2020
-Siena/NYT,NA,-1.5,8,759,2020-10-19,Georgia,Joe Biden,45,2020
-YouGov,Yahoo News,-1.1,8,1465,2020-10-18,National,Joe Biden,51,2020
-Siena/NYT,NA,-1.5,8,987,2020-10-18,National,Joe Biden,50,2020
-ABC/Washington Post,NA,-1.2,9,646,2020-10-17,North Carolina,Joe Biden,49,2020
-YouGov,CBS News,-1.1,9,1074,2020-10-16,Arizona,Joe Biden,50,2020
-YouGov,CBS News,-1.1,9,1112,2020-10-16,Wisconsin,Joe Biden,51,2020
-Siena/NYT,NA,-1.5,8,605,2020-10-14,South Carolina,Joe Biden,41,2020
-Siena/NYT,NA,-1.5,8,423,2020-10-14,Alaska,Joe Biden,39,2020
-YouGov,Economist,-1.1,9,1333,2020-10-13,National,Joe Biden,52,2020
-Siena/NYT,NA,-1.5,8,627,2020-10-13,North Carolina,Joe Biden,46,2020
-YouGov,Yahoo News,-1.1,8,1366,2020-10-11,National,Joe Biden,51,2020
-Siena/NYT,NA,-1.5,8,789,2020-10-11,Wisconsin,Joe Biden,51,2020
-Siena/NYT,NA,-1.5,8,614,2020-10-11,Michigan,Joe Biden,48,2020
-ABC/Washington Post,NA,-1.2,9,725,2020-10-09,National,Joe Biden,54,2020
-YouGov,CBS News,-1.1,9,1190,2020-10-09,Michigan,Joe Biden,52,2020
-YouGov,CBS News,-1.1,9,1036,2020-10-09,Nevada,Joe Biden,52,2020
-YouGov,CBS News,-1.1,9,1035,2020-10-09,Iowa,Joe Biden,49,2020
-YouGov,University of Colorado,-1.1,9,800,2020-10-09,Colorado,Joe Biden,47,2020
-YouGov,Saint Louis University,-1.1,9,931,2020-10-07,Missouri,Joe Biden,43.2,2020
-YouGov,Economist,-1.1,9,1364,2020-10-06,National,Joe Biden,51,2020
-Siena/NYT,NA,-1.5,8,661,2020-10-06,Ohio,Joe Biden,45,2020
-Siena/NYT,NA,-1.5,8,660,2020-10-06,Nevada,Joe Biden,48,2020
-Marquette Law School,NA,-1.1,10,700,2020-10-04,Wisconsin,Joe Biden,47,2020
-YouGov,Texas Tribune | University of Texas,-1.1,9,908,2020-10-04,Texas,Joe Biden,45,2020
-YouGov,Yahoo News,-1.1,8,1088,2020-10-03,National,Joe Biden,51,2020
-Siena/NYT,NA,-1.5,8,655,2020-10-03,Arizona,Joe Biden,49,2020
-YouGov,Yahoo News,-1.1,8,1345,2020-10-02,National,Joe Biden,48,2020
-Siena/NYT,NA,-1.5,8,706,2020-10-02,Pennsylvania,Joe Biden,49,2020
-YouGov,CBS News,-1.1,9,1187,2020-10-02,Pennsylvania,Joe Biden,51,2020
-YouGov,CBS News,-1.1,9,1114,2020-10-02,Ohio,Joe Biden,47,2020
-Siena/NYT,NA,-1.5,8,710,2020-10-01,Florida,Joe Biden,47,2020
-YouGov,Economist,-1.1,9,1350,2020-09-30,National,Joe Biden,50,2020
-Siena/NYT,NA,-1.5,8,420,2020-09-27,Nebraska CD-2,Joe Biden,48,2020
-Siena/NYT,NA,-1.5,8,711,2020-09-27,Pennsylvania,Joe Biden,49,2020
-ABC/Washington Post,NA,-1.2,9,568,2020-09-26,Pennsylvania,Joe Biden,54,2020
-YouGov,CBS News,-1.1,9,1164,2020-09-25,Georgia,Joe Biden,46,2020
-YouGov,CBS News,-1.1,9,1213,2020-09-25,North Carolina,Joe Biden,48,2020
-YouGov,CBS News,-1.1,9,1080,2020-09-25,South Carolina,Joe Biden,42,2020
-Siena/NYT,NA,-1.5,8,950,2020-09-24,National,Joe Biden,49,2020
-ABC/Washington Post,NA,-1.2,9,739,2020-09-24,National,Joe Biden,54,2020
-YouGov,Yahoo News,-1.1,8,1125,2020-09-23,National,Joe Biden,49,2020
-YouGov,Economist,-1.1,9,1124,2020-09-22,National,Joe Biden,49,2020
-Siena/NYT,NA,-1.5,8,501,2020-09-22,Iowa,Joe Biden,45,2020
-Siena/NYT,NA,-1.5,8,653,2020-09-22,Texas,Joe Biden,43,2020
-YouGov,Hofstra University Kalikow Center for the Study of the American Presidency,-1.1,9,2000,2020-09-22,National,Joe Biden,53.2,2020
-Siena/NYT,NA,-1.5,8,523,2020-09-21,Georgia,Joe Biden,45,2020
-YouGov,University of Wisconsin–Madison,-1.1,9,641,2020-09-21,Michigan,Joe Biden,51,2020
-YouGov,University of Wisconsin–Madison,-1.1,9,642,2020-09-21,Pennsylvania,Joe Biden,49,2020
-YouGov,University of Wisconsin–Madison | Wisconsin State Journal,-1.1,9,664,2020-09-21,Wisconsin,Joe Biden,50,2020
-ABC/Washington Post,NA,-1.2,9,579,2020-09-20,Arizona,Joe Biden,48,2020
-ABC/Washington Post,NA,-1.2,9,613,2020-09-20,Florida,Joe Biden,47,2020
-YouGov,CBS News,-1.1,9,1205,2020-09-18,Florida,Joe Biden,48,2020
-YouGov,CBS News,-1.1,9,1140,2020-09-18,Texas,Joe Biden,46,2020
-Siena/NYT,NA,-1.5,8,625,2020-09-16,Montana,Joe Biden,42,2020
-Siena/NYT,NA,-1.5,8,663,2020-09-16,Maine,Joe Biden,55,2020
-Siena/NYT,NA,-1.5,8,653,2020-09-16,North Carolina,Joe Biden,45,2020
-Siena/NYT,NA,-1.5,8,440,2020-09-16,Maine CD-2,Joe Biden,47,2020
-YouGov,Economist,-1.1,9,1062,2020-09-15,National,Joe Biden,51,2020
-Siena/NYT,NA,-1.5,8,653,2020-09-15,Arizona,Joe Biden,49,2020
-Marquette Law School,NA,-1.1,10,1357,2020-09-15,National,Joe Biden,50,2020
-ABC/Washington Post,NA,-1.2,9,615,2020-09-13,Minnesota,Joe Biden,57,2020
-ABC/Washington Post,NA,-1.2,9,605,2020-09-13,Wisconsin,Joe Biden,52,2020
-YouGov,CBS News,-1.1,9,1106,2020-09-11,Arizona,Joe Biden,47,2020
-YouGov,CBS News,-1.1,9,1087,2020-09-11,Minnesota,Joe Biden,50,2020
-Siena/NYT,NA,-1.5,8,445,2020-09-11,New Hampshire,Joe Biden,45,2020
-Siena/NYT,NA,-1.5,8,814,2020-09-10,Minnesota,Joe Biden,50,2020
-Siena/NYT,NA,-1.5,8,462,2020-09-10,Nevada,Joe Biden,46,2020
-Siena/NYT,NA,-1.5,8,760,2020-09-10,Wisconsin,Joe Biden,48,2020
-YouGov,Economist,-1.1,9,1057,2020-09-08,National,Joe Biden,52,2020
-YouGov,CBS News,-1.1,NA,2433,2020-09-04,National,Joe Biden,52,2020
-YouGov,CBS News,-1.1,NA,978,2020-09-04,Wisconsin,Joe Biden,50,2020
-Marquette Law School,NA,-1.1,NA,688,2020-09-03,Wisconsin,Joe Biden,48,2020
-YouGov,NA,-1.1,NA,934,2020-08-22,National,Joe Biden,52,2020
-YouGov,Yahoo News,-1.1,NA,1027,2020-08-15,National,Joe Biden,50,2020
-ABC/Washington Post,NA,-1.2,NA,707,2020-08-15,National,Joe Biden,54,2020
-YouGov,CBS News,-1.1,NA,2152,2020-08-14,National,Joe Biden,52,2020
-Marquette Law School,NA,-1.1,NA,694,2020-08-09,Wisconsin,Joe Biden,50,2020
-YouGov,CBS News,-1.1,NA,1211,2020-08-07,Pennsylvania,Joe Biden,49,2020
-YouGov,CBS News,-1.1,NA,994,2020-08-07,Wisconsin,Joe Biden,48,2020
-YouGov,CBS News,-1.1,NA,1129,2020-07-31,North Carolina,Joe Biden,48,2020
-YouGov,CBS News,-1.1,NA,1109,2020-07-31,Georgia,Joe Biden,46,2020
-YouGov,CBS News,-1.1,NA,1401,2020-07-24,National,Joe Biden,51,2020
-YouGov,CBS News,-1.1,NA,1156,2020-07-24,Michigan,Joe Biden,48,2020
-YouGov,CBS News,-1.1,NA,1211,2020-07-24,Ohio,Joe Biden,45,2020
-ABC/Washington Post,NA,-1.2,NA,673,2020-07-15,National,Joe Biden,54,2020
-YouGov,CBS News,-1.1,NA,1087,2020-07-10,Arizona,Joe Biden,46,2020
-YouGov,CBS News,-1.1,NA,1206,2020-07-10,Florida,Joe Biden,48,2020
-YouGov,CBS News,-1.1,NA,1185,2020-07-10,Texas,Joe Biden,45,2020
-YouGov,Saint Louis University,-1.1,NA,900,2020-07-01,Missouri,Joe Biden,42.5,2020
-Marquette Law School,NA,-1.1,NA,686,2020-06-18,Wisconsin,Joe Biden,52,2020
-YouGov,CBS News,-1.1,NA,1486,2020-06-01,National,Joe Biden,47,2020
-Marquette Law School,NA,-1.1,NA,650,2020-05-07,Wisconsin,Joe Biden,49,2020
-YouGov,CBS News,-1.1,NA,1671,2020-05-01,National,Joe Biden,49,2020
-YouGov,Hofstra University Kalikow Center for the Study of the American Presidency,-1.1,NA,1500,2020-03-12,National,Joe Biden,50.6,2020
-YouGov,USC Price | USC Schwarzenegger,-1.1,NA,1200,2020-02-15,California,Joe Biden,59.9,2020
-Marquette Law School,NA,-1.1,NA,701,2020-01-12,Wisconsin,Joe Biden,48,2020
-Marquette Law School,NA,-1.1,NA,652,2019-12-08,Wisconsin,Joe Biden,49,2020
-Marquette Law School,NA,-1.1,NA,685,2019-11-17,Wisconsin,Joe Biden,45,2020
-YouGov,Hofstra University Kalikow Center for the Study of the American Presidency,-1.1,NA,1500,2019-10-31,National,Joe Biden,51.5,2020
-Siena/NYT,NA,-1.5,NA,650,2019-10-26,Florida,Joe Biden,46.01,2020
-Siena/NYT,NA,-1.5,NA,651,2019-10-26,North Carolina,Joe Biden,45.88,2020
-Siena/NYT,NA,-1.5,NA,651,2019-10-26,Wisconsin,Joe Biden,46.15,2020
-Siena/NYT,NA,-1.5,NA,501,2019-10-25,Michigan,Joe Biden,45.39,2020
-Siena/NYT,NA,-1.5,NA,661,2019-10-25,Pennsylvania,Joe Biden,46.06,2020
-Siena/NYT,NA,-1.5,NA,652,2019-10-23,Arizona,Joe Biden,48.51,2020
-Marquette Law School,NA,-1.1,NA,657,2019-10-17,Wisconsin,Joe Biden,51,2020
-Marquette Law School,NA,-1.1,NA,672,2019-08-29,Wisconsin,Joe Biden,51,2020
+pollster,has_sponsor,numeric_grade,pollscore,transparency_score,sample_size,end_date,state,candidate_name,pct,cycle
+YouGov,1,3,-1.1,9,1363,2020-11-02,National,Joe Biden,53,2020
+YouGov,1,3,-1.1,8,1360,2020-11-01,National,Joe Biden,53,2020
+Siena/NYT,0,3,-1.5,8,1451,2020-10-31,Florida,Joe Biden,47,2020
+Siena/NYT,0,3,-1.5,8,1862,2020-10-31,Pennsylvania,Joe Biden,49,2020
+Siena/NYT,0,3,-1.5,8,1252,2020-10-30,Arizona,Joe Biden,49,2020
+Siena/NYT,0,3,-1.5,8,1253,2020-10-30,Wisconsin,Joe Biden,52,2020
+ABC/Washington Post,0,3,-1.2,9,824,2020-10-29,Florida,Joe Biden,48,2020
+ABC/Washington Post,0,3,-1.2,9,810,2020-10-29,Pennsylvania,Joe Biden,51,2020
+YouGov,1,3,-1.1,9,1365,2020-10-27,National,Joe Biden,54,2020
+Siena/NYT,0,3,-1.5,8,1034,2020-10-27,North Carolina,Joe Biden,48,2020
+CES / YouGov,0,3,-1.1,10,50908,2020-10-27,National,Joe Biden,51,2020
+CES / YouGov,0,3,-1.1,10,3755,2020-10-27,Florida,Joe Biden,49,2020
+CES / YouGov,0,3,-1.1,10,1456,2020-10-27,Georgia,Joe Biden,48,2020
+CES / YouGov,0,3,-1.1,10,1627,2020-10-27,North Carolina,Joe Biden,49,2020
+CES / YouGov,0,3,-1.1,10,2703,2020-10-27,Pennsylvania,Joe Biden,52,2020
+CES / YouGov,0,3,-1.1,10,2947,2020-10-27,Texas,Joe Biden,47,2020
+Siena/NYT,0,3,-1.5,8,809,2020-10-26,Nevada,Joe Biden,49,2020
+Siena/NYT,0,3,-1.5,8,856,2020-10-26,Michigan,Joe Biden,49,2020
+YouGov,1,3,-1.1,9,2000,2020-10-26,National,Joe Biden,53.9,2020
+YouGov,1,3,-1.1,9,1200,2020-10-26,Florida,Joe Biden,48,2020
+YouGov,1,3,-1.1,9,2500,2020-10-26,National,Joe Biden,52,2020
+YouGov,1,3,-1.1,8,1350,2020-10-25,National,Joe Biden,54,2020
+Marquette Law School,0,3,-1.1,10,749,2020-10-25,Wisconsin,Joe Biden,48,2020
+Siena/NYT,0,3,-1.5,8,802,2020-10-25,Texas,Joe Biden,43,2020
+ABC/Washington Post,0,3,-1.2,9,789,2020-10-25,Michigan,Joe Biden,51,2020
+ABC/Washington Post,0,3,-1.2,9,809,2020-10-25,Wisconsin,Joe Biden,57,2020
+YouGov,1,3,-1.1,9,1228,2020-10-23,Florida,Joe Biden,50,2020
+YouGov,1,3,-1.1,9,1090,2020-10-23,Georgia,Joe Biden,49,2020
+YouGov,1,3,-1.1,9,1022,2020-10-23,North Carolina,Joe Biden,51,2020
+YouGov,1,3,-1.1,9,681,2020-10-21,Michigan,Joe Biden,52,2020
+YouGov,1,3,-1.1,9,669,2020-10-21,Pennsylvania,Joe Biden,52,2020
+YouGov,1,3,-1.1,9,647,2020-10-21,Wisconsin,Joe Biden,53,2020
+YouGov,1,3,-1.1,9,1344,2020-10-20,National,Joe Biden,52,2020
+Siena/NYT,0,3,-1.5,8,753,2020-10-20,Iowa,Joe Biden,46,2020
+Siena/NYT,0,3,-1.5,8,755,2020-10-20,Kansas,Joe Biden,41,2020
+Siena/NYT,0,3,-1.5,8,758,2020-10-20,Montana,Joe Biden,43,2020
+Siena/NYT,0,3,-1.5,8,759,2020-10-19,Georgia,Joe Biden,45,2020
+YouGov,1,3,-1.1,8,1465,2020-10-18,National,Joe Biden,51,2020
+Siena/NYT,0,3,-1.5,8,987,2020-10-18,National,Joe Biden,50,2020
+ABC/Washington Post,0,3,-1.2,9,646,2020-10-17,North Carolina,Joe Biden,49,2020
+YouGov,1,3,-1.1,9,1074,2020-10-16,Arizona,Joe Biden,50,2020
+YouGov,1,3,-1.1,9,1112,2020-10-16,Wisconsin,Joe Biden,51,2020
+Siena/NYT,0,3,-1.5,8,605,2020-10-14,South Carolina,Joe Biden,41,2020
+Siena/NYT,0,3,-1.5,8,423,2020-10-14,Alaska,Joe Biden,39,2020
+YouGov,1,3,-1.1,9,1333,2020-10-13,National,Joe Biden,52,2020
+Siena/NYT,0,3,-1.5,8,627,2020-10-13,North Carolina,Joe Biden,46,2020
+YouGov,1,3,-1.1,8,1366,2020-10-11,National,Joe Biden,51,2020
+Siena/NYT,0,3,-1.5,8,789,2020-10-11,Wisconsin,Joe Biden,51,2020
+Siena/NYT,0,3,-1.5,8,614,2020-10-11,Michigan,Joe Biden,48,2020
+ABC/Washington Post,0,3,-1.2,9,725,2020-10-09,National,Joe Biden,54,2020
+YouGov,1,3,-1.1,9,1190,2020-10-09,Michigan,Joe Biden,52,2020
+YouGov,1,3,-1.1,9,1036,2020-10-09,Nevada,Joe Biden,52,2020
+YouGov,1,3,-1.1,9,1035,2020-10-09,Iowa,Joe Biden,49,2020
+YouGov,1,3,-1.1,9,800,2020-10-09,Colorado,Joe Biden,47,2020
+YouGov,1,3,-1.1,9,931,2020-10-07,Missouri,Joe Biden,43.2,2020
+YouGov,1,3,-1.1,9,1364,2020-10-06,National,Joe Biden,51,2020
+Siena/NYT,0,3,-1.5,8,661,2020-10-06,Ohio,Joe Biden,45,2020
+Siena/NYT,0,3,-1.5,8,660,2020-10-06,Nevada,Joe Biden,48,2020
+Marquette Law School,0,3,-1.1,10,700,2020-10-04,Wisconsin,Joe Biden,47,2020
+YouGov,1,3,-1.1,9,908,2020-10-04,Texas,Joe Biden,45,2020
+YouGov,1,3,-1.1,8,1088,2020-10-03,National,Joe Biden,51,2020
+Siena/NYT,0,3,-1.5,8,655,2020-10-03,Arizona,Joe Biden,49,2020
+YouGov,1,3,-1.1,8,1345,2020-10-02,National,Joe Biden,48,2020
+Siena/NYT,0,3,-1.5,8,706,2020-10-02,Pennsylvania,Joe Biden,49,2020
+YouGov,1,3,-1.1,9,1187,2020-10-02,Pennsylvania,Joe Biden,51,2020
+YouGov,1,3,-1.1,9,1114,2020-10-02,Ohio,Joe Biden,47,2020
+Siena/NYT,0,3,-1.5,8,710,2020-10-01,Florida,Joe Biden,47,2020
+YouGov,1,3,-1.1,9,1350,2020-09-30,National,Joe Biden,50,2020
+Siena/NYT,0,3,-1.5,8,420,2020-09-27,Nebraska CD-2,Joe Biden,48,2020
+Siena/NYT,0,3,-1.5,8,711,2020-09-27,Pennsylvania,Joe Biden,49,2020
+ABC/Washington Post,0,3,-1.2,9,568,2020-09-26,Pennsylvania,Joe Biden,54,2020
+YouGov,1,3,-1.1,9,1164,2020-09-25,Georgia,Joe Biden,46,2020
+YouGov,1,3,-1.1,9,1213,2020-09-25,North Carolina,Joe Biden,48,2020
+YouGov,1,3,-1.1,9,1080,2020-09-25,South Carolina,Joe Biden,42,2020
+Siena/NYT,0,3,-1.5,8,950,2020-09-24,National,Joe Biden,49,2020
+ABC/Washington Post,0,3,-1.2,9,739,2020-09-24,National,Joe Biden,54,2020
+YouGov,1,3,-1.1,8,1125,2020-09-23,National,Joe Biden,49,2020
+YouGov,1,3,-1.1,9,1124,2020-09-22,National,Joe Biden,49,2020
+Siena/NYT,0,3,-1.5,8,501,2020-09-22,Iowa,Joe Biden,45,2020
+Siena/NYT,0,3,-1.5,8,653,2020-09-22,Texas,Joe Biden,43,2020
+YouGov,1,3,-1.1,9,2000,2020-09-22,National,Joe Biden,53.2,2020
+Siena/NYT,0,3,-1.5,8,523,2020-09-21,Georgia,Joe Biden,45,2020
+YouGov,1,3,-1.1,9,641,2020-09-21,Michigan,Joe Biden,51,2020
+YouGov,1,3,-1.1,9,642,2020-09-21,Pennsylvania,Joe Biden,49,2020
+YouGov,1,3,-1.1,9,664,2020-09-21,Wisconsin,Joe Biden,50,2020
+ABC/Washington Post,0,3,-1.2,9,579,2020-09-20,Arizona,Joe Biden,48,2020
+ABC/Washington Post,0,3,-1.2,9,613,2020-09-20,Florida,Joe Biden,47,2020
+YouGov,1,3,-1.1,9,1205,2020-09-18,Florida,Joe Biden,48,2020
+YouGov,1,3,-1.1,9,1140,2020-09-18,Texas,Joe Biden,46,2020
+Siena/NYT,0,3,-1.5,8,625,2020-09-16,Montana,Joe Biden,42,2020
+Siena/NYT,0,3,-1.5,8,663,2020-09-16,Maine,Joe Biden,55,2020
+Siena/NYT,0,3,-1.5,8,653,2020-09-16,North Carolina,Joe Biden,45,2020
+Siena/NYT,0,3,-1.5,8,440,2020-09-16,Maine CD-2,Joe Biden,47,2020
+YouGov,1,3,-1.1,9,1062,2020-09-15,National,Joe Biden,51,2020
+Siena/NYT,0,3,-1.5,8,653,2020-09-15,Arizona,Joe Biden,49,2020
+Marquette Law School,0,3,-1.1,10,1357,2020-09-15,National,Joe Biden,50,2020
+ABC/Washington Post,0,3,-1.2,9,615,2020-09-13,Minnesota,Joe Biden,57,2020
+ABC/Washington Post,0,3,-1.2,9,605,2020-09-13,Wisconsin,Joe Biden,52,2020
+YouGov,1,3,-1.1,9,1106,2020-09-11,Arizona,Joe Biden,47,2020
+YouGov,1,3,-1.1,9,1087,2020-09-11,Minnesota,Joe Biden,50,2020
+Siena/NYT,0,3,-1.5,8,445,2020-09-11,New Hampshire,Joe Biden,45,2020
+Siena/NYT,0,3,-1.5,8,814,2020-09-10,Minnesota,Joe Biden,50,2020
+Siena/NYT,0,3,-1.5,8,462,2020-09-10,Nevada,Joe Biden,46,2020
+Siena/NYT,0,3,-1.5,8,760,2020-09-10,Wisconsin,Joe Biden,48,2020
+YouGov,1,3,-1.1,9,1057,2020-09-08,National,Joe Biden,52,2020

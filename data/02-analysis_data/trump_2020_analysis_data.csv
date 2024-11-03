@@ -1,146 +1,106 @@
-pollster,sponsors,pollscore,transparency_score,sample_size,end_date,state,candidate_name,pct,cycle
-YouGov,Economist,-1.1,9,1363,2020-11-02,National,Donald Trump,43,2020
-YouGov,Yahoo News,-1.1,8,1360,2020-11-01,National,Donald Trump,43,2020
-Siena/NYT,NA,-1.5,8,1451,2020-10-31,Florida,Donald Trump,44,2020
-Siena/NYT,NA,-1.5,8,1862,2020-10-31,Pennsylvania,Donald Trump,43,2020
-Siena/NYT,NA,-1.5,8,1252,2020-10-30,Arizona,Donald Trump,43,2020
-Siena/NYT,NA,-1.5,8,1253,2020-10-30,Wisconsin,Donald Trump,41,2020
-ABC/Washington Post,NA,-1.2,9,824,2020-10-29,Florida,Donald Trump,50,2020
-ABC/Washington Post,NA,-1.2,9,810,2020-10-29,Pennsylvania,Donald Trump,44,2020
-YouGov,Economist,-1.1,9,1365,2020-10-27,National,Donald Trump,43,2020
-Siena/NYT,NA,-1.5,8,1034,2020-10-27,North Carolina,Donald Trump,45,2020
-CES / YouGov,NA,-1.1,10,50908,2020-10-27,National,Donald Trump,43,2020
-CES / YouGov,NA,-1.1,10,3755,2020-10-27,Florida,Donald Trump,47,2020
-CES / YouGov,NA,-1.1,10,1456,2020-10-27,Georgia,Donald Trump,47,2020
-CES / YouGov,NA,-1.1,10,1627,2020-10-27,North Carolina,Donald Trump,45,2020
-CES / YouGov,NA,-1.1,10,2703,2020-10-27,Pennsylvania,Donald Trump,44,2020
-CES / YouGov,NA,-1.1,10,2947,2020-10-27,Texas,Donald Trump,49,2020
-Siena/NYT,NA,-1.5,8,809,2020-10-26,Nevada,Donald Trump,43,2020
-Siena/NYT,NA,-1.5,8,856,2020-10-26,Michigan,Donald Trump,41,2020
-YouGov,Hofstra University Kalikow Center for the Study of the American Presidency,-1.1,9,2000,2020-10-26,National,Donald Trump,42.5,2020
-YouGov,Florida State University,-1.1,9,1200,2020-10-26,Florida,Donald Trump,46,2020
-YouGov,George Washington University,-1.1,9,2500,2020-10-26,National,Donald Trump,41,2020
-YouGov,Yahoo News,-1.1,8,1350,2020-10-25,National,Donald Trump,42,2020
-Marquette Law School,NA,-1.1,10,749,2020-10-25,Wisconsin,Donald Trump,43,2020
-Siena/NYT,NA,-1.5,8,802,2020-10-25,Texas,Donald Trump,47,2020
-ABC/Washington Post,NA,-1.2,9,789,2020-10-25,Michigan,Donald Trump,44,2020
-ABC/Washington Post,NA,-1.2,9,809,2020-10-25,Wisconsin,Donald Trump,40,2020
-YouGov,CBS News,-1.1,9,1228,2020-10-23,Florida,Donald Trump,48,2020
-YouGov,CBS News,-1.1,9,1090,2020-10-23,Georgia,Donald Trump,49,2020
-YouGov,CBS News,-1.1,9,1022,2020-10-23,North Carolina,Donald Trump,47,2020
-YouGov,University of Wisconsin–Madison,-1.1,9,681,2020-10-21,Michigan,Donald Trump,42,2020
-YouGov,University of Wisconsin–Madison,-1.1,9,669,2020-10-21,Pennsylvania,Donald Trump,44,2020
-YouGov,University of Wisconsin–Madison | Wisconsin State Journal,-1.1,9,647,2020-10-21,Wisconsin,Donald Trump,44,2020
-YouGov,Economist,-1.1,9,1344,2020-10-20,National,Donald Trump,43,2020
-Siena/NYT,NA,-1.5,8,753,2020-10-20,Iowa,Donald Trump,43,2020
-Siena/NYT,NA,-1.5,8,755,2020-10-20,Kansas,Donald Trump,48,2020
-Siena/NYT,NA,-1.5,8,758,2020-10-20,Montana,Donald Trump,49,2020
-Siena/NYT,NA,-1.5,8,759,2020-10-19,Georgia,Donald Trump,45,2020
-YouGov,Yahoo News,-1.1,8,1465,2020-10-18,National,Donald Trump,40,2020
-Siena/NYT,NA,-1.5,8,987,2020-10-18,National,Donald Trump,41,2020
-ABC/Washington Post,NA,-1.2,9,646,2020-10-17,North Carolina,Donald Trump,48,2020
-YouGov,CBS News,-1.1,9,1074,2020-10-16,Arizona,Donald Trump,47,2020
-YouGov,CBS News,-1.1,9,1112,2020-10-16,Wisconsin,Donald Trump,46,2020
-Siena/NYT,NA,-1.5,8,605,2020-10-14,South Carolina,Donald Trump,49,2020
-Siena/NYT,NA,-1.5,8,423,2020-10-14,Alaska,Donald Trump,45,2020
-YouGov,Economist,-1.1,9,1333,2020-10-13,National,Donald Trump,42,2020
-Siena/NYT,NA,-1.5,8,627,2020-10-13,North Carolina,Donald Trump,42,2020
-YouGov,Yahoo News,-1.1,8,1366,2020-10-11,National,Donald Trump,43,2020
-Siena/NYT,NA,-1.5,8,789,2020-10-11,Wisconsin,Donald Trump,41,2020
-Siena/NYT,NA,-1.5,8,614,2020-10-11,Michigan,Donald Trump,40,2020
-ABC/Washington Post,NA,-1.2,9,725,2020-10-09,National,Donald Trump,42,2020
-YouGov,CBS News,-1.1,9,1190,2020-10-09,Michigan,Donald Trump,46,2020
-YouGov,CBS News,-1.1,9,1036,2020-10-09,Nevada,Donald Trump,46,2020
-YouGov,CBS News,-1.1,9,1035,2020-10-09,Iowa,Donald Trump,49,2020
-YouGov,University of Colorado,-1.1,9,800,2020-10-09,Colorado,Donald Trump,38,2020
-YouGov,Saint Louis University,-1.1,9,931,2020-10-07,Missouri,Donald Trump,51.8,2020
-YouGov,Economist,-1.1,9,1364,2020-10-06,National,Donald Trump,42,2020
-Siena/NYT,NA,-1.5,8,661,2020-10-06,Ohio,Donald Trump,44,2020
-Siena/NYT,NA,-1.5,8,660,2020-10-06,Nevada,Donald Trump,42,2020
-Marquette Law School,NA,-1.1,10,700,2020-10-04,Wisconsin,Donald Trump,42,2020
-YouGov,Texas Tribune | University of Texas,-1.1,9,908,2020-10-04,Texas,Donald Trump,50,2020
-YouGov,Yahoo News,-1.1,8,1088,2020-10-03,National,Donald Trump,43,2020
-Siena/NYT,NA,-1.5,8,655,2020-10-03,Arizona,Donald Trump,41,2020
-YouGov,Yahoo News,-1.1,8,1345,2020-10-02,National,Donald Trump,40,2020
-Siena/NYT,NA,-1.5,8,706,2020-10-02,Pennsylvania,Donald Trump,42,2020
-YouGov,CBS News,-1.1,9,1187,2020-10-02,Pennsylvania,Donald Trump,44,2020
-YouGov,CBS News,-1.1,9,1114,2020-10-02,Ohio,Donald Trump,47,2020
-Siena/NYT,NA,-1.5,8,710,2020-10-01,Florida,Donald Trump,42,2020
-YouGov,Economist,-1.1,9,1350,2020-09-30,National,Donald Trump,42,2020
-Siena/NYT,NA,-1.5,8,420,2020-09-27,Nebraska CD-2,Donald Trump,41,2020
-Siena/NYT,NA,-1.5,8,711,2020-09-27,Pennsylvania,Donald Trump,40,2020
-ABC/Washington Post,NA,-1.2,9,568,2020-09-26,Pennsylvania,Donald Trump,45,2020
-YouGov,CBS News,-1.1,9,1164,2020-09-25,Georgia,Donald Trump,47,2020
-YouGov,CBS News,-1.1,9,1213,2020-09-25,North Carolina,Donald Trump,46,2020
-YouGov,CBS News,-1.1,9,1080,2020-09-25,South Carolina,Donald Trump,52,2020
-Siena/NYT,NA,-1.5,8,950,2020-09-24,National,Donald Trump,41,2020
-ABC/Washington Post,NA,-1.2,9,739,2020-09-24,National,Donald Trump,44,2020
-YouGov,Yahoo News,-1.1,8,1125,2020-09-23,National,Donald Trump,44,2020
-YouGov,Economist,-1.1,9,1124,2020-09-22,National,Donald Trump,42,2020
-Siena/NYT,NA,-1.5,8,501,2020-09-22,Iowa,Donald Trump,42,2020
-Siena/NYT,NA,-1.5,8,653,2020-09-22,Texas,Donald Trump,46,2020
-YouGov,Hofstra University Kalikow Center for the Study of the American Presidency,-1.1,9,2000,2020-09-22,National,Donald Trump,41.9,2020
-Siena/NYT,NA,-1.5,8,523,2020-09-21,Georgia,Donald Trump,45,2020
-YouGov,University of Wisconsin–Madison,-1.1,9,641,2020-09-21,Michigan,Donald Trump,45,2020
-YouGov,University of Wisconsin–Madison,-1.1,9,642,2020-09-21,Pennsylvania,Donald Trump,45,2020
-YouGov,University of Wisconsin–Madison | Wisconsin State Journal,-1.1,9,664,2020-09-21,Wisconsin,Donald Trump,46,2020
-ABC/Washington Post,NA,-1.2,9,579,2020-09-20,Arizona,Donald Trump,49,2020
-ABC/Washington Post,NA,-1.2,9,613,2020-09-20,Florida,Donald Trump,51,2020
-YouGov,CBS News,-1.1,9,1205,2020-09-18,Florida,Donald Trump,46,2020
-YouGov,CBS News,-1.1,9,1140,2020-09-18,Texas,Donald Trump,48,2020
-Siena/NYT,NA,-1.5,8,625,2020-09-16,Montana,Donald Trump,49,2020
-Siena/NYT,NA,-1.5,8,663,2020-09-16,Maine,Donald Trump,38,2020
-Siena/NYT,NA,-1.5,8,653,2020-09-16,North Carolina,Donald Trump,44,2020
-Siena/NYT,NA,-1.5,8,440,2020-09-16,Maine CD-2,Donald Trump,45,2020
-YouGov,Economist,-1.1,9,1062,2020-09-15,National,Donald Trump,42,2020
-Siena/NYT,NA,-1.5,8,653,2020-09-15,Arizona,Donald Trump,40,2020
-Marquette Law School,NA,-1.1,10,1357,2020-09-15,National,Donald Trump,40,2020
-ABC/Washington Post,NA,-1.2,9,615,2020-09-13,Minnesota,Donald Trump,41,2020
-ABC/Washington Post,NA,-1.2,9,605,2020-09-13,Wisconsin,Donald Trump,46,2020
-YouGov,CBS News,-1.1,9,1106,2020-09-11,Arizona,Donald Trump,44,2020
-YouGov,CBS News,-1.1,9,1087,2020-09-11,Minnesota,Donald Trump,41,2020
-Siena/NYT,NA,-1.5,8,445,2020-09-11,New Hampshire,Donald Trump,42,2020
-Siena/NYT,NA,-1.5,8,814,2020-09-10,Minnesota,Donald Trump,41,2020
-Siena/NYT,NA,-1.5,8,462,2020-09-10,Nevada,Donald Trump,42,2020
-Siena/NYT,NA,-1.5,8,760,2020-09-10,Wisconsin,Donald Trump,43,2020
-YouGov,Economist,-1.1,9,1057,2020-09-08,National,Donald Trump,43,2020
-YouGov,CBS News,-1.1,NA,2433,2020-09-04,National,Donald Trump,42,2020
-YouGov,CBS News,-1.1,NA,978,2020-09-04,Wisconsin,Donald Trump,44,2020
-Marquette Law School,NA,-1.1,NA,688,2020-09-03,Wisconsin,Donald Trump,44,2020
-YouGov,NA,-1.1,NA,934,2020-08-22,National,Donald Trump,42,2020
-YouGov,Yahoo News,-1.1,NA,1027,2020-08-15,National,Donald Trump,41,2020
-ABC/Washington Post,NA,-1.2,NA,707,2020-08-15,National,Donald Trump,44,2020
-YouGov,CBS News,-1.1,NA,2152,2020-08-14,National,Donald Trump,42,2020
-Marquette Law School,NA,-1.1,NA,694,2020-08-09,Wisconsin,Donald Trump,46,2020
-YouGov,CBS News,-1.1,NA,1211,2020-08-07,Pennsylvania,Donald Trump,43,2020
-YouGov,CBS News,-1.1,NA,994,2020-08-07,Wisconsin,Donald Trump,42,2020
-YouGov,CBS News,-1.1,NA,1129,2020-07-31,North Carolina,Donald Trump,44,2020
-YouGov,CBS News,-1.1,NA,1109,2020-07-31,Georgia,Donald Trump,45,2020
-YouGov,CBS News,-1.1,NA,1401,2020-07-24,National,Donald Trump,41,2020
-YouGov,CBS News,-1.1,NA,1156,2020-07-24,Michigan,Donald Trump,42,2020
-YouGov,CBS News,-1.1,NA,1211,2020-07-24,Ohio,Donald Trump,46,2020
-ABC/Washington Post,NA,-1.2,NA,673,2020-07-15,National,Donald Trump,44,2020
-YouGov,CBS News,-1.1,NA,1087,2020-07-10,Arizona,Donald Trump,46,2020
-YouGov,CBS News,-1.1,NA,1206,2020-07-10,Florida,Donald Trump,42,2020
-YouGov,CBS News,-1.1,NA,1185,2020-07-10,Texas,Donald Trump,46,2020
-YouGov,Saint Louis University,-1.1,NA,900,2020-07-01,Missouri,Donald Trump,49.6,2020
-Marquette Law School,NA,-1.1,NA,686,2020-06-18,Wisconsin,Donald Trump,44,2020
-YouGov,CBS News,-1.1,NA,1486,2020-06-01,National,Donald Trump,43,2020
-Marquette Law School,NA,-1.1,NA,650,2020-05-07,Wisconsin,Donald Trump,45,2020
-YouGov,CBS News,-1.1,NA,1671,2020-05-01,National,Donald Trump,43,2020
-YouGov,Hofstra University Kalikow Center for the Study of the American Presidency,-1.1,NA,1500,2020-03-12,National,Donald Trump,49.4,2020
-YouGov,USC Price | USC Schwarzenegger,-1.1,NA,1200,2020-02-15,California,Donald Trump,30.4,2020
-Marquette Law School,NA,-1.1,NA,701,2020-01-12,Wisconsin,Donald Trump,47,2020
-Marquette Law School,NA,-1.1,NA,652,2019-12-08,Wisconsin,Donald Trump,47,2020
-Marquette Law School,NA,-1.1,NA,685,2019-11-17,Wisconsin,Donald Trump,48,2020
-Marquette Law School,NA,-1.1,NA,345,2019-11-17,Wisconsin,Donald Trump,53,2020
-Marquette Law School,NA,-1.1,NA,340,2019-11-17,Wisconsin,Donald Trump,45,2020
-YouGov,Hofstra University Kalikow Center for the Study of the American Presidency,-1.1,NA,1500,2019-10-31,National,Donald Trump,48.5,2020
-Siena/NYT,NA,-1.5,NA,650,2019-10-26,Florida,Donald Trump,44.48,2020
-Siena/NYT,NA,-1.5,NA,651,2019-10-26,North Carolina,Donald Trump,47.86,2020
-Siena/NYT,NA,-1.5,NA,651,2019-10-26,Wisconsin,Donald Trump,44.33,2020
-Siena/NYT,NA,-1.5,NA,501,2019-10-25,Michigan,Donald Trump,44.07,2020
-Siena/NYT,NA,-1.5,NA,661,2019-10-25,Pennsylvania,Donald Trump,44.85,2020
-Siena/NYT,NA,-1.5,NA,652,2019-10-23,Arizona,Donald Trump,46.16,2020
-Marquette Law School,NA,-1.1,NA,657,2019-10-17,Wisconsin,Donald Trump,44,2020
-Marquette Law School,NA,-1.1,NA,672,2019-08-29,Wisconsin,Donald Trump,44,2020
+pollster,has_sponsor,numeric_grade,pollscore,transparency_score,sample_size,end_date,state,candidate_name,pct,cycle
+YouGov,1,3,-1.1,9,1363,2020-11-02,National,Donald Trump,43,2020
+YouGov,1,3,-1.1,8,1360,2020-11-01,National,Donald Trump,43,2020
+Siena/NYT,0,3,-1.5,8,1451,2020-10-31,Florida,Donald Trump,44,2020
+Siena/NYT,0,3,-1.5,8,1862,2020-10-31,Pennsylvania,Donald Trump,43,2020
+Siena/NYT,0,3,-1.5,8,1252,2020-10-30,Arizona,Donald Trump,43,2020
+Siena/NYT,0,3,-1.5,8,1253,2020-10-30,Wisconsin,Donald Trump,41,2020
+ABC/Washington Post,0,3,-1.2,9,824,2020-10-29,Florida,Donald Trump,50,2020
+ABC/Washington Post,0,3,-1.2,9,810,2020-10-29,Pennsylvania,Donald Trump,44,2020
+YouGov,1,3,-1.1,9,1365,2020-10-27,National,Donald Trump,43,2020
+Siena/NYT,0,3,-1.5,8,1034,2020-10-27,North Carolina,Donald Trump,45,2020
+CES / YouGov,0,3,-1.1,10,50908,2020-10-27,National,Donald Trump,43,2020
+CES / YouGov,0,3,-1.1,10,3755,2020-10-27,Florida,Donald Trump,47,2020
+CES / YouGov,0,3,-1.1,10,1456,2020-10-27,Georgia,Donald Trump,47,2020
+CES / YouGov,0,3,-1.1,10,1627,2020-10-27,North Carolina,Donald Trump,45,2020
+CES / YouGov,0,3,-1.1,10,2703,2020-10-27,Pennsylvania,Donald Trump,44,2020
+CES / YouGov,0,3,-1.1,10,2947,2020-10-27,Texas,Donald Trump,49,2020
+Siena/NYT,0,3,-1.5,8,809,2020-10-26,Nevada,Donald Trump,43,2020
+Siena/NYT,0,3,-1.5,8,856,2020-10-26,Michigan,Donald Trump,41,2020
+YouGov,1,3,-1.1,9,2000,2020-10-26,National,Donald Trump,42.5,2020
+YouGov,1,3,-1.1,9,1200,2020-10-26,Florida,Donald Trump,46,2020
+YouGov,1,3,-1.1,9,2500,2020-10-26,National,Donald Trump,41,2020
+YouGov,1,3,-1.1,8,1350,2020-10-25,National,Donald Trump,42,2020
+Marquette Law School,0,3,-1.1,10,749,2020-10-25,Wisconsin,Donald Trump,43,2020
+Siena/NYT,0,3,-1.5,8,802,2020-10-25,Texas,Donald Trump,47,2020
+ABC/Washington Post,0,3,-1.2,9,789,2020-10-25,Michigan,Donald Trump,44,2020
+ABC/Washington Post,0,3,-1.2,9,809,2020-10-25,Wisconsin,Donald Trump,40,2020
+YouGov,1,3,-1.1,9,1228,2020-10-23,Florida,Donald Trump,48,2020
+YouGov,1,3,-1.1,9,1090,2020-10-23,Georgia,Donald Trump,49,2020
+YouGov,1,3,-1.1,9,1022,2020-10-23,North Carolina,Donald Trump,47,2020
+YouGov,1,3,-1.1,9,681,2020-10-21,Michigan,Donald Trump,42,2020
+YouGov,1,3,-1.1,9,669,2020-10-21,Pennsylvania,Donald Trump,44,2020
+YouGov,1,3,-1.1,9,647,2020-10-21,Wisconsin,Donald Trump,44,2020
+YouGov,1,3,-1.1,9,1344,2020-10-20,National,Donald Trump,43,2020
+Siena/NYT,0,3,-1.5,8,753,2020-10-20,Iowa,Donald Trump,43,2020
+Siena/NYT,0,3,-1.5,8,755,2020-10-20,Kansas,Donald Trump,48,2020
+Siena/NYT,0,3,-1.5,8,758,2020-10-20,Montana,Donald Trump,49,2020
+Siena/NYT,0,3,-1.5,8,759,2020-10-19,Georgia,Donald Trump,45,2020
+YouGov,1,3,-1.1,8,1465,2020-10-18,National,Donald Trump,40,2020
+Siena/NYT,0,3,-1.5,8,987,2020-10-18,National,Donald Trump,41,2020
+ABC/Washington Post,0,3,-1.2,9,646,2020-10-17,North Carolina,Donald Trump,48,2020
+YouGov,1,3,-1.1,9,1074,2020-10-16,Arizona,Donald Trump,47,2020
+YouGov,1,3,-1.1,9,1112,2020-10-16,Wisconsin,Donald Trump,46,2020
+Siena/NYT,0,3,-1.5,8,605,2020-10-14,South Carolina,Donald Trump,49,2020
+Siena/NYT,0,3,-1.5,8,423,2020-10-14,Alaska,Donald Trump,45,2020
+YouGov,1,3,-1.1,9,1333,2020-10-13,National,Donald Trump,42,2020
+Siena/NYT,0,3,-1.5,8,627,2020-10-13,North Carolina,Donald Trump,42,2020
+YouGov,1,3,-1.1,8,1366,2020-10-11,National,Donald Trump,43,2020
+Siena/NYT,0,3,-1.5,8,789,2020-10-11,Wisconsin,Donald Trump,41,2020
+Siena/NYT,0,3,-1.5,8,614,2020-10-11,Michigan,Donald Trump,40,2020
+ABC/Washington Post,0,3,-1.2,9,725,2020-10-09,National,Donald Trump,42,2020
+YouGov,1,3,-1.1,9,1190,2020-10-09,Michigan,Donald Trump,46,2020
+YouGov,1,3,-1.1,9,1036,2020-10-09,Nevada,Donald Trump,46,2020
+YouGov,1,3,-1.1,9,1035,2020-10-09,Iowa,Donald Trump,49,2020
+YouGov,1,3,-1.1,9,800,2020-10-09,Colorado,Donald Trump,38,2020
+YouGov,1,3,-1.1,9,931,2020-10-07,Missouri,Donald Trump,51.8,2020
+YouGov,1,3,-1.1,9,1364,2020-10-06,National,Donald Trump,42,2020
+Siena/NYT,0,3,-1.5,8,661,2020-10-06,Ohio,Donald Trump,44,2020
+Siena/NYT,0,3,-1.5,8,660,2020-10-06,Nevada,Donald Trump,42,2020
+Marquette Law School,0,3,-1.1,10,700,2020-10-04,Wisconsin,Donald Trump,42,2020
+YouGov,1,3,-1.1,9,908,2020-10-04,Texas,Donald Trump,50,2020
+YouGov,1,3,-1.1,8,1088,2020-10-03,National,Donald Trump,43,2020
+Siena/NYT,0,3,-1.5,8,655,2020-10-03,Arizona,Donald Trump,41,2020
+YouGov,1,3,-1.1,8,1345,2020-10-02,National,Donald Trump,40,2020
+Siena/NYT,0,3,-1.5,8,706,2020-10-02,Pennsylvania,Donald Trump,42,2020
+YouGov,1,3,-1.1,9,1187,2020-10-02,Pennsylvania,Donald Trump,44,2020
+YouGov,1,3,-1.1,9,1114,2020-10-02,Ohio,Donald Trump,47,2020
+Siena/NYT,0,3,-1.5,8,710,2020-10-01,Florida,Donald Trump,42,2020
+YouGov,1,3,-1.1,9,1350,2020-09-30,National,Donald Trump,42,2020
+Siena/NYT,0,3,-1.5,8,420,2020-09-27,Nebraska CD-2,Donald Trump,41,2020
+Siena/NYT,0,3,-1.5,8,711,2020-09-27,Pennsylvania,Donald Trump,40,2020
+ABC/Washington Post,0,3,-1.2,9,568,2020-09-26,Pennsylvania,Donald Trump,45,2020
+YouGov,1,3,-1.1,9,1164,2020-09-25,Georgia,Donald Trump,47,2020
+YouGov,1,3,-1.1,9,1213,2020-09-25,North Carolina,Donald Trump,46,2020
+YouGov,1,3,-1.1,9,1080,2020-09-25,South Carolina,Donald Trump,52,2020
+Siena/NYT,0,3,-1.5,8,950,2020-09-24,National,Donald Trump,41,2020
+ABC/Washington Post,0,3,-1.2,9,739,2020-09-24,National,Donald Trump,44,2020
+YouGov,1,3,-1.1,8,1125,2020-09-23,National,Donald Trump,44,2020
+YouGov,1,3,-1.1,9,1124,2020-09-22,National,Donald Trump,42,2020
+Siena/NYT,0,3,-1.5,8,501,2020-09-22,Iowa,Donald Trump,42,2020
+Siena/NYT,0,3,-1.5,8,653,2020-09-22,Texas,Donald Trump,46,2020
+YouGov,1,3,-1.1,9,2000,2020-09-22,National,Donald Trump,41.9,2020
+Siena/NYT,0,3,-1.5,8,523,2020-09-21,Georgia,Donald Trump,45,2020
+YouGov,1,3,-1.1,9,641,2020-09-21,Michigan,Donald Trump,45,2020
+YouGov,1,3,-1.1,9,642,2020-09-21,Pennsylvania,Donald Trump,45,2020
+YouGov,1,3,-1.1,9,664,2020-09-21,Wisconsin,Donald Trump,46,2020
+ABC/Washington Post,0,3,-1.2,9,579,2020-09-20,Arizona,Donald Trump,49,2020
+ABC/Washington Post,0,3,-1.2,9,613,2020-09-20,Florida,Donald Trump,51,2020
+YouGov,1,3,-1.1,9,1205,2020-09-18,Florida,Donald Trump,46,2020
+YouGov,1,3,-1.1,9,1140,2020-09-18,Texas,Donald Trump,48,2020
+Siena/NYT,0,3,-1.5,8,625,2020-09-16,Montana,Donald Trump,49,2020
+Siena/NYT,0,3,-1.5,8,663,2020-09-16,Maine,Donald Trump,38,2020
+Siena/NYT,0,3,-1.5,8,653,2020-09-16,North Carolina,Donald Trump,44,2020
+Siena/NYT,0,3,-1.5,8,440,2020-09-16,Maine CD-2,Donald Trump,45,2020
+YouGov,1,3,-1.1,9,1062,2020-09-15,National,Donald Trump,42,2020
+Siena/NYT,0,3,-1.5,8,653,2020-09-15,Arizona,Donald Trump,40,2020
+Marquette Law School,0,3,-1.1,10,1357,2020-09-15,National,Donald Trump,40,2020
+ABC/Washington Post,0,3,-1.2,9,615,2020-09-13,Minnesota,Donald Trump,41,2020
+ABC/Washington Post,0,3,-1.2,9,605,2020-09-13,Wisconsin,Donald Trump,46,2020
+YouGov,1,3,-1.1,9,1106,2020-09-11,Arizona,Donald Trump,44,2020
+YouGov,1,3,-1.1,9,1087,2020-09-11,Minnesota,Donald Trump,41,2020
+Siena/NYT,0,3,-1.5,8,445,2020-09-11,New Hampshire,Donald Trump,42,2020
+Siena/NYT,0,3,-1.5,8,814,2020-09-10,Minnesota,Donald Trump,41,2020
+Siena/NYT,0,3,-1.5,8,462,2020-09-10,Nevada,Donald Trump,42,2020
+Siena/NYT,0,3,-1.5,8,760,2020-09-10,Wisconsin,Donald Trump,43,2020
+YouGov,1,3,-1.1,9,1057,2020-09-08,National,Donald Trump,43,2020

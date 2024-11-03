@@ -49,7 +49,8 @@ just_trump_high_quality <- current_polls_data |>
   mutate(
     state = if_else(is.na(state), "National", state),
     end_date = mdy(end_date)
-  )
+  ) |>
+  filter(end_date >= as.Date("2024-07-21"))
 
 # repeat for historical data
 biden_past_high_quality <- past_polls_data |>
@@ -123,7 +124,8 @@ just_trump_lower_quality <- current_polls_data |>
   mutate(
     state = if_else(is.na(state), "National", state),
     end_date = mdy(end_date)
-  )
+  ) |>
+  filter(end_date >= as.Date("2024-07-21"))
 
 just_harris_lower_quality <- just_harris_lower_quality %>%
   distinct(poll_id, pollster_id, state, end_date, sample_size, race_id,

@@ -16,6 +16,8 @@ library(caret)
 library(glmnet)
 library(nnet)
 library(lubridate)
+library(pROC)
+library(stringr)
 
 
 #### Read data ####
@@ -72,6 +74,16 @@ harris_2024_national_adj <- harris_2024_national %>%
   select(-Biden_bias) %>%
   drop_na(end_date, has_sponsor, pollscore, transparency_score, sample_size)
 
+# also mutate has_sponsor variable for non-adjusted datasets
+trump_2024_national <- trump_2024_national %>% mutate(
+  has_sponsor = if_else(is.na(sponsors), 0, 1)
+) %>%
+  drop_na(end_date, has_sponsor, pollscore, transparency_score, sample_size)
+
+harris_2024_national <- harris_2024_national %>% mutate(
+  has_sponsor = if_else(is.na(sponsors), 0, 1)
+) %>%
+  drop_na(end_date, has_sponsor, pollscore, transparency_score, sample_size)
 
 # model adjusted support percentage by time and control variables
 # first split training and testing dataset using an 80/20 split
@@ -136,7 +148,7 @@ ggplot(combined_data, aes(x = end_date, y = pct_adj, color = candidate_name)) +
   geom_point(alpha = 0.6) +
   # Regression lines
   geom_line(aes(y = fitted_date), size = 0.5) +
-  xlim(as.Date("2024-07-01"), as.Date("2024-10-25")) +
+  xlim(as.Date("2024-07-19"), as.Date("2024-10-25")) +
   # Assign specific colors
   scale_color_manual(values = 
       c("Kamala Harris" = "blue", "Donald Trump" = "red")) +
@@ -197,7 +209,6 @@ combined_regional <- left_join(
 combined_regional <- combined_regional %>%
   mutate(across(everything(), ~ replace(.x, is.nan(.x), NA)))
 
-# Trump has data in 43 states, while Harris only has data in 33 states
 # Mutate expected winner column, determined by the confidence intervals
 # If confidence intervals are missing, compare average support levels instead
 combined_regional <- combined_regional %>% mutate(
@@ -319,20 +330,84 @@ state_evs <- tibble::tribble(
 combined_regional <- combined_regional %>%
   left_join(state_evs, by = "state")
 
-#################################################################
-# potential changes area
-prediction_harris <- data.frame(end_date = end_date_seq) %>%
+#### Logistic regression for national support ####
+
+combined_national <- full_join(
+  trump_2024_national,
+  harris_2024_national,
+  by = c("pollster", "sponsors", "has_sponsor", "pollscore", 
+         "transparency_score", "sample_size", "end_date", "state", "cycle")
+)
+
+combined_national <- combined_national %>% mutate(
+  harris_win = case_when(
+      pct.y >= pct.x ~ 1,
+      pct.y < pct.x ~ 0
+  )
+)
+
+# repeat for adjusted support levels
+combined_national_adj <- full_join(
+  trump_2024_national_adj,
+  harris_2024_national_adj,
+  by = c("pollster", "sponsors", "has_sponsor", "pollscore",
+         "transparency_score", "sample_size", "end_date", "state", "cycle")
+)
+
+combined_national_adj <- combined_national_adj %>% mutate(
+  harris_win = case_when(
+      pct_adj.y >= pct_adj.x ~ 1,
+      pct_adj.y < pct_adj.x ~ 0
+  )
+)
+
+
+# logistic model to predict the winner
+model_logistic <- glm(
+  harris_win ~ end_date + has_sponsor + transparency_score + sample_size,
+  data = combined_national,
+  family = binomial
+)
+
+summary(model_logistic)
+
+model_logistic_adj <- glm(
+  harris_win ~ end_date + has_sponsor + transparency_score + sample_size,
+  data = combined_national_adj,
+  family = binomial
+)
+
+summary(model_logistic_adj)
+
+# include predicted outcomes to the dataframes
+combined_national <- combined_national %>%
   mutate(
-    has_sponsor = 0,  # Adjust as needed
-    pollscore = mean(harris_2024_national_adj$pollscore, na.rm = TRUE),
-    transparency_score = mean(harris_2024_national_adj$transparency_score, na.rm = TRUE),
-    sample_size = mean(harris_2024_national_adj$sample_size, na.rm = TRUE),
-    candidate = "Harris"
-  ) %>%
-  mutate(pct_adj = predict(model_harris_full, newdata = .))
+    harris_win_prob = round(100*predict(model_logistic, type = "response"), 2)
+  )
 
-# Combine prediction data
-combined_prediction <- bind_rows(prediction_trump, prediction_harris)
+combined_national_adj <- combined_national_adj %>%
+  mutate(
+    harris_win_prob = round(100*predict(model_logistic_adj, 
+    type = "response"), 2)
+  )
 
-# CI of actual outcome, using the date of the election and average CVs
+#### Evaluate the Model ####
+
+# ROC Curve and AUC
+roc_obj <- roc(combined_national$harris_win,
+    combined_national$harris_win_prob)
+plot(roc_obj, main = "ROC Curve for Harris Win Prediction")
+auc_value <- auc(roc_obj)
+print(paste("AUC:", auc_value))
+
+# note: roc curve above diagonal line is good
+# auc value closer to 1 is good, closer to 0 is bad
+
+# Check correlation matrix
+cor_matrix <- combined_national %>%
+  select(has_sponsor, 
+  transparency_score, sample_size) %>%
+  cor()
+
+print(cor_matrix)
 

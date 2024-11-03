@@ -211,6 +211,207 @@ Several types of bias affect the poll's results. Self-selection bias occurs beca
 Finally, the poll also faces common challenges in political polls such as this one - the five-day field period (October 24-28) may miss opinion changes close to election day, and while weighting adjustments help correct for demographic imbalances, they may increase variance in the estimates if some groups need to be weighted heavily to match population benchmarks, for example.
 
 Overall, Quinnipiac's methodology represents a balanced approach to managing practical constraints and statistical rigor in modern political polling - while some common biases are still likely to skew the poll results off the true support levels for Harris, for example, the poll uses methods such as post-stratification weighting to tradeoff biases at the cost of model variance. Using live interviewers unavoidably introduces social desirability bias, however, and significantly increases poll costs per quota. Modifying the methodology to remove this aspect of the survey would potentially reduce bias and allow for larger samples to be taken, in turn opening up possibilities for cross-validation and the such, which then reduces the effect of increased model variance on the final results.
+
+## Idealised methodology
+With a $100,000 budget, our approach focuses on producing accurate state-level estimates in key battleground states, which would then inform our national forecast. We prioritize Pennsylvania, Michigan, Wisconsin, Georgia, Arizona, and Nevada, allocating resources proportionally based on each state's electoral importance and expected margin of victory.
+
+Our sampling strategy employs both probability and non-probability methods. Probability sampling (60% of budget) means every member of our target population has a known, non-zero chance of being selected - this allows us to calculate proper margins of error and make statistical inferences about the population. For this, we use dual-frame random digit dialing (RDD) for phone surveys and address-based sampling (ABS) for mail-to-web recruitment. RDD involves generating random phone numbers within active area codes, while ABS uses the U.S. Postal Service's delivery database as a sampling frame. The ABS approach helps reach households without reliable phone access. We stratify our sample by geography, demographics, and previous voting patterns to ensure representation across key subgroups - meaning we divide the population into these subgroups and sample from each independently.
+
+For non-probability sampling (40% of budget), where respondents' selection probabilities are unknown and not everyone has a chance of being selected, we recruit through multiple online panel vendors and use targeted social media advertising to reach traditionally underrepresented groups. While this approach introduces potential selection bias because participants self-select into the sample, it helps reach younger voters who are less responsive to traditional survey methods. We implement quota sampling within these non-probability samples to match key demographic targets - for example, stopping collection from certain demographic groups once their quota is filled.
+
+Respondent recruitment uses multiple contact methods - mail, email, text, and phone - with attempts made at different times and days to maximize response rates. We offer a $10 gift card incentive for completed surveys and provide both English and Spanish language options. This mixed-mode contact strategy helps reduce non-response bias by providing multiple ways to participate.
+
+Data validation is crucial for maintaining quality. We cross-reference responses with voter files where available - meaning we check if respondents' self-reported registration status matches official records. We screen for duplicate responses using IP addresses and phone numbers, and implement attention checks within the survey (questions with known correct answers to ensure respondents are reading carefully). Speed checks identify rushed responses that might indicate low-quality data by flagging completions that fall below a minimum reasonable completion time, while consistency checks across related questions help identify potentially fraudulent responses by looking for logical contradictions in answers.
+
+Our weighting approach uses post-stratification to known population benchmarks - this means we adjust the weight given to each response so that our sample matches known population characteristics. For example, if our sample has 30% college graduates but the population has 40%, we would give more weight to responses from college graduates. We include demographics (age, race, education, gender), geographic location, past voting behavior, and party registration in our weighting scheme. We produce daily estimates using a 7-day rolling average, which helps smooth out daily fluctuations while remaining responsive to real changes in voter preferences.
+
+The survey instrument itself focuses on six key areas: screening questions to identify likely voters, voting intentions (including direct questions about Trump vs. Harris preferences), political preferences, demographics, issue priorities, and media consumption patterns. We've implemented this survey design in Google Forms, which can be found here: [Link to be added]
+
+This methodology balances statistical rigor with practical constraints, while acknowledging and attempting to address the key challenges in modern political polling: declining response rates, coverage bias, and the increasing difficulty of reaching a representative sample of likely voters.
+
+## Idealised survey
+The survey, made using Google Forms, is linked here:
+Note that the questions are identical for both the phone and online surveys bar q6.
+A copy of the survey that is identical to the one implemented in the Google Forms above is presented below:
+Thank you for participating in this survey about the 2024 U.S. Presidential Election. This survey is part of a research project at the University of Toronto studying voting intentions and political attitudes.
+
+Estimated completion time: 8-10 minutes
+
+Your responses will be kept confidential and used only for research purposes. You may skip any questions you prefer not to answer, though complete responses are most helpful for our research.
+
+For questions or concerns about this survey, please contact: andrew.goh@mail.utoronto.ca
+
+SCREENING SECTION:
+Q1. Are you 18 years of age or older?
+
+Yes
+No [END SURVEY]
+
+Q2. Are you a U.S. citizen?
+
+Yes
+No [END SURVEY]
+
+Q3. Are you registered to vote at your current address?
+
+Yes
+No
+Not sure
+[If No or Not sure: Do you plan to register before the November 2024 election?]
+
+VOTING INTENTION:
+Q4. How likely are you to vote in the 2024 presidential election?
+
+Definitely will vote
+Probably will vote
+Might or might not vote
+Probably will not vote
+Definitely will not vote
+
+Q5. If the 2024 presidential election were held today, and the candidates were Donald Trump (Republican) and Kamala Harris (Democrat), who would you vote for?
+
+Donald Trump
+Kamala Harris
+Another candidate (please specify)
+Would not vote
+Not sure
+
+ATTENTION CHECK:
+Q6. To ensure you're reading carefully, please select "Somewhat disagree" for this question: "I enjoy following political news."
+
+Strongly agree
+Somewhat agree
+Somewhat disagree
+Strongly disagree
+No opinion
+
+POLITICAL PREFERENCES:
+Q7. Generally speaking, do you consider yourself a:
+
+Republican
+Democrat
+Independent
+Something else (please specify)
+
+Q8. How would you rate the current state of the U.S. economy?
+
+Excellent
+Good
+Fair
+Poor
+Very poor
+
+ISSUE PRIORITIES:
+Q9. Which ONE of the following issues is most important to you when deciding how to vote?
+
+Economy and jobs
+Immigration
+Healthcare
+Climate change
+Crime and public safety
+Education
+National security
+Abortion rights
+Gun policy
+Something else (please specify)
+
+For each of the following issues, please indicate whether you think Donald Trump or Kamala Harris would do a better job handling it:
+
+Q10. Economy and jobs:
+
+Donald Trump would do better
+Kamala Harris would do better
+No difference
+Not sure
+
+Q11. Immigration:
+[Same options]
+Q12. National security:
+[Same options]
+Q13. Healthcare:
+[Same options]
+
+MEDIA CONSUMPTION:
+Q14. Where do you most often get your news about politics? (Select all that apply)
+
+Network TV news (ABC, CBS, NBC)
+Cable TV news (CNN, Fox News, MSNBC)
+Local TV news
+Radio
+Print newspapers
+News websites
+Social media
+Friends and family
+Other (please specify)
+
+Q15. How many hours per day do you typically spend following news about politics?
+
+Less than 1 hour
+1-2 hours
+2-4 hours
+More than 4 hours
+
+DEMOGRAPHICS:
+Q16. What is your age?
+
+18-24
+25-34
+35-44
+45-54
+55-64
+65 or older
+
+Q17. What is your gender?
+
+Male
+Female
+Non-binary/Other
+Prefer not to say
+
+Q18. What is your race/ethnicity? (Select all that apply)
+
+White
+Black or African American
+Hispanic or Latino
+Asian
+Native American
+Other (please specify)
+Prefer not to say
+
+Q19. What is the highest level of education you have completed?
+
+Less than high school
+High school graduate
+Some college
+Associate's degree
+Bachelor's degree
+Graduate degree
+Prefer not to say
+
+Q20. What was your total household income before taxes in 2023?
+
+Under $25,000
+$25,000-$49,999
+$50,000-$74,999
+$75,000-$99,999
+$100,000-$149,999
+$150,000 or more
+Prefer not to say
+
+CONSISTENCY CHECK:
+Q21. Looking ahead to November 2024, if Donald Trump is the Republican nominee and Kamala Harris is the Democratic nominee, how do you think you will vote?
+
+Donald Trump
+Kamala Harris
+Another candidate (please specify)
+Would not vote
+Not sure
+
+[END OF SURVEY]
+
+Thank you for completing this survey about the 2024 U.S. Presidential Election. Your responses will help us better understand voter preferences and political attitudes across the country.
+If you have any questions about this research or would like to be informed about the results, please contact andrew.goh@mail.utoronto.ca.
+Your time and participation is greatly appreciated.
 # Additional data details
 
 # Model details {#sec-model-details}

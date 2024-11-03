@@ -225,19 +225,19 @@ Data validation is crucial for maintaining quality. We cross-reference responses
 
 Our weighting approach uses post-stratification to known population benchmarks - this means we adjust the weight given to each response so that our sample matches known population characteristics. For example, if our sample has 30% college graduates but the population has 40%, we would give more weight to responses from college graduates. We include demographics (age, race, education, gender), geographic location, past voting behavior, and party registration in our weighting scheme. We produce daily estimates using a 7-day rolling average, which helps smooth out daily fluctuations while remaining responsive to real changes in voter preferences.
 
-The survey instrument itself focuses on six key areas: screening questions to identify likely voters, voting intentions (including direct questions about Trump vs. Harris preferences), political preferences, demographics, issue priorities, and media consumption patterns. We've implemented this survey design in Google Forms, which can be found here: [Link to be added]
+The survey instrument itself focuses on six key areas: screening questions to identify likely voters, voting intentions (including direct questions about Trump vs. Harris preferences), political preferences, demographics, issue priorities, and media consumption patterns. We've implemented this survey design in Google Forms, which can be found here: https://forms.gle/pk7vDiMHwEGLMK849
 
 This methodology balances statistical rigor with practical constraints, while acknowledging and attempting to address the key challenges in modern political polling: declining response rates, coverage bias, and the increasing difficulty of reaching a representative sample of likely voters.
 
 ## Idealised survey
-The survey, made using Google Forms, is linked here:
+The survey, made using Google Forms, is linked here: https://forms.gle/pk7vDiMHwEGLMK849
 Note that the questions are identical for both the phone and online surveys bar q6.
 A copy of the survey that is identical to the one implemented in the Google Forms above is presented below:
 Thank you for participating in this survey about the 2024 U.S. Presidential Election. This survey is part of a research project at the University of Toronto studying voting intentions and political attitudes.
 
 Estimated completion time: 8-10 minutes
 
-Your responses will be kept confidential and used only for research purposes. You may skip any questions you prefer not to answer, though complete responses are most helpful for our research.
+Your responses will be kept confidential and used only for research purposes. Email information, and any other information that may personally identify you, is not gathered. You may skip any questions you prefer not to answer, though complete responses are most helpful for our research.
 
 For questions or concerns about this survey, please contact: andrew.goh@mail.utoronto.ca
 
@@ -268,10 +268,10 @@ Might or might not vote
 Probably will not vote
 Definitely will not vote
 
-Q5. If the 2024 presidential election were held today, and the candidates were Donald Trump (Republican) and Kamala Harris (Democrat), who would you vote for?
+Q5. If the 2024 presidential election were held today, and the candidates were Kamala Harris (Democrat) and Donald Trump (Republican), who would you vote for?
 
-Donald Trump
 Kamala Harris
+Donald Trump
 Another candidate (please specify)
 Would not vote
 Not sure
@@ -286,20 +286,20 @@ Strongly disagree
 No opinion
 
 POLITICAL PREFERENCES:
-Q7. Generally speaking, do you consider yourself a:
+Q7. Generally speaking, you consider yourself a:
 
-Republican
 Democrat
+Republican
 Independent
 Something else (please specify)
 
 Q8. How would you rate the current state of the U.S. economy?
 
-Excellent
-Good
-Fair
-Poor
 Very poor
+Poor
+Fair
+Good
+Excellent
 
 ISSUE PRIORITIES:
 Q9. Which ONE of the following issues is most important to you when deciding how to vote?
@@ -315,24 +315,28 @@ Abortion rights
 Gun policy
 Something else (please specify)
 
-For each of the following issues, please indicate whether you think Donald Trump or Kamala Harris would do a better job handling it:
+For each of the following issues, please indicate whether you think Kamala Harris or Donald Trump would do a better job handling it:
 
 Q10. Economy and jobs:
 
-Donald Trump would do better
 Kamala Harris would do better
+Donald Trump would do better
 No difference
 Not sure
 
-Q11. Immigration:
+Q11. Human rights and freedom of speech:
 [Same options]
-Q12. National security:
+Q12. Abortion:
 [Same options]
 Q13. Healthcare:
 [Same options]
+Q14. Immigration:
+[Same options]
+Q15. National security:
+[Same options]
 
 MEDIA CONSUMPTION:
-Q14. Where do you most often get your news about politics? (Select all that apply)
+Q16. Where do you most often get your news about politics? (Select all that apply)
 
 Network TV news (ABC, CBS, NBC)
 Cable TV news (CNN, Fox News, MSNBC)
@@ -344,7 +348,7 @@ Social media
 Friends and family
 Other (please specify)
 
-Q15. How many hours per day do you typically spend following news about politics?
+Q17. How many hours per day do you typically spend following news about politics?
 
 Less than 1 hour
 1-2 hours
@@ -352,7 +356,7 @@ Less than 1 hour
 More than 4 hours
 
 DEMOGRAPHICS:
-Q16. What is your age?
+Q18. What is your age?
 
 18-24
 25-34
@@ -361,14 +365,14 @@ Q16. What is your age?
 55-64
 65 or older
 
-Q17. What is your gender?
+Q19. What is your gender?
 
 Male
 Female
 Non-binary/Other
 Prefer not to say
 
-Q18. What is your race/ethnicity? (Select all that apply)
+Q20. What is your race/ethnicity? (Select all that apply)
 
 White
 Black or African American
@@ -378,7 +382,7 @@ Native American
 Other (please specify)
 Prefer not to say
 
-Q19. What is the highest level of education you have completed?
+Q21. What is the highest level of education you have completed?
 
 Less than high school
 High school graduate
@@ -388,7 +392,7 @@ Bachelor's degree
 Graduate degree
 Prefer not to say
 
-Q20. What was your total household income before taxes in 2023?
+Q22. What was your total household income before taxes in 2023?
 
 Under $25,000
 $25,000-$49,999
@@ -399,10 +403,10 @@ $150,000 or more
 Prefer not to say
 
 CONSISTENCY CHECK:
-Q21. Looking ahead to November 2024, if Donald Trump is the Republican nominee and Kamala Harris is the Democratic nominee, how do you think you will vote?
+Q23. Looking ahead to November 2024, if Kamala Harris is the Democratic nominee and Donald Trump is the Republican nominee, how do you think you will vote?
 
-Donald Trump
 Kamala Harris
+Donald Trump
 Another candidate (please specify)
 Would not vote
 Not sure
@@ -411,6 +415,7 @@ Not sure
 Thank you for completing this survey about the 2024 U.S. Presidential Election. Your responses will help us better understand voter preferences and political attitudes across the country.
 If you have any questions about this research or would like to be informed about the results, please contact andrew.goh@mail.utoronto.ca.
 Your time and participation is greatly appreciated.
+
 # Additional data details
 
 # Model details {#sec-model-details}

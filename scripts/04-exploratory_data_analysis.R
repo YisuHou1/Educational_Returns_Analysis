@@ -30,169 +30,117 @@ harris_2024_lower <-
 trump_2020 <- read_csv("data/02-analysis_data/trump_2020_analysis_data.csv")
 biden_2020 <- read_csv("data/02-analysis_data/biden_2020_analysis_data.csv")
 
-# Summary statistics of datasets [to be updated]
+# Distribution of variables in the dataset
+all_combined <- bind_rows(harris_2024_lower, trump_2024_lower,
+                          biden_2020, trump_2020)
 
-# Regional polls analysis
-trump_2024_regional <- trump_2024_lower %>% filter(state != "National")
-harris_2024_regional <- harris_2024_lower %>% filter(state != "National")
-
-trump_by_state <- trump_2024_regional %>%
-  group_by(state) %>%
-  summarize(
-    Trump_State_Support = mean(pct, na.rm = TRUE),
-    Trump_SD_support = sd(pct, na.rm = TRUE),
-    Trump_n = n()
-  ) %>%
-  mutate(
-    Trump_SE = Trump_SD_support / sqrt(Trump_n),                
-    Trump_t = qt(0.975, df = Trump_n - 1),                       
-    Trump_CI_lower = Trump_State_Support - Trump_t * Trump_SE,   
-    Trump_CI_upper = Trump_State_Support + Trump_t * Trump_SE      
-  )
-harris_by_state <- harris_2024_regional %>%
-  group_by(state) %>%
-  summarize(
-    Harris_State_Support = mean(pct, na.rm = TRUE),
-    Harris_SD_support = sd(pct, na.rm = TRUE),
-    Harris_n = n()
-  ) %>%
-  mutate(
-    Harris_SE = Harris_SD_support / sqrt(Harris_n),                
-    Harris_t = qt(0.975, df = Harris_n - 1),                       
-    Harris_CI_lower = Harris_State_Support - Harris_t * Harris_SE,   
-    Harris_CI_upper = Harris_State_Support + Harris_t * Harris_SE      
-  )
-
-
-# combine the two data frames for comparison
-combined_regional <- left_join(
-  trump_by_state,
-  harris_by_state,
-  by = "state"
-)
-
-# change all NaN values to NA
-combined_regional <- combined_regional %>%
-  mutate(across(everything(), ~ replace(.x, is.nan(.x), NA)))
-
-# Mutate expected winner column, determined by the confidence intervals
-# If confidence intervals are missing, compare average support levels instead
-combined_regional <- combined_regional %>% mutate(
-  exp_winner = case_when(
-    # 1. Both Candidates Have CIs
-    !is.na(Trump_CI_lower) & !is.na(Trump_CI_upper) &
-      !is.na(Harris_CI_lower) & !is.na(Harris_CI_upper) &
-      Trump_CI_lower > Harris_CI_upper ~ "Trump",
-    
-    !is.na(Trump_CI_lower) & !is.na(Trump_CI_upper) &
-      !is.na(Harris_CI_lower) & !is.na(Harris_CI_upper) &
-      Harris_CI_lower > Trump_CI_upper ~ "Harris",
-    
-    # If Both Have CIs but They Overlap
-    !is.na(Trump_CI_lower) & !is.na(Trump_CI_upper) &
-      !is.na(Harris_CI_lower) & !is.na(Harris_CI_upper) ~ "Unknown",
-    
-    # 2a. Only Trump Has CI
-    !is.na(Trump_CI_lower) & !is.na(Trump_CI_upper) &
-      is.na(Harris_CI_lower) & is.na(Harris_CI_upper) &
-      Harris_State_Support < Trump_CI_lower ~ "Trump",
-    
-    !is.na(Trump_CI_lower) & !is.na(Trump_CI_upper) &
-      is.na(Harris_CI_lower) & is.na(Harris_CI_upper) &
-      Harris_State_Support > Trump_CI_upper ~ "Harris",
-    
-    # If Only Trump Has CI and Harris's Support is Within Trump's CI
-    !is.na(Trump_CI_lower) & !is.na(Trump_CI_upper) &
-      is.na(Harris_CI_lower) & is.na(Harris_CI_upper) ~ "Unknown",
-    
-    # 2b. Only Harris Has CI
-    !is.na(Harris_CI_lower) & !is.na(Harris_CI_upper) &
-      is.na(Trump_CI_lower) & is.na(Trump_CI_upper) &
-      Trump_State_Support < Harris_CI_lower ~ "Harris",
-    
-    !is.na(Harris_CI_lower) & !is.na(Harris_CI_upper) &
-      is.na(Trump_CI_lower) & is.na(Trump_CI_upper) &
-      Trump_State_Support > Harris_CI_upper ~ "Trump",
-    
-    # If Only Harris Has CI and Trump's Support is Within Harris's CI
-    !is.na(Harris_CI_lower) & !is.na(Harris_CI_upper) &
-      is.na(Trump_CI_lower) & is.na(Trump_CI_upper) ~ "Unknown",
-    
-    # 4. Special Scenario: Harris_State_Support is NA
-    is.na(Harris_State_Support) ~ case_when(
-      Trump_State_Support > 50 ~ "Trump",
-      Trump_State_Support < 49 ~ "Harris",
-      Trump_State_Support >= 49 & Trump_State_Support <= 50 ~ "Unknown",
-      TRUE ~ "Unknown"
+# Generate plots to display the distributions
+ggplot(all_combined, aes(x = pct)) +
+  geom_histogram(
+    binwidth = 1,                # Adjust bin width for granularity
+    fill = "#2c7bb6",            # Aesthetic fill color (steel blue)
+    color = "white",             # Border color for bins
+    alpha = 0.8                   # Transparency of the fill
+  ) +
+  labs(
+    x = "Percentage Support",
+    y = "Number of Polls"
+  ) +
+  theme_minimal(base_size = 14) +   # Minimal theme with increased base font size
+  theme(
+    plot.title = element_text(
+      size = 16, 
+      face = "bold", 
+      hjust = 0.5,                # Center the title
+      margin = margin(b = 10)     # Add space below the title
     ),
-    
-    # 3. Neither Candidate Has CI
-    is.na(Trump_CI_lower) & is.na(Trump_CI_upper) &
-      is.na(Harris_CI_lower) & is.na(Harris_CI_upper) &
-      Trump_State_Support > Harris_State_Support ~ "Trump",
-    
-    is.na(Trump_CI_lower) & is.na(Trump_CI_upper) &
-      is.na(Harris_CI_lower) & is.na(Harris_CI_upper) &
-      Harris_State_Support > Trump_State_Support ~ "Harris",
-    
-    # If Both Support Equal
-    is.na(Trump_CI_lower) & is.na(Trump_CI_upper) &
-      is.na(Harris_CI_lower) & is.na(Harris_CI_upper) &
-      Trump_State_Support == Harris_State_Support ~ "Unknown",
-    
-    # Catch-All for Any Other Cases
-    TRUE ~ "Unknown"
+    plot.subtitle = element_text(
+      size = 12, 
+      hjust = 0.5, 
+      margin = margin(b = 20)     # Add space below the subtitle
+    ),
+    axis.title = element_text(face = "bold"), # Bold axis titles
+    axis.text = element_text(color = "gray30"), # Dark gray axis text
+    panel.grid.major = element_line(color = "gray80"), # Light gray major grid lines
+    panel.grid.minor = element_blank()                 # Remove minor grid lines
+  ) +
+  # Add a vertical line for the mean percentage support
+  geom_vline(
+    aes(xintercept = mean(pct, na.rm = TRUE)),
+    color = "#d73027",           # Aesthetic color (red)
+    linetype = "dashed", 
+    size = 1
+  ) +
+  # Annotate the mean value on the plot
+  annotate(
+    "text",
+    x = mean(all_combined$pct, na.rm = TRUE) - 7, # Position text slightly to the right of the mean line
+    y = Inf,                                     # Position text at the top of the plot
+    label = paste("Mean:", round(mean(all_combined$pct, na.rm = TRUE), 1), "%"),
+    vjust = 2,                                   # Vertical adjustment
+    color = "#d73027",
+    size = 5,
+    fontface = "bold"
   )
-)
 
-# include electoral votes to determine who is in the lead
-state_evs <- tibble::tribble(
-  ~state, ~electoral_votes,
-  "Alaska", 3,
-  "Arizona", 11,
-  "Arkansas", 6,
-  "California", 55,
-  "Colorado", 9,
-  "Connecticut", 7,
-  "Florida", 29,
-  "Georgia", 16,
-  "Illinois", 20,
-  "Indiana", 11,
-  "Iowa", 6,
-  "Kansas", 6,
-  "Louisiana", 8,
-  "Maine", 2,
-  "Maine CD-1", 1,
-  "Maine CD-2", 1,
-  "Maryland", 10,
-  "Massachusetts", 11,
-  "Michigan", 16,
-  "Minnesota", 10,
-  "Mississippi", 6,
-  "Missouri", 10,
-  "Montana", 3,
-  "Nebraska", 2,
-  "Nebraska CD-2", 1,
-  "Nevada", 6,
-  "New Hampshire", 4,
-  "New Mexico", 5,
-  "New York", 29,
-  "North Carolina", 15,
-  "Ohio", 18,
-  "Oklahoma", 7,
-  "Oregon", 7,
-  "Pennsylvania", 20,
-  "Rhode Island", 4,
-  "South Carolina", 9,
-  "South Dakota", 3,
-  "Texas", 38,
-  "Utah", 6,
-  "Vermont", 3,
-  "Virginia", 13,
-  "Washington", 12,
-  "Wisconsin", 10
-)
+ggplot(all_combined %>% filter(cycle == 2020), aes(x = end_date)) +
+  geom_histogram(binwidth = 7, fill = "#1f78b4", color = "white", alpha = 0.7) +
+  labs(
+    x = "End Date",
+    y = "Number of Polls"
+  ) +
+  scale_x_date(date_labels = "%b %d, %Y", date_breaks = "1 month") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
 
-combined_regional <- combined_regional %>%
-  left_join(state_evs, by = "state")
+ggplot(all_combined %>% filter(cycle == 2024), aes(x = end_date)) +
+  geom_histogram(binwidth = 7, fill = "#1f78b4", color = "white", alpha = 0.7) +
+  labs(
+    x = "End Date",
+    y = "Number of Polls"
+  ) +
+  scale_x_date(date_labels = "%b %d, %Y", date_breaks = "1 month") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+ggplot(all_combined, aes(x = factor(has_sponsor, levels = c(0,1), labels = c("No Sponsor", "Has Sponsor")))) +
+  geom_bar(fill = "#1f78b4", color = "white", alpha = 0.7) +
+  labs(
+    x = "Has Sponsor",
+    y = "Number of Polls"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold")
+  )
+
+ggplot(all_combined, aes(x = factor(transparency_score))) +
+  geom_bar(fill = "#1f78b4", color = "white", alpha = 0.7) +
+  labs(
+    x = "Transparency Score",
+    y = "Number of Polls"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold")
+  )
+
+ggplot(all_combined, aes(x = sample_size)) +
+  geom_histogram(binwidth = 500, fill = "#1f78b4", color = "white", alpha = 0.7) +
+  labs(
+    x = "Sample Size",
+    y = "Number of Polls"
+  ) +
+  scale_x_continuous(labels = scales::comma) +
+  coord_cartesian(xlim = c(0, 6000)) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold")
+  )
 

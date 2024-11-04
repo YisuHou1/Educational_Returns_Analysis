@@ -1,13 +1,12 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "A Logistic Regression Prediction of 2024 Election Odds Gives VP Harris a 38.3% Winrate"
 author: 
   - Andrew Goh
   - Yisu Hou
-thanks: "Code and data are available at: [https://github.com/RohanAlexander/starter_folder](https://github.com/RohanAlexander/starter_folder)."
+thanks: "Code and data are available at: [https://github.com/YisuHou1/US_Election_Statistics](https://github.com/YisuHou1/US_Election_Statistics)."
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "The 2024 Presidential Election, run between the Democratic candidate Vice President Kamala Harris and Republican candidate Former President Donald Trump, is both widely predicted to be a close race [@538data] and considered to be the “most important election of your life” by a majority of likely voters this election season, as estimated by Quinnipiac [@quinnipiac]. To predict the results of this election, we use a FiveThirtyEight poll-of-polls dataset [@538data], fitting multinomial logistic regression models with the data both at a national level and for each of the 7 swing states. Using these estimates for the probability of Harris winning the popular votes in each of those categories, we find that Vice President Harris has a 38.3% probability of winning the election in the context of the electoral college, a statistically significant result after considering margin of error and various biases."
 format: pdf
 header-includes:
   - \usepackage{float}
@@ -36,24 +35,15 @@ library(knitr)
 
 # Introduction
 
-Overview paragraph
+With most polls maintaining close (<1) odds at both the national and statewide level for the seven swing states [@538data; @nyt2024polls], the 2024 Presidential Elections are proving to be an extremely volatile one, with poll predictions regularly flipping and disagreeing with each other, even up until the day before Election Day. The volatility even extends beyond the polling itself – since the January 6 Capitol Attack, prominent figures supporting both parties have painted the 2024 elections specifically as one that underpins the very democratic integrity of the country. Elon Musk, for example, has openly expressed concerns of a Harris win leading to a one-party country [@musk2024x], and Zack Beauchamp from Vox has described a Trump re-election as an “extinction-level threat to democracy” [@vox]. In short, the stakes are high, at least as perceived in the eyes of voters [@quinnipiac]. 
 
-note: For the literature review/why our thing matters section talk about how other predictions don't consider the biases in polls. Our thing is something new because we attempt to account for the bias in historical predictions for our 2024 prediction. (basically, for all models and predictions, I have an adjusted version that adjusts the support percentage using the difference between 2020 polls and real election outcomes, and a normal version that just uses the percentages from 2024 polls)
+In order to arrive at such a conclusion, we used poll-by-polls data from FiveThirtyEight [@538data] to fit multinomial logistic regression models for both the nation as a whole and each of the seven swing states. Taking into consideration the mispredictions by pollsters for both the 2016 and 2020 elections, where Trump won the presidential race against Clinton in a 304-227 landslide despite predictions universally predicting a landslide win in the opposite direction [@weighting2], we regress on the characteristics of the poll/pollster such as transparency rating and sponsors and correct the results for systematic polling biases based on past election data, an approach predicted to yield better results this year [@weighting].
 
-There's essentially 3 different levels of analysis: using multiple linear regression to look at the candidates' support over time on the national level, using logistic regression to predict the chance of winning on the national level, using state polls data to see who is ahead in electoral college votes.
+Our estimand, or what we seek to predict, is the probability that Kamala Harris wins the election on the 6th of November. 
 
-Estimand paragraph
+After obtaining the probabilities that Harris wins each swing state via randomised sampling using our fitted models, we then analysed these probabilities in the context of the electoral college, i.e. the probability that Harris can obtain 44 votes from the swing states, which would all but guarantee her step into office [@nyt2024polls]. We find that Harris has a 38.3% chance of winning the general election, suggesting a likely Trump advantage after accounting for the margin of error in all related processes and observations. 
 
-Results paragraph
-
-Why it matters paragraph
-
-Telegraphing paragraph: The remainder of this paper is structured as follows. @sec-data....
-
-
-
-
-
+The body of the paper contains the data, model, results, and discussion sections. In order, @sec-data contains an overview of the data used, the variables involved and the tools used in our analysis and interpretation of the data, @sec-model describes the model in detail and other related miscellaneous musings, @sec-results contains a run-down and explanation of the results and findings from the model, and @sec-discussion contains a discussion of the implications and limitations of the result, among others. The appendices contain a sample of an idealised methodology and survey, as well as a case study of the sample and methodology of Quinnipiac’s Pennsylvania poll [@quinnipiac; @quinnipiacmethodology]. 
 
 # Data {#sec-data}
 
@@ -298,11 +288,15 @@ Sample size, finally, is a measure of the number of participants in each poll. A
 
 \FloatBarrier
 
-# Model
+# Model {#sec-model}
 
 The goal of our modelling strategy is twofold. Firstly, we seek to predict the winning candidate on election day by calculating the expected win rate of Vice President Kamala Harris and Former President Donald Trump in the seven swing states: Pennsylvania, Georgia, North Carolina, Michigan, Arizona, Wisconsin, and Nevada [@nyt2024polls]. Secondly, we hope to predict the candidate who has the popular vote on election day, controlling for the potential bias of national polls by accounting for the difference between polled popular vote and the actual popular vote on election day for the 2020 cycle.
 
-To achieve the first goal, the polls dataset was divided by individual states, and only data points from the seven swing states were selected, forming seven smaller datasets. Then, for each state, the harris_win variable was constructed by comparing the support rate of the candidates in each poll. The variable was set to 1 if the support rate of Harris is greater than or equal to Trump's support rate and 0 when Trump's support rate is greater. A logistic model was constructed for each state, using harris_win as the outcome and previously stated predictors as inputs. [EXPLAIN THE 1000 simulations and PROBABILITY calculation STEP HERE]
+To achieve the first goal, the polls dataset was divided by individual states, and only data points from the seven swing states were selected, forming seven smaller datasets. Then, for each state, the harris_win variable was constructed by comparing the support rate of the candidates in each poll. The variable was set to 1 if the support rate of Harris is greater than or equal to Trump's support rate and 0 when Trump's support rate is greater. A logistic model was constructed for each state, using harris_win as the outcome and previously stated predictors as inputs. 
+
+Then, after the models were constructed, we conducted 1000 simulations of election results with randomly-generated parameters. The date parameter was set to election day, and the other three predictor variables were simulated from a normal distribution with the mean and standard deviation of the training dataset. We then averaged the values to obtain our final prediction for the probability of a Harris win in the state of interest.
+
+Then, using the probabilities for each state and their respective electoral college votes, we calculated the probability that Vice President Harris successfully obtains the 44 required electoral college votes to secure the presidency. This is done via an R script that can be found in the end of /scripts/05-model_data.R.
 
 For the popular vote, we utilized the data from 2020 to calculate each pollster's bias by identifying the average difference between the popular vote on election day and their polled national support rates of Trump and President Joe Biden. Next, we adjusted the polled national support rates of pollsters in the 2024 cycle by the calculated gap in 2020. By making this adjustment, we are assuming that the pollsters systematically bias 2024 candidates equally compared to 2020 candidates. We acknowledge that the assumption is most likely false. Ideally, incorporating poll data from earlier election cycles may produce a more accurate indicator of how pollsters systematically bias candidates from the two dominant political parties. However, comprehensive poll data before 2020 is unavailable. Since popular vote is unrelated to the winner of the election, we are using this analysis as an exploration of methods that incorporate historical data without emphasizing predictiveness. Using both adjusted and unadjusted national support levels, multiple linear regressions were created with support levels as the outcome and stated predictors as inputs to predict candidates' support rate over time. Adjusted and unadjusted logistic regressions were made using harris_win as the outcome and the same predictors to predict the candidate with the popular vote on election day. The attempt to control for historical bias was not applied to the swing states due to a lack of data.
 
@@ -557,9 +551,9 @@ auc_value_Nevada <- auc(roc_obj_Nevada)
 
 ```
 
-We identified the AUC values and ROC plots for each of the seven swing-state logistic regressions. The ROC plots are presented in the Appendix, from @fig-pen to @fig-nev. The AUC values are: 0.90 for Pennsylvania, 0.88 for Georgia, 0.74 for North Carolina, 0.93 for Michigan, 1.00 for Arizona, 0.86 for Wisconsin, and 0.65 for Nevada. All states other than Nevada have acceptable or excellent AUC values, indicating that the respective logistic models are reliable when distinguishing cases where Harris wins. The low AUC value for Nevada is potentially caused by the limited sample size; there are only 9 polls conducted in Nevada.
+We identified the AUC values and ROC plots for each of the seven swing-state logistic regressions. The ROC plots are presented in the Additional Data Details section (@sec-model-details), from @fig-pen to @fig-nev. The AUC values are: 0.90 for Pennsylvania, 0.88 for Georgia, 0.74 for North Carolina, 0.93 for Michigan, 1.00 for Arizona, 0.86 for Wisconsin, and 0.65 for Nevada. All states other than Nevada have acceptable or excellent AUC values, indicating that the respective logistic models are reliable when distinguishing cases where Harris wins. The low AUC value for Nevada is potentially caused by the limited sample size; there are only 9 polls conducted in Nevada.
 
-Moreover, the sample size restrictions were the reason why we did not use training and testing data to validate our logistic models. The state with the greatest number of polls, Pennsylvania, only records 26 polls. Utilizing training and testing datasets implies that the datasets may include only a couple of data points in some states, which is insufficient to construct or test the model. On top of that, according to [@trainingerror], achieving low training error is sufficient to ensure the predictability of a model to some extent. [ADD MORE IF NECESSARY]
+Moreover, the sample size restrictions were the reason why we did not use training and testing data to validate our logistic models. The state with the greatest number of polls, Pennsylvania, only records 26 polls. Utilizing training and testing datasets implies that the datasets may include only a couple of data points in some states, which is insufficient to construct or test the model. On top of that, according to [@trainingerror], achieving low training error, such as by using a training-MSE-minimising regression model such as our own, is sufficient to ensure the predictive capabilities of a model bounded by some constant variance term.
 
 ```{r}
 #| echo: false
@@ -780,7 +774,7 @@ For the analysis of the national popular vote, the logistic model of adjusted po
 RMSE values and R squared values were calculated for the multiple linear regression models predicting popular vote. The RMSE values for all four models, adjusted and unadjusted support levels of the two candidates, are greater than 1, indicating that the fitted values and the support levels of actual polls are more than 1 percent apart on average, which is significant when analyzing popular vote. Moreover, all R squared values other than the model for the adjusted support rate of Trump, are smaller than 0.3, indicating the inability of the models to account for the variance of national support rates in the data. The model for the adjusted support rate of Trump has a R squared value of 0.69, indicating a relatively high proportion of variance in polled support rates being explained by the multiple linear regression model. This was expected, as the predictors such as a poll's end date and transparency does not necessarily correlate with the outcome of the polls. More predictive variables used by FiveThirtyEight [@5383] for their predictions are unavailable in the raw dataset, which is a key limitation of the data.
 
 
-# Results
+# Results {#sec-results}
 
 ## Swing states
 
@@ -1160,23 +1154,25 @@ The regression coefficients for the logistic and linear models are presented in 
 
 
 
-# Discussion
+# Discussion {#sec-discussion   }
 
-## First discussion point {#sec-first-point}
+## The illusion of polarization 
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+As mentioned in the introduction, one thing that stands out about the 2024 election in particular is just how polarized the two factions are. Instead of merely being a choice over which individual to helm the country over the next four years, this particular election is being framed more and more as a “fight to protect our democracy” from both sides of the debate stand. This, while evidently a new level of polarization, merely mirrors the trend in recent years more than anything else: party loyalty has been on a steady uprise since 1972, with loyalty in weak partisan and leaning independent voters increasing by approximately 50% in the 40 years that followed [@partisanship]. New records were further set in 2016, with Republican validated voters voting Trump a staggering 92% to 4% for Clinton, and Democratic validated voters voting Clinton an equally extreme 94% to 5% Trump support [@pew2018voters]. 
 
-## Second discussion point
+New voting statistics, however, suggest that this polarization is likely only more prominent in the upper echelons of political representation, however: a Washington Post article found that approximately 1 in 8 women and 1 in 10 men are now voting differently from their spouses compared to before [@wapo2024women], a development that suggests a decrease in long-increasing partisanship trends. This is especially pronounced since households in the States overwhelmingly vote together: at least 70% of them do, at least, which means that this value is projected to decrease from 70% to approximately 62% [@households]. In short: while it seems that ideologies are shifting more and more away from each other, the stats say otherwise. So does the Overton window [@overton]. 
 
-Please don't use these as sub-heading labels - change them to be what your point actually is.
+## Win probabilities versus support ratings: why our predictions are as extreme as they are
 
-## Third discussion point
+Our model led to a win probability prediction with numbers much more skewed towards one side than most pollsters currently predict: under this model, we find that Harris has a 40-60 chance against Trump, whereas most pollsters nowadays hover somewhere between 50-50 to 45-55 (towards either side). This is mainly a consequence of using a multinomial logistic regression model as opposed than other models – instead of predicting the support rates of the two candidates, such a model outputs the probability that a random support rate value from the predicted distribution of Harris support rates is larger than that of the predicted distribution of Trump support rates. This means that in states such as Nevada, where 538 gives Trump a +3 advantage, factoring in for margin of error and standard error means that the probability of Harris winning the state is not in fact 47% but rather much closer to zero, which we decided is a more intuitive way of understanding election odds. 
+
+A final reason for this is how swing states are polled much more sample-size-wise than other states, leading to a much higher power value than polls from said other states – a +3 lead in a sample of 1000 people from California’s 39 million might not mean too much, but a +3 lead in a sample of 3000 people from Nevada’s 3 million represents the actual results for 0.3% of the state’s population, holding much more relative weight when it comes to election predictions. 
 
 ## Weaknesses and next steps
 
 The dataset used for this analysis has a number of clear limitations. First of all, there is a lack of high-quality polls. Though FiveThirtyEight distributes each pollster with a rating out of 3.0, almost all pollsters under the rating of 2.7 produces outcomes that are unreliable and highly volatile. For this research, it was only possible for us to use pollsters with a 3.0 rating when analyzing national polls; we had to lower the standards to 2.5 for the analysis of swing states, as the number of high-quality state-specific polls are very limited. The inclusion of unreliable data reduces the predictability of our logistic models and thus our final outcome. The lack of predictability of our Nevada model is a perfect example of how low-quality data and the lack of data points impacts our ability to create effective models. However, we acknowledge that this is beyond the control of FiveThirtyEight, as they do not conduct the polls.
 
-The second major challenge presented by the dataset is the lack of predictors. FiveThirtyEight utilizes predictive variables that are unavailable to us, such as weighted values that represent the extent to which a pollster is partisan [@5383]. The predictors used in this research, such as the transparency score of the pollster, are not related to their bias towards any candidate. This limits the predictive power of our models.
+The second major challenge presented by the dataset is the lack of predictors. FiveThirtyEight utilizes predictive variables that are unavailable to us, such as weighted values that represent the extent to which a pollster is partisan [@5383]. The predictors used in this research, such as the transparency score of the pollster, are not related to their bias towards any candidate from a partisanship point of view, limiting the predictive power of our models.
 
 \newpage
 

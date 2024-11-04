@@ -1,0 +1,1243 @@
+User
+write a data + measurements section according to these two rubric elements:
+
+
+
+This criterion is linked to a Learning OutcomeData
+
+A sense of the dataset should be communicated to the reader. The broader context of the dataset should be discussed. All variables should be thoroughly examined and explained. Explain if there were similar datasets that could have been used and why they were not.
+
+
+
+This criterion is linked to a Learning OutcomeMeasurement
+
+A thorough discussion of measurement, relating to the dataset, is provided in the data section. Please ensure that you explain how we went from some phenomena in the world that happened to an entry in the dataset that you are interested in.
+
+
+
+for the 538 poll-of-polls dataset for the 2024 presidential election: https://projects.fivethirtyeight.com/polls/president-general/2024/national/
+
+
+
+methodology 1 and 2:
+
+
+
+Trump leads in swing-state polls and is tied with Biden nationally
+
+How 538's new 2024 presidential general election polling averages work.
+
+
+
+ByG. Elliott Morris via five thirty eight logo
+
+April 25, 2024, 10:01 PM
+
+
+
+
+
+
+
+
+
+
+
+5:00
+
+Trump leads in swing-state polls and is tied with Biden nationally
+
+
+
+Trump leads in swing-state polls and is tied with Biden nationally
+
+
+
+How 538's new 2024 presidential general election polling averages work.
+
+It's the moment you've all been waiting for: Today, 538 launched our interactive polling averages for the 2024 presidential general election. They show incumbent President Joe Biden and former President Donald Trump essentially tied in national polls and Trump with a tenuous lead in key swing states.
+
+
+
+Specifically, as of April 25 at 9 a.m. Eastern, our national polling average shows 40.9 percent of likely voters would support Biden if the election were held today, while 41.6 percent would support Trump.
+
+
+
+PHOTO: 538's 2024 presidential general election polling average, as of April 25 at 9 a.m. Eastern, showing former President Donald Trump at 41.6 percent, President Joe Biden at 40.9 percent and Robert F. Kennedy Jr. at 10.2 percent.
+
+538's 2024 presidential general election polling average, as of April 25 at 9 a.m. Eastern.
+
+538 Photo Illustration
+
+But there's considerable uncertainty in those numbers. To communicate this, we are also publishing uncertainty intervals for our horse-race averages for the first time. These intervals — represented by the red and blue shaded areas around each line — are kind of like the range of possible precipitation reported in a weather forecast, showing you could get anywhere from, say, 1 to 3 inches of rain in an upcoming storm.
+
+
+
+Our uncertainty intervals take into account the variability of the polling data and the uncertainty we have about the various adjustments we are making, which are detailed later in this article. Right now, that interval shows that Biden's support could be anywhere between 39.4 and 42.2 percent, while Trump’s range is from 40.3 to 42.8 percent. Read on for more information about all the sources of uncertainty we are (and aren't) taking into account for these averages.
+
+
+
+Our averages also show Trump leading in most swing states, though there is enough uncertainty that Biden could easily be ahead in enough to win the Electoral College. The table below shows each candidate's current estimated support and our uncertainty intervals for those numbers.
+
+
+
+Biden is currently trailing Trump in the swing states
+
+538′s polling averages for the 2024 presidential general election, accounting for pollster quality and house effects, poll recency, sample size, partisanship, mode and population effects, whether a poll tested named third-party candidates, and the trendline in national polls, as of April 25 at 9 a.m. Eastern
+
+
+
+Biden margin
+
+State	Biden %	Trump %	Median	Lower Bound	Upper Bound
+
+GA	39.2%	45.4%	-6.2	-10.3	-2.3
+
+NV	37.2	43.1	-5.9	-11.0	-1.0
+
+NC	39.6	45.1	-5.5	-9.2	-1.7
+
+AZ	38.8	43.4	-4.6	-9.1	-0.3
+
+MI	40.4	41.9	-1.5	-5.4	2.5
+
+PA	41.6	42.8	-1.2	-5.3	3.1
+
+WI	41.2	41.3	-0.1	-4.0	3.7
+
+National	40.9	41.6	-0.7	-2.6	1.1
+
+The lower and upper bounds for Biden margins are calculated as the 95% uncertainty intervals of our polling average’s simulations.
+
+
+
+Source: Polls
+
+
+
+Of course, the election will not be held today. While 538's new way of calculating polling averages takes into account sources of error that could affect those averages today — such as having a lot of polls from pollsters who tend to favor one party over another — we make no attempt to account for error that could arise from the large amount of time (six months!) remaining until the election, nor do we include the chance of an industrywide polling miss favoring either candidate.
+
+
+
+Those are the types of potential errors we will account for in our election forecast, which will use several ingredients (including these averages) to predict the outcome of the November election and which we'll release in a couple of months. By contrast, our polling averages are intended to be our best guess at where public opinion stands right now, not a prediction for an election happening several months from now. We still urge you to exercise caution when reading early polls; they can change significantly between now and Election Day.
+
+
+
+The rest of this article explains the methodology behind our polling averages: which polls we collect, how we weight and adjust them, and how we average them. This methodology is different from the one powering our other polling averages (such as for Biden's presidential job approval rating) in a few important ways, so it's worth spending a little time on the details.
+
+
+
+Which polls we include
+
+The building blocks of our polling averages are, of course, individual polls. Our presidential general election polling averages include all publicly available scientific polls that meet our methodological and ethical standards and test at least Biden versus Trump, though we prefer polls that test all major candidates who will be on the ballot in most states. We consider the Democratic and Republican presidential nominees to be "major" candidates by default, and include in that category any third-party candidate that is polling at least in the mid single digits nationally and will be on the ballot in most states, or who has a sizable chance of coming in second place in any state (think Evan McMullin in 2016).
+
+
+
+That means we exclude polls that ask people how they would vote in hypothetical matchups, like if Michelle Obama were the Democratic nominee instead of Biden. We also don't use polls that ask about support for a "generic Democrat" or "generic Republican," nor do we include polls that ask voters if they support "someone else" for a third-party option.
+
+
+
+
+
+If a pollster releases versions of a survey among multiple populations, our horse-race averages use the one with the most restrictive sample. That means we prefer polls of likely voters to polls of registered voters and polls of registered voters to polls of all adults. If a pollster releases multiple likely voter estimates, we average them together.
+
+
+
+Some pollsters conduct polls that overlap with each other, such as Morning Consult. In these so-called "tracking polls," interviews from a certain period are incorporated into future polls, getting reweighted with different samples until they are too old and dropped from the analysis. But our averages include only polls with non-overlapping dates. How this works in practice is that we include the most recent iteration of each tracking poll, then include the next most recent version of that poll that doesn't overlap at all with the first poll, then include the next most recent version that doesn't overlap with that poll, etc.
+
+
+
+Finally, to answer a frequently asked question, we do include partisan and internal campaign polls that get released to the public, with adjustments that aim to cancel out their partisan biases (see below). These polls make up a fairly small percentage of the data 538 aggregates, but they can still be useful for calculating trends in support over the course of the campaign.
+
+
+
+How we weight polls
+
+The next step is to calculate how much weight each poll should be given in our average. For really cool, but wonky, reasons you can read about in the footnotes,* our new presidential general election polling averages don't need to weight polls by several factors that we previously weighted on. Instead, a poll's weight is now a function of just two factors. (While our model does not weight for these old factors, they still get taken into account. See the footnote.)
+
+
+
+The first is the 538 rating of the pollster that conducted the poll.** These ratings distill the empirical record and methodological transparency of each pollster into a single rating (from 0.5 to 3.0 stars) that tells our model how seriously to take its polls. Each poll gets a weight equal to the square root of its pollster's rating divided by the maximum three stars, then that weight is divided by the weight of the average pollster. The resulting pollster weight on a typical day usually ranges between a maximum of 1.3 and minimum of 0.5. If a pollster is new and does not have a 538 pollster rating, its polls get a weight equal to one.
+
+
+
+Polls also receive reduced weight if the pollster who conducted them has released a lot of surveys in a short period of time. Specifically, each poll gets a weight equal to the square root of the number of polls released by its pollster in a 14-day window. We make this adjustment to prevent any given pollster from exerting too much control over the average.
+
+
+
+Finally, we no longer explicitly weight polls by sample size, but we do limit the effective number of interviews per poll. Some polls contain tens of thousands of interviews (usually done very cheaply), and leaving these large numbers as they are would give those polls too much weight in our average. Therefore, we cap sample sizes at 5,000.
+
+
+
+How we adjust and average polls
+
+Let's zoom out for a second. Broadly speaking, the most commonly used polling averages for U.S. elections have followed one of three approaches:
+
+
+
+Take a simple moving average of polls released over some number of previous days (the RealClearPolitics approach).
+
+Calculate a trendline through the polls using various statistical techniques, such as a polynomial trendline or Kalman filter (the HuffPost Pollster and The Economist approach).
+
+
+
+Combine these approaches, putting a certain amount of weight on the moving average and the rest on the fancier trend (historically, this has been the 538 approach).
+
+
+
+There are a lot of benefits to this third option. The average-of-averages approach allows you to use predictions from the best parts of a slow-moving exponentially weighted moving average and a fast-moving polynomial trendline; it is computationally efficient to do so; and it's easy to explain this model to the public. It's also relatively trivial to tweak the model if we find something is working incorrectly.
+
+
+
+However, this model has some shortcomings too. Our poll-averaging model for approval rating, favorability rating, primary elections and the generic congressional ballot is really a set of many different models that work together iteratively: First, we use models to reduce the weight on polls that are very old or have small sample sizes; then we use models to average polls and detect outliers; then we run new averaging models to detect house effects; and so on and so on, for nearly a dozen individual steps.
+
+
+
+This can introduce some problems, some of them practical and others statistical, if a modeler is not careful. First, it's hard to account for uncertainty in the average, especially when using ad hoc weights for sample size and other factors. That's because we generate potential statistical error every time we move from one model to the next, and we have to run the program thousands of times every time we want to update! It's also a little more sensitive to noise than we'd like it to be, even when designed to accurately predict support for candidates in previous campaigns.
+
+
+
+So this year, we're unveiling a brand-new methodology for averaging polls of the presidential general election. While the general approach is similar — we take polls, we weight them, we adjust them and we average them together — the various steps of our model no longer happen iteratively, but rather simultaneously in the same combined model.
+
+
+
+Our new model is formally called a Bayesian multi-level dynamic linear model, or a "state-space" model depending on your persuasion. The model is fit using a statistical method called Markov chain Monte Carlo — a mathematical approach to figuring out the likely values of a bunch of different parameters in one huge equation.
+
+
+
+Oversimplifying a bit, you can think of our presidential general-election polling average as one giant model that is trying to predict the results of polls we collect based on (1) the overall state of public opinion on any given day and (2) various factors that could have influenced the result of a particular poll. For example:
+
+
+
+The polling firm responsible for the poll: The specific ways in which a pollster collects and analyzes its data can lead to systematic differences between its polls and other pollsters' polls. For example, some pollsters, such as the Trafalgar Group, usually underestimate support for Democrats, while other pollsters, like Center Street PAC, overestimate them. We call these differences "house effects," and we apply a house-effect adjustment to ensure they're not biasing our averages.
+
+The mode used to conduct the poll: Different groups of people answer polls in different ways. Young people are likelier to be online, for instance, and phone polls reach older, whiter voters more readily. If pollsters aren't careful, these biases can creep into all polls conducted using a single mode. So we apply a mode-effects adjustment to correct for those biases before we aggregate those surveys.
+
+
+
+Whether the poll sampled likely voters, registered voters or all adults: Our presidential general-election averages apply a likely-voter adjustment to all polls of registered voters and adults, since, at the end of the day, we're not interested in Trump's and Biden's support among people who aren't going to turn out.
+
+
+
+
+
+Whether the poll included response options for third-party candidates or forced respondents to pick between Biden and Trump: This year, independent candidate Robert F. Kennedy Jr. is likely to make the ballot in most, if not all states, and since he's polling at around 10 percent according to our average, polls that don't include him as an option are likely overestimating support for Biden and Trump. So we apply a third-party adjustment to polls that don't ask about third parties.
+
+
+
+Whether the poll was conducted by a campaign or other partisan organization: We apply a partisanship adjustment to account for this. Our initial guess is partisan polls overestimate support for the allied candidate by 2 percentage points, but this effect will shrink (or grow) if the data reveals a different answer.
+
+
+
+Our prediction for a given poll also accounts for the value of the polling average on the day it was conducted. That's because if overall support for a candidate is 50 percent, we should expect polls from that day to reveal higher support than if they were at, say, 30 percent overall support. This also means the model implicitly puts less weight on polls that look like huge outliers, after adjusting for all the factors above.
+
+
+
+At the state level, we consider one more variable: the national political environment. Historically, candidates' support has tended to rise and fall across the country more or less uniformly. In other words, if a candidate slips in national polls, they have probably slipped in state polls by a similar amount (our nation is made up of the states, after all). Our trendline adjustment takes this into account. Every day, movement in a given state's polling average is a function of changes in both polls of that state and national polls. The relationship also works the other way — if we see a flood of state polls with Biden improving by 3 points, his national average will increase, too.
+
+
+
+But if our prediction for the support of Candidate X in State Y on Day Z depends on the average for that X-Y-Z combination, that brings up the question of how exactly the national and state averages are being calculated. We use a random walk to model averages over time. In essence, we tell our computers that support for every candidate in state and national polls should start at some point on Day 1 and move by some amount on average each subsequent day. Support for Biden might move by 0.1 points on Day 2, -0.2 points on Day 3, 0.4 points on Day 4, 0 points on Day 5, and so on and so on. Every time we run our model, it determines the likeliest values of these daily changes for each candidate nationally and in each state, while adjusting polls for all the factors mentioned above.
+
+
+
+We also account for the amount of random error in each poll. This is noise that goes above and beyond the patterns of bias we can account for with the adjustments listed above. The primary source of this noise is sampling error, derived from the number of interviews a pollster does: A larger sample size means less variance due to "stochasticity" (random weirdness) in a poll's sample. But there is also non-sampling error in each poll — a blanket term encompassing any additional noise that could be a result of faulty weights, certain groups not picking up the phone, a bad questionnaire design or really anything else that we haven't added explicit adjustment factors for. Our model decides how much non-sampling error is present across the polls by adding an additional constant to the standard deviation implied by each poll's sample size via the sum of squares formula (with the model deciding how large that constant should be). Considering all these factors together, the full equation behind our model looks like this.
+
+
+
+
+
+Two more short notes: First, we also tell the model to expect support for one candidate to move inversely with support for the other. If Biden makes gains in Wisconsin, it's probably coming at Trump's expense. While this correlation is more important for forecasting outcomes than averaging polls (it changes average support for Biden by just 0.1 points today), we find that our models run much faster if they take this into account. The exact correlation between the candidates is also a parameter in the model; we start with a strong prior that extra Democratic votes cost the Republicans (and vice versa), but the data will determine how strong the penalty is.
+
+
+
+Second, our model no longer directly measures each state's "elasticity," or how malleable its public opinion is compared with the nation as a whole. However, the model implicitly accounts for this by letting the day-to-day variability in candidates' averages change by different amounts in different states.
+
+
+
+How we account for uncertainty
+
+Our new model also lets us account for uncertainty in the polling average in a very straightforward way. Imagine we are not calculating support for Biden in Wisconsin one single time, but thousands of times, where each time we see what his support would be if the data and parameters of our model had different values. What if the latest poll from The New York Times/Siena College had Biden's support 3 points higher, as a poll of 1,000 people would be expected to have about 5 percent of the time? Or what if the third-party adjustment were smaller?
+
+
+
+Our model answers these questions by simulating thousands of different polling averages each time it runs. That, in turn, lets us show uncertainty intervals directly on the average — to our knowledge, the first time a general-election polling average has done so since HuffPost Pollster in 2016.
+
+
+
+Again, though, these uncertainty intervals aren't showing you the uncertainty that arises from the possibility of an industrywide polling miss. That is the job of our forecast. The uncertainty in our averages answers the question, "How different could support for each candidate be in the average poll today if we observed more polls with slightly different results?", while the uncertainty in our forecast answers the question, "How different could each candidate's actual support be from the polls?"
+
+
+
+Conclusion
+
+I should note that variations of this model have been proposed by political scientists and statisticians for a few decades. (The following paragraph is not exhaustive, but should give you a good sense of the history of this approach.) By my research, Robert Erikson and Christopher Wlezien were the first to model support for candidates with house effects and as a smooth function of time over the campaign. Political scientist Simon Jackman later formalized a Bayesian time-series model of polls with house effects for Australian elections. Statisticians Kari Lock and Andrew Gelman employed a time-series model of polls as part of a paper forecasting election outcomes with polls and other data. Political scientist/survey statistician/pollster Drew Linzer combined aspects of these and other approaches in a Bayesian dynamic linear model of state and national polls of 2012 general election. And I worked with Gelman and statistician Merlin Heidemanns to add additional poll-level adjustments as well as other factors to model the 2020 general election in this way.
+
+
+
+538's new presidential general-election polling average goes one step beyond these previous approaches by modeling support for multiple candidates across geographies simultaneously and adding a few additional adjustments that have not been attempted before in the fully Bayesian context.
+
+
+
+That's it for now! If I've done my job well, hopefully you can see how this new approach closely resembles our original dual-purpose model of models, but in one neat package. If you see any polls that are missing, or spot a methodological bug (these things do happen when we launch new averages, especially with models of this level of sophistication), hit us up with an email.
+
+
+
+Footnotes
+
+*More on this in the "How we adjust and average polls" section, but the basic reason is that our new model is not a mix of a weighted average and polynomial trendline — methods that need to be told explicitly which observations are subject to less noise — but rather a Bayesian time series model that directly takes the observation noise in the poll into account. So we no longer need to weight on sample size, poll recency and the degree to which a poll is an outlier; the model handles that stuff for us on its own.
+
+
+
+**As a methodological matter, we think how to best integrate pollster weights into an aggregation model is an open debate. (In fact, one statistician told me we shouldn't weight to pollster effects at all — instead we should create complicated meta-models of polling accuracy across many different contests simultaneously and inject the estimated uncertainty and bias of each pollster directly into our model. Unfortunately, this is not computationally feasible for the type of live-updating statistical model we want to publish.) We tried a few more complicated methods — such as adjusting the effective sample size of each poll to match how accurate we expected it to be — but they did not perform meaningfully better than more parsimonious approaches. As a practical matter, what matters more than how you weight polls based on their quality is that you try to account for quality at all.
+
+
+
+538's polls policy and FAQs
+
+How we decide which surveys to include in our database and models.
+
+
+
+ByMary Radcliffe and G. Elliott Morris via five thirty eight logo
+
+November 28, 2023, 6:58 AM
+
+
+
+
+
+
+
+
+
+
+
+1:02:44
+
+If the 2024 election were held today, would Trump win?
+
+
+
+If the 2024 election were held today, would Trump win?
+
+
+
+The crew looks at what all the data says one year out from the 2024 elections.
+
+UPDATE (Sept. 24, 2024, 1:15 p.m. Eastern): This article was updated to reflect revised criteria under which we publish a polling average for a given race.
+
+
+
+***
+
+
+
+At 538, we strive to accumulate and analyze polling data in a way that is honest, informed, comprehensive and accurate. While we do occasionally commission polls, most of our understanding of American public opinion comes from aggregating polling data conducted by other firms and organizations. This data forms the foundation of our polling averages, election forecasts and much of our political coverage.
+
+
+
+Because there are many different ways to conduct a poll, we are intentionally permissive when deciding which surveys to include in our database and models. As a general rule, we aim to capture all publicly available polls that are being conducted in good faith. While some polls have a more established track record of accuracy than others, we exclude polls from our dataset only in exceptional circumstances.
+
+
+
+However, we do have fundamental standards that we expect pollsters to uphold. These standards are twofold: First, we have a set of methodological standards aimed at ensuring that we can verify polls included in our forecasts and models are based on sound survey methods. Second, we have a set of ethical standards aimed at ensuring pollsters are honestly engaged in the pursuit of truth and knowledge.
+
+
+
+Fundamentally, both of these sets of standards are in service of the same goal: painting an informative and accurate picture of public opinion about politics and elections. To do so, the data we use must be both trustworthy and scientific. Our standards, set out in detail below, are the rules we use to ensure that is the case.
+
+
+
+Methodological standards
+
+Our methodological standards are intended to ensure that a pollster is conducting research in accordance with science. For a primer on the scientific principles undergirding public opinion research, we recommend this detailed overview from the Pew Research Center.
+
+
+
+Simply put, we will consider aggregating any poll that has been made publicly available and meets a few basic standards of disclosure:
+
+
+
+The poll must include the name of the pollster, survey dates and details about the population sampled. If these are not included in the poll's release, we must be able to obtain them in order to include the poll.
+
+Pollsters must also be able to answer basic questions about their methodology, including but not limited to the polling mode used (e.g., telephone calls, text messages, online panels), the source of their sample, their weighting criteria and the source of the poll's funding. In most cases, a detailed written methodology statement is sufficient to satisfy this criterion, but we may contact pollsters directly to clarify methodological details and follow up occasionally to ensure the pollster is still meeting our standards.
+
+
+
+Any questions we include on our polls page or in our models must have a topline sample size of at least 100.
+
+
+
+
+
+There are some types of methodologies we don't include, such as:
+
+
+
+Nonscientific polls that don't attempt to survey a representative sample of the population or electorate. This includes surveys that do not attempt to weight or adjust their sample to represent the desired population. (Using quotas to recruit a representative sample is fine.)
+
+Polls that blend or smooth their data over time using methods like MRP (short for "multilevel regression with poststratification") or polls that use MRP to estimate results in geographies or populations they did not sample directly. While this is a valid technique for understanding public opinion data, we exclude these polls because we consider them more like models than individual polls. (As an analogy, we think of this as using someone else's barbecue sauce as an ingredient in your own barbecue sauce.) However, we will include polls that use model-based techniques like MRP as a substitute for traditional weighting methods to adjust individual samples of opinion, rather than smoothing the data over time.
+
+
+
+Polls that recontact respondents from a previous survey to measure how their opinions may have changed. Like MRP, this is a valid technique for understanding public opinion data, but we exclude these polls due to potential response bias among the sample: People that choose to take a political survey twice may be different from the electorate at large. Recontact surveys are also distinct from online panels, since most good panel providers will screen respondents to make sure they are not taking multiple surveys in quick succession.
+
+
+
+
+
+Do-it-yourself polls commissioned by nonprofessional hobbyists on online platforms like Google Surveys or SurveyMonkey. (Professional or campaign polls using these platforms as a source for raw data are fine.)
+
+
+
+Subsamples of multistate polls are not treated as individual polls of those states unless there is some method employed to verify the geographic location of the respondents and each state in the poll is weighted individually.
+
+
+
+Questions that reveal leading information about the candidates before asking voters whom they support, sometimes called an "informed ballot" question. If, for instance, a poll says "President Joe Biden loves puppies. Whom do you plan to support: Biden or former President Donald Trump?", we won't include it.
+
+
+
+Questions that include generic candidates (other than the generic congressional ballot). For example, if a poll asked, "Whom do you plan to support: Biden, Trump, or a moderate independent candidate?", we won't include it.
+
+
+
+General election polls that include hypothetical candidates — for example, a poll testing a hypothetical three-way presidential race between Trump, Biden and former Rep. Liz Cheney — are included on our polls page but are not included in our models unless and until every politician asked about has declared their intention to seek the office in question and has gotten their name on the ballot or is engaged in a serious, well-funded write-in campaign. Write-in candidates are included on our polls page if a poll asks about them directly or if at least 10 percent of respondents to a poll volunteered them.
+
+
+
+Polls of presidential primaries that include hypothetical candidates are also included on our polls page but may or may not be included in our models. (For example, our polling averages exclude polls of primary matchups that have already been ruled an impossibility. See our methodology for full details.)
+
+
+
+Ethical standards
+
+In addition to these methodological standards, we expect pollsters to adhere to several basic ethical standards. We've derived these standards in part from those developed by the American Association for Public Opinion Research in its Code of Professional Ethics and Practices. In particular, we expect the following:
+
+
+
+Pollsters will not falsify or fabricate data.
+
+Pollsters will not engage in betting markets that may be directly impacted by their survey work.
+
+
+
+Pollsters will not knowingly select research tools or methods of analysis that yield misleading conclusions.
+
+
+
+
+
+Pollsters will disclose to the public the methods and procedures used to obtain publicly disseminated research results. When such disclosures are insufficient, pollsters will respond to queries seeking further detail.
+
+
+
+Pollsters will not knowingly make interpretations of research results that are inconsistent with the data available, nor sanction such interpretations made by others. Pollsters will ensure that any findings they report are an accurate portrayal of their results. Pollsters will not knowingly imply that interpretations are accorded greater confidence than the data warrants.
+
+
+
+Pollsters will not misrepresent the purpose of their surveys or conduct other activities (such as sales, fundraising or true "push polling" for political campaigns) under the guise of conducting research. Polls that are conducted and released on behalf of political clients (candidates, PACs, lobbying organizations or other such clients) will be clearly labeled as such. Pollsters will make no false or misleading claims as to a poll's sponsorship or purpose.
+
+
+
+Pollsters will correct any errors in their work that come to their attention and that could influence interpretation of the results. If factual misrepresentations or distortions have been made publicly, pollsters will correct them in a public forum that is as similar as possible to the original data dissemination.
+
+
+
+Consequences
+
+When a new pollster releases data for the first time, we conduct an initial screening to ensure it meets our methodological and ethical standards. If this screening is insufficient to determine whether the pollster meets these standards, we will follow up with a more thorough review that can include multiple avenues of investigation, such as phone conversations, requests for additional methodological information or detailed data such as crosstabs or raw individual-level data, or other queries that can convince us of the pollster's scientific and ethical integrity. We may also conduct such a review of an established pollster if one of its polls appears methodologically or ethically dubious or if we receive credible allegations of misconduct about the pollster.
+
+
+
+Any pollster found to be violating one of our first two ethical standards — falsifying data or engaging in betting markets directly impacted by its survey work — will be permanently excluded from our aggregation. This is irreversible. These actions raise serious questions about the intent of the pollster's work and irreparably break our trust in its future polling.
+
+
+
+If there are at least two suspected violations of ethical standards No. 3 through No. 7, we will inform the pollster of our concerns about its behavior and give it at least three opportunities to either show that the behavior has been corrected or argue that the behavior is not problematic. If we do not hear from the pollster after three attempts to reach it, at least one by phone and at least one by email, or if its response is insufficient to address our concerns, we will exclude future polling by that firm from our polls page, model runs and articles. (Polls conducted by the pollster prior to the date of exclusion will remain on our polls page, and old model runs will be unaffected.) The pollster can be reinstated at any point if it can demonstrate that it meets the above criteria and that any unethical behavior has been corrected. We expect these situations to occur extremely rarely; if more than two pollsters are removed under this section of the policy in a given calendar year, we will reevaluate our procedures and make changes as needed.
+
+
+
+Alternatively, for a pollster that at least twice fails to disclose the sponsors of its surveys (a violation of ethical standard No. 6), we may decide to treat all of the pollster's polls as partisan rather than excluding them from our data entirely. This impacts how the polls appear on our page and how they are treated by our models.
+
+
+
+Partisan surveys
+
+While we know that polls are often paid for by entities with a vested interest in the outcomes of elections, such polls can provide useful data when properly adjusted, so long as pollsters and sponsors are not misrepresenting the outcome of their research or using scientifically unsound methods. As long as they meet the standards outlined above, we include these internal and partisan polls in our database and models, except in one unusual circumstance (a general election poll sponsored by a candidate's rival in the primary*).
+
+
+
+Polls are considered "partisan" if they're conducted on behalf of any organization that conducts a large majority of its political activity on behalf of one political party or candidate. Typically, a partisan organization is a PAC, super PAC, hybrid PAC, 501(c)(4), 501(c)(5) or 501(c)(6). However, we may consider organizations of other types to be partisan if their political spending indicates a large majority of activity is conducted on behalf of a particular party. We will also count all of a pollster's polls as partisan if it is formally affiliated with a partisan organization; for instance, the Democratic Congressional Campaign Committee has an in-house polling operation that is always considered partisan. Polls sponsored by partisan organizations are noted on the polls page by a solid diamond next to the sponsor's name. Polls conducted by partisan pollsters are noted by a solid diamond next to the pollster's name.
+
+
+
+Additionally, if we find that a sponsor organization is selectively releasing polls favorable to a certain candidate or party, we may also categorize that organization as partisan. We generally go out of our way to not characterize news organizations as partisan, even if they have a liberal or conservative view. But selectively releasing data that favors one party is a partisan action, and those polls will be treated as such. These classifications may be revisited if a sponsor ceases engaging in this behavior.
+
+
+
+"Internal" polls are a narrower category of partisan surveys that are conducted on behalf of a political party, campaign committee or other official party apparatus. Internal polls are noted on the polls page with a hollow diamond next to the sponsor's name.
+
+
+
+Below are some questions we've been asked over the years about the types of polls we collect. Take a look, and if you still have questions or find a poll we don't have, please email us at polls@fivethirtyeight.com.
+
+
+
+Frequently asked questions
+
+Q: Which races do you collect polls for?
+
+A: We collect horse-race polls for presidential, Senate, gubernatorial and House primary and general elections (including polls of the generic congressional ballot). We also collect job approval and/or favorability polls for various politicians and governmental institutions.
+
+
+
+Q: Why don't you have any polls of the race I'm interested in?
+
+A: The latest polls page includes all polls publicly released within two years of a general election or presidential primary, beginning with the 2018 election cycle. Polls of primaries for Senate, gubernatorial and House elections are also included, beginning with the 2024 election cycle. If we don't have any polls for a particular race, that means we aren't aware of any polls for that race.
+
+
+
+Q: Why isn't a particular candidate included in your polling averages?
+
+A: Polling averages for presidential primaries include every candidate who qualifies as "major" according to our criteria and has been included in at least eight polls from at least three different pollsters.
+
+
+
+For general elections, candidates appear in polling averages if they have received at least 3 percent support in at least five different polls from at least three different pollsters and we expect them to have their name included on the ballot in the relevant state or are running a serious, well-funded write-in campaign. Being included on the ballot in at least one state is sufficient for inclusion in our national presidential polling average, provided the other conditions are also met.
+
+
+
+For primary elections, candidates appear in polling averages if they have received at least 3 percent support in at least five different polls from at least three different pollsters, have been asked about in at least eight polls total, and have had their name included on the ballot or are running a serious, well-funded write-in campaign.
+
+
+
+Q: Why do some races not have a polling average?
+
+A: In order to ensure a polling average has enough data to accurately represent the state of the race, we do not publish an average for nonpresidential general elections until the major party candidates have been officially selected in primaries and we have collected sufficient polling data. For most races, we require at least five different polls from at least three different pollsters before we publish a polling average.
+
+
+
+For primaries, we publish averages for races for which we have collected at least eight different polls from at least three different pollsters that include the most serious candidates.
+
+
+
+In addition, we may not have polling averages for races that use an instant runoff, as the candidates included in the questions may differ from pollster to pollster.
+
+
+
+Q: Can I download this data?
+
+A: Yes! There is a dropdown menu containing all our polling datasets at the bottom of the latest polls page, but you can also download this data and more from our data repository, which includes all our polls, forecasts and other data projects. Unfortunately, under the terms of our data-sharing agreements, we are not able to share data on presidents' approval ratings before Trump. You can find additional information on historical presidential approval ratings, and guidelines for acquiring that dataset, on the Roper Center's website.
+
+
+
+Q: How do you account for a pollster that publishes multiple results for a question?
+
+A: When a pollster publishes multiple populations (for example, all adults, only registered voters and only likely voters), we include all of them in our database. Similarly, if a pollster asks a horse-race question with different sets of candidates (for example, with and without a third-party candidate), we include all versions of this question in our database. If the pollster includes multiple likely voter models, as in this Monmouth poll, we first check if the pollster indicates that one of the versions is its preferred option. If it does, we use that version; otherwise, we include them all in our database. Our election models take these multiple versions into account, preferring likely voters over registered voters and registered voters over all adults. The model also averages results in the case of multiple topline questions, such as when a poll asks both a head-to-head matchup and a matchup including third-party candidates or has more than one likely voter model. Our approval and favorability models work similarly, though these models prefer questions among all adults over those among registered voters and questions among registered voters over those among likely voters.
+
+
+
+Q: How do you account for a pollster that publishes numbers with and without "leaners"?
+
+A: When a pollster publishes one version of a question with "leaners" — respondents who may be uncertain about their vote but say that they lean toward a particular candidate or party — and one without, we include only the version with leaners. If the question including leaners is a "forced-choice" question, in which respondents are not given an option of saying they are undecided when asked which way they lean, we still include only that version of the question instead of the version without leaners.
+
+
+
+Q: Do you weight or adjust polls?
+
+A: Yes. When we calculate our polling averages, some polls get more weight than others. For example, polls that survey more people or were conducted more recently get more consideration in calculating our polling averages than polls with small sample sizes or older polls. Our polling averages also apply adjustments for things like how consistently a pollster leans toward one party or candidate. For more information on how we calculate polling averages, see this detailed methodology.
+
+
+
+Q: Why are the sample sizes sometimes missing for polls?
+
+A: If a poll does not have a sample size listed, the pollster or sponsor did not report it and we are actively working to obtain it. These polls are still included in our averages and models with an imputed sample size based on the sample sizes we typically expect from that pollster for the type of race being polled. Once we obtain the actual sample size, we will update the data and any relevant models. (We recalculate model estimates only for the day the change was made, not the past.)
+
+
+
+Q: Why do the values in some polls add up to more than 100 percent?
+
+A: Values in some polls may appear to add up to more than 100 percent due to rounding. For example, if a pollster published a poll that gave the president an approval rating of 46.5 percent and a disapproval rating of 53.5 percent, then those numbers would round up to 47 percent and 54 percent, respectively.
+
+
+
+Q: Why do the margins in some polls not match what the pollster reports?
+
+A: This often boils down to rounding. For example, if a pollster puts one candidate at 45.2 percent and another at 45.6 percent, we'll display these two candidates at 45 percent and 46 percent, respectively, since we round to the nearest integer. However, the actual margin in the poll is 0.4 percent, which will display on our site as a difference of 0.
+
+
+
+This may also occur if the pollster publicizes a version of the question that differs from the version that 538 includes on our polls page. For example, a pollster may publicize a horse-race question that does not include leaners, but 538 publishes only the version that does include leaners.
+
+
+
+*The reason for this is that we don't have good priors for which direction the bias in such polls might run. Typically, for instance, a Democratic internal poll would have Democrats faring well in a general election matchup. But in a competitive primary, it's plausible that a Democrat might want to draw attention to numbers that made a rival Democrat's general election chances look worse.
+
+
+
+CLARIFICATION (Sept. 6, 2024, 2:00 p.m.): This article has been updated to clarify that we do not include recontact surveys on our polls page or in our models and averages.
+
+
+
+ok example (7/10):
+
+
+
+## Measurement and Considerations 
+
+
+
+The goal of measurement here is to translate individual voter opinions into a reliable estimate of electoral college outcomes. This analysis aims to systematically capture public sentiment through polling data and convert it into a structured forecast of electoral support for each candidate.
+
+
+
+- Data Source and Quality Assurance: The dataset is sourced from @fivethirty, a trusted platform recognized for its stringent standards in polling data quality. Only polls meeting high-quality criteria are included to ensure broad representation of likely U.S. voters. Each poll provides essential details, including the pollster’s identity, survey dates, sample size, and methodological transparency. These methods include data collection medium (e.g., phone, online), use of voter files, demographic weighting, and adjustments to create a representative sample. While these standards help capture respondents’ voting intentions accurately, it’s important to note that these criteria rely on historical benchmarks, potentially overlooking recent methodological shifts or emerging biases.
+
+- Temporal Limitations and Data Recency: Polling data captures discrete snapshots of voter sentiment rather than continuous updates. Consequently, the analysis reflects voter intentions only at specific moments, which may not capture rapid opinion shifts, particularly as Election Day approaches. To mitigate this limitation, recency adjustments are applied to account for the time elapsed since each poll was conducted, helping to ensure that the data remains reflective of current voter sentiment.
+
+- Participation and Response Bias: Despite the rigorous methodology, certain biases in survey participation are difficult to avoid. Self-selection bias (where individuals choose whether to participate) and social desirability bias (where respondents may adjust their responses to be more socially acceptable) can affect data accuracy. These biases may introduce discrepancies between expressed opinions and actual voting behavior, potentially influencing forecast reliability.
+
+- Regional Sampling Imbalances: The frequency of polling varies significantly by state, with battleground states receiving more frequent attention than states considered “safe.” This uneven distribution can lead to imbalances in regional representation, which might skew state-level and, by extension, national forecasts. Such discrepancies highlight the challenge of producing a uniformly accurate forecast across all regions.
+
+
+
+
+
+
+
+未选择任何文件
+Assistant
+Here's a data + measurements section for the 538 poll-of-polls dataset:
+
+
+
+## Data and Measurement
+
+
+
+### Dataset Overview
+
+The dataset consists of aggregated polling data from FiveThirtyEight's 2024 presidential election polling database, which compiles surveys testing general election matchups between Joe Biden and Donald Trump. The data spans national and state-level polls, with particular focus on key battleground states that could determine the Electoral College outcome. This dataset was chosen over alternatives like RealClearPolitics because of 538's comprehensive methodological adjustments and transparent quality standards for included polls.
+
+
+
+### Data Collection and Quality Standards
+
+The polls included must meet specific methodological criteria:
+
+- Clear documentation of pollster identity, survey dates, and sampled population
+
+- Minimum sample size of 100 respondents
+
+- Transparent methodology including polling mode (phone/online/text), sample source, and weighting procedures
+
+- Scientific sampling methods attempting to achieve representative samples
+
+- Disclosure of poll sponsorship and funding sources
+
+
+
+Notably excluded are:
+
+- Non-scientific polls lacking representative sampling
+
+- MRP-smoothed data or recontact surveys
+
+- DIY polls from nonprofessional sources
+
+- Polls with leading questions or hypothetical matchups
+
+- Subsamples from multi-state polls without geographic verification
+
+
+
+### Measurement Process
+
+The journey from raw voter opinion to dataset entries involves several key steps:
+
+
+
+1. Initial Data Collection: Pollsters conduct surveys using various modes (phone, online, mixed-mode) to gather voter preferences
+
+
+
+2. Sample Processing:
+
+- Likely voter screens applied to identify probable voters
+
+- Demographic weighting to match population benchmarks
+
+- Party ID and other adjustments to ensure representativeness
+
+
+
+3. Quality Adjustments by 538:
+
+- House effects corrections for systematic pollster biases
+
+- Mode effects adjustments for sampling method biases
+
+- Population adjustments between likely/registered voters
+
+- Third-party candidate inclusion effects
+
+- Partisan poll adjustments
+
+
+
+4. Aggregation:
+
+- Polls weighted by pollster rating quality (0.5-3.0 stars)
+
+- Recent polls weighted more heavily
+
+- Sample size caps at 5,000 to prevent overweighting
+
+- National trend incorporation into state estimates
+
+
+
+### Measurement Limitations
+
+Several important caveats affect measurement quality:
+
+
+
+- Temporal gaps between polls create discontinuous measurement of voter sentiment
+
+- Response rates and participation biases may skew samples
+
+- Geographic coverage varies significantly, with swing states overrepresented
+
+- Third-party candidate treatment varies across polls
+
+- House effects and mode effects corrections rely on historical patterns that may not hold
+
+- Uncertainty exists in various adjustment factors applied to raw poll numbers
+
+
+
+This measurement approach prioritizes systematic bias correction and transparent methodology while acknowledging inherent limitations in polling data collection and processing. The resulting dataset provides structured estimates of candidate support while maintaining clear documentation of uncertainty bounds.
+
+
+User
+wait when i use a logistic regression model to predict the outcome of an election based on survey data, how does that work? don't i fit a model and not have anything left over? like as in i use the data to fit a model - how do I arrive at a percentage likelihood for a Trump win, for example?
+
+未选择任何文件
+
+Assistant
+Ah, this is a key concept in election forecasting! When using logistic regression for election prediction, you typically:
+
+
+
+1. Generate many simulations using your fitted model's uncertainty
+
+2. Count what proportion of those simulations result in a win for each candidate
+
+
+
+Here's a simplified example:
+
+
+
+```python
+
+# Fit logistic regression model
+
+model = LogisticRegression()
+
+model.fit(X_train, y_train)  # X contains poll numbers, economics data etc
+
+
+
+# Get model coefficients and their standard errors
+
+coef = model.coef_
+
+std_errors = # (calculated from model variance-covariance matrix)
+
+
+
+# Run many simulations (e.g. 10,000)
+
+n_sims = 10000
+
+simulated_outcomes = []
+
+
+
+for i in range(n_sims):
+
+    # Draw random coefficients from normal distribution around your estimates
+
+    sim_coefs = np.random.normal(coef, std_errors)
+
+    
+
+    # Apply these coefficients to your data
+
+    sim_prediction = sigmoid(X_test @ sim_coefs)
+
+    
+
+    # Record if Trump wins (>0.5) or loses
+
+    simulated_outcomes.append(sim_prediction > 0.5)
+
+
+
+# Calculate win probability
+
+trump_win_prob = sum(simulated_outcomes)/n_sims
+
+```
+
+
+
+So while the base logistic regression just gives you one set of coefficients, you:
+
+
+
+1. Account for uncertainty in those coefficients by simulating many possible values
+
+2. See how often those simulated scenarios lead to different outcomes
+
+3. Calculate probabilities based on those simulation frequencies
+
+
+
+This is why 538 can say "Trump has a 35% chance of winning" - it means in 35% of their simulations, given the uncertainty in their model, Trump wins the electoral college.
+
+
+
+The key insight is: the model uncertainty lets you generate many possible scenarios, which lets you calculate probabilities, rather than just having one prediction.
+
+
+User
+ok, so do I change up the coefficients each time, or do i use the entire dataset as the training dataset and average the results over sampling, kinda similar to loocv (but with larger bins than 1 - forgot the specific name)
+
+未选择任何文件
+
+Assistant
+Both approaches are valid! You're describing two different ways to capture uncertainty:
+
+
+
+1. Parameter Uncertainty (varying coefficients):
+
+```python
+
+# Fit model on whole dataset once
+
+model = LogisticRegression()
+
+model.fit(X, y)
+
+
+
+# Run simulations varying coefficients
+
+for i in range(n_sims):
+
+    sim_coefs = np.random.normal(model.coef_, std_errors)
+
+    pred = sigmoid(X @ sim_coefs)
+
+    # Record outcome
+
+```
+
+
+
+2. K-Fold Cross Validation (varying training data):
+
+```python
+
+# Split data into k folds
+
+kf = KFold(n_splits=5)  # or 10, etc.
+
+
+
+predictions = []
+
+for train_idx, test_idx in kf.split(X):
+
+    # Fit model on each training fold
+
+    model.fit(X[train_idx], y[train_idx])
+
+    # Predict on held-out fold
+
+    pred = model.predict_proba(X[test_idx])
+
+    predictions.append(pred)
+
+```
+
+
+
+The first approach (parameter uncertainty) is more common in election forecasting because:
+
+- It better captures uncertainty in the relationship between polls and outcomes
+
+- Polls are time-series data, so random k-fold splits might not make sense
+
+- You typically want to use all available data to fit your final model
+
+
+
+But you could combine both approaches! Some forecasters:
+
+1. Use cross-validation to validate their model structure
+
+2. Fit final model on full dataset
+
+3. Use parameter uncertainty for final predictions
+
+
+
+The key is that you need some way to generate multiple plausible scenarios to get probabilities. Parameter uncertainty through simulation is the most common approach, but cross-validation can be useful for model validation and understanding prediction stability.
+
+
+User
+ok so for parameter uncertainty what happens is i get a final point estimate + confidence interval for each of the coefficients?
+
+未选择任何文件
+
+Assistant
+Exactly! When you fit a logistic regression, you get:
+
+
+
+1. Point estimates (β̂) for each coefficient
+
+2. Standard errors (SE) for each coefficient, which tell you the uncertainty around those estimates
+
+
+
+For example, if your model is:
+
+```python
+
+# Simplified example with two predictors
+
+# P(Trump wins) = logistic(β₀ + β₁×polls + β₂×economy)
+
+
+
+model.coef_ might be:
+
+β₀ (intercept) = -0.5 ± 0.2 SE
+
+β₁ (polls) = 2.1 ± 0.3 SE
+
+β₂ (economy) = 1.2 ± 0.4 SE
+
+```
+
+
+
+Then for each simulation you draw new coefficients:
+
+```python
+
+# One simulation
+
+β₀_sim = np.random.normal(-0.5, 0.2)
+
+β₁_sim = np.random.normal(2.1, 0.3)
+
+β₂_sim = np.random.normal(1.2, 0.4)
+
+
+
+# Calculate probability with these coefficients
+
+p_trump = sigmoid(β₀_sim + β₁_sim*polls + β₂_sim*economy)
+
+```
+
+
+
+The standard errors come from the variance-covariance matrix of the model fit. Larger standard errors mean:
+
+- More uncertainty in that coefficient
+
+- More variation in simulated values
+
+- More uncertainty in final predictions
+
+
+
+This is why having good standard error estimates is crucial - they determine how much your simulated scenarios vary from your point estimates.
+
+
+
+Note: In practice you usually draw from the multivariate normal distribution using the full variance-covariance matrix, because coefficients can be correlated. But the concept is the same!
+
+
+User
+so if i get a final set of coefficients, what is the x-value that i use to predict a final y-value?
+
+未选择任何文件
+
+Assistant
+Ah, this is crucial - for election forecasting, you'd typically use the most recent polling/economic data as your X values. 
+
+
+
+For example:
+
+```python
+
+# If your final model is:
+
+# P(Trump wins) = logistic(β₀ + β₁×polls + β₂×economy)
+
+
+
+# And your final coefficients are:
+
+β₀ = -0.5 
+
+β₁ = 2.1  # coefficient for polls
+
+β₂ = 1.2  # coefficient for economy
+
+
+
+# You'd use the CURRENT values:
+
+current_polls = 0.48  # e.g. Trump at 48% in latest polls
+
+current_economy = -0.2 # e.g. economy slightly negative
+
+
+
+# For each simulation:
+
+β₀_sim = np.random.normal(-0.5, 0.2)
+
+β₁_sim = np.random.normal(2.1, 0.3)
+
+β₂_sim = np.random.normal(1.2, 0.4)
+
+
+
+p_trump = sigmoid(β₀_sim + β₁_sim*0.48 + β₂_sim*(-0.2))
+
+```
+
+
+
+The X values stay constant across simulations - you're using the same current data each time. What varies is:
+
+1. The coefficients (capturing uncertainty in the relationship between X and Y)
+
+2. Sometimes additional noise terms (capturing uncertainty in the measurements)
+
+
+
+This is different from training, where you used historical data (past elections) to estimate the coefficients. For prediction, you apply those learned relationships to current conditions.
+
+
+
+538 would use current polling averages, economic indicators, etc. as their X values, then run thousands of simulations varying the coefficients to get their probability estimates.
+
+
+User
+ok so to confirm i use:
+
+
+
+ALL the data for training a model - we do this multiple times with different samples of the data and get a final set of coefficients (+ se)
+
+
+
+then, to get a final value for probability of harris win for example, i take the most recent set of data and feed it into the model?
+
+未选择任何文件
+
+Assistant
+Yes, exactly! Here's the full process:
+
+
+
+1. TRAINING PHASE:
+
+```python
+
+# Use ALL historical election data to fit model
+
+X_historical = [polls, economy, etc from past elections]
+
+y_historical = [actual election outcomes]
+
+
+
+# Fit model multiple times with resampling/simulation
+
+# to get final coefficients + standard errors
+
+model.fit(X_historical, y_historical)
+
+
+
+final_coefficients = [-0.5, 2.1, 1.2]  # example
+
+standard_errors = [0.2, 0.3, 0.4]
+
+```
+
+
+
+2. PREDICTION PHASE:
+
+```python
+
+# Take MOST RECENT single row of data
+
+X_current = [
+
+    latest_polls=0.48,
+
+    latest_economy=-0.2,
+
+    etc
+
+]
+
+
+
+# Run many simulations using this SAME current data
+
+# but with DIFFERENT coefficient draws
+
+predictions = []
+
+for i in range(10000):
+
+    sim_coefs = np.random.normal(final_coefficients, standard_errors)
+
+    p_harris = sigmoid(X_current @ sim_coefs)
+
+    predictions.append(p_harris)
+
+
+
+# Final probability is proportion of simulations where Harris wins
+
+p_harris_wins = sum(pred > 0.5 for pred in predictions) / 10000
+
+```
+
+
+
+So you're right - you use ALL historical data to learn the relationships (coefficients), then apply those learned relationships to the CURRENT snapshot of conditions to predict the outcome probability.
+
+
+
+The multiple simulations in the prediction phase aren't using different data points - they're using the same current data but with different possible coefficient values to account for uncertainty in those relationships.
+
+
+User
+how does the different coefficient values thing work? is it randomly chosen with respect to the se, or do we take a different sample of x-values each time to fit the model?
+
+未选择任何文件
+
+Assistant
+In standard practice, we use the SE approach - randomly drawing coefficients based on their uncertainty (standard errors), NOT refitting with different samples. Here's why:
+
+
+
+TYPICAL APPROACH (Parameter Uncertainty):
+
+```python
+
+# 1. Fit model ONCE on ALL historical data
+
+model.fit(X_historical, y_historical)
+
+
+
+# Get point estimates and standard errors
+
+coef_means = [-0.5, 2.1, 1.2]
+
+coef_SEs = [0.2, 0.3, 0.4]
+
+
+
+# 2. Run simulations with SAME data but DIFFERENT coefficients
+
+for i in range(10000):
+
+    # Draw random coefficients from Normal distribution
+
+    # centered at estimate, spread = standard error
+
+    sim_coefs = np.random.normal(coef_means, coef_SEs)
+
+    
+
+    # Use SAME current X values each time
+
+    X_current = [latest_polls, latest_economy]
+
+    pred = sigmoid(X_current @ sim_coefs)
+
+```
+
+
+
+ALTERNATIVE (Resampling Approach):
+
+```python
+
+# Would instead fit model MULTIPLE times on DIFFERENT samples
+
+predictions = []
+
+for i in range(10000):
+
+    # Draw random sample of historical data
+
+    X_sample, y_sample = resample(X_historical, y_historical)
+
+    
+
+    # Fit new model each time
+
+    model.fit(X_sample, y_sample)
+
+    
+
+    # Predict using these coefficients
+
+    pred = model.predict_proba(X_current)
+
+```
+
+
+
+The first approach (Parameter Uncertainty) is more common because:
+
+1. It's computationally more efficient (fit model once)
+
+2. It uses all available data for coefficient estimation
+
+3. It directly models uncertainty in the relationships we learned
+
+4. The standard errors capture the uncertainty from sampling
+
+
+
+The resampling approach is more commonly used for model validation than for final predictions.
+
+
+User
+doesn't it only artificially increase the error term involved? since you already have expected values for the coefficients
+

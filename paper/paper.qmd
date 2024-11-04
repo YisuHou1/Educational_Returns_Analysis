@@ -29,6 +29,8 @@ library(lubridate)
 library(pROC)
 library(stringr)
 library(gt)
+library(broom)
+library(knitr)
 ```
 
 
@@ -159,7 +161,7 @@ ggplot(all_combined, aes(x = pct)) +
 
 \FloatBarrier
 
-The aggregated polling data includes support percentages of different presidential candidates in polls with different FiveThirtyEight ratings [@5382] across two elections. Please view [UPDATE APPENDIX] for summary statistics of sub-datasets.
+The aggregated polling data includes support percentages of different presidential candidates in polls with different FiveThirtyEight ratings [@5382] across two elections.
 
 As displayed by @fig-outcome, the distribution of support percentages is close to a normal distribution, with most data points between 45 and 52 percent.
 
@@ -300,7 +302,7 @@ Sample size, finally, is a measure of the number of participants in each poll. A
 
 The goal of our modelling strategy is twofold. Firstly, we seek to predict the winning candidate on election day by calculating the expected win rate of Vice President Kamala Harris and Former President Donald Trump in the seven swing states: Pennsylvania, Georgia, North Carolina, Michigan, Arizona, Wisconsin, and Nevada [@nyt2024polls]. Secondly, we hope to predict the candidate who has the popular vote on election day, controlling for the potential bias of national polls by accounting for the difference between polled popular vote and the actual popular vote on election day for the 2020 cycle.
 
-To achieve the first goal, the polls dataset was divided by individual states, and only data points from the seven swing states were selected, forming seven smaller datasets. Then, for each state, the harris_win variable was constructed by comparing the support rate of the candidates in each poll. The variable was set to 1 if the support rate of Harris is greater than or equal to Trump's support rate and 0 when Trump's support rate is greater. A logistic model was constructed for each state, using harris_win as the outcome and previously stated predictors as inputs. [EXPLAIN THE PROBABILITY STEP HERE]
+To achieve the first goal, the polls dataset was divided by individual states, and only data points from the seven swing states were selected, forming seven smaller datasets. Then, for each state, the harris_win variable was constructed by comparing the support rate of the candidates in each poll. The variable was set to 1 if the support rate of Harris is greater than or equal to Trump's support rate and 0 when Trump's support rate is greater. A logistic model was constructed for each state, using harris_win as the outcome and previously stated predictors as inputs. [EXPLAIN THE 1000 simulations and PROBABILITY calculation STEP HERE]
 
 For the popular vote, we utilized the data from 2020 to calculate each pollster's bias by identifying the average difference between the popular vote on election day and their polled national support rates of Trump and President Joe Biden. Next, we adjusted the polled national support rates of pollsters in the 2024 cycle by the calculated gap in 2020. By making this adjustment, we are assuming that the pollsters systematically bias 2024 candidates equally compared to 2020 candidates. We acknowledge that the assumption is most likely false. Ideally, incorporating poll data from earlier election cycles may produce a more accurate indicator of how pollsters systematically bias candidates from the two dominant political parties. However, comprehensive poll data before 2020 is unavailable. Since popular vote is unrelated to the winner of the election, we are using this analysis as an exploration of methods that incorporate historical data without emphasizing predictiveness. Using both adjusted and unadjusted national support levels, multiple linear regressions were created with support levels as the outcome and stated predictors as inputs to predict candidates' support rate over time. Adjusted and unadjusted logistic regressions were made using harris_win as the outcome and the same predictors to predict the candidate with the popular vote on election day. The attempt to control for historical bias was not applied to the swing states due to a lack of data.
 
@@ -780,9 +782,318 @@ RMSE values and R squared values were calculated for the multiple linear regress
 
 # Results
 
-Our results are summarized in @tbl-modelresults.
+## Swing states
+
+@tbl-result shows the average likelihood percentage of Harris winning each swing state, calculated by using the logistic model on 1,000 hypothetical data points for each state, generated with the normal distribution of predictors and setting the end_date to election day. It indicates that Harris has a greater probability to win in Pennsylvania, Georgia, and Nevada, while Trump is more likely to win in North Carolina, Michigan, Arizona, and Wisconsin. The electoral votes in each state is also presented.
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+#### Results ####
+# To predict the outcome on election day, generate 1000 hypothetical data points
+# using the election day as end_date and the normal curve of other input 
+# variables, mimicing all the situations that may happen on election day
+hypothetical_data_Pennsylvania <- tibble(
+  end_date = as.Date("2024-11-05"),
+  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Pennsylvania$has_sponsor)),
+  transparency_score = rnorm(1000, mean = mean(combined_Pennsylvania$transparency_score), 
+                             sd = sd(combined_Pennsylvania$transparency_score)),
+  sample_size = rnorm(1000, mean = mean(combined_Pennsylvania$sample_size),
+                      sd = sd(combined_Pennsylvania$sample_size))
+)
+
+hypothetical_data_Georgia <- tibble(
+  end_date = as.Date("2024-11-05"),
+  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Georgia$has_sponsor)),
+  transparency_score = rnorm(1000, mean = mean(combined_Georgia$transparency_score), 
+                             sd = sd(combined_Georgia$transparency_score)),
+  sample_size = rnorm(1000, mean = mean(combined_Georgia$sample_size),
+                      sd = sd(combined_Georgia$sample_size))
+)
+
+hypothetical_data_North_Carolina <- tibble(
+  end_date = as.Date("2024-11-05"),
+  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_North_Carolina$has_sponsor)),
+  transparency_score = rnorm(1000, mean = mean(combined_North_Carolina$transparency_score), 
+                             sd = sd(combined_North_Carolina$transparency_score)),
+  sample_size = rnorm(1000, mean = mean(combined_North_Carolina$sample_size),
+                      sd = sd(combined_North_Carolina$sample_size))
+)
+
+hypothetical_data_Michigan <- tibble(
+  end_date = as.Date("2024-11-05"),
+  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Michigan$has_sponsor)),
+  transparency_score = rnorm(1000, mean = mean(combined_Michigan$transparency_score), 
+                             sd = sd(combined_Michigan$transparency_score)),
+  sample_size = rnorm(1000, mean = mean(combined_Michigan$sample_size),
+                      sd = sd(combined_Michigan$sample_size))
+)
+
+hypothetical_data_Arizona <- tibble(
+  end_date = as.Date("2024-11-05"),
+  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Arizona$has_sponsor)),
+  transparency_score = rnorm(1000, mean = mean(combined_Arizona$transparency_score), 
+                             sd = sd(combined_Arizona$transparency_score)),
+  sample_size = rnorm(1000, mean = mean(combined_Arizona$sample_size),
+                      sd = sd(combined_Arizona$sample_size))
+)
+
+hypothetical_data_Wisconsin <- tibble(
+  end_date = as.Date("2024-11-05"),
+  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Wisconsin$has_sponsor)),
+  transparency_score = rnorm(1000, mean = mean(combined_Wisconsin$transparency_score), 
+                             sd = sd(combined_Wisconsin$transparency_score)),
+  sample_size = rnorm(1000, mean = mean(combined_Wisconsin$sample_size),
+                      sd = sd(combined_Wisconsin$sample_size))
+)
+
+hypothetical_data_Nevada <- tibble(
+  end_date = as.Date("2024-11-05"),
+  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Nevada$has_sponsor)),
+  transparency_score = rnorm(1000, mean = mean(combined_Nevada$transparency_score), 
+                             sd = sd(combined_Nevada$transparency_score)),
+  sample_size = rnorm(1000, mean = mean(combined_Nevada$sample_size),
+                      sd = sd(combined_Nevada$sample_size))
+)
+
+# run the corresponding logistic regression on the hypothetical data of each
+# state and average the outcomes to find the expected win rate of Harris
+# on election day
+hypothetical_data_Pennsylvania <- hypothetical_data_Pennsylvania %>%
+  mutate(
+    harris_win_prob = round(100*predict(logistic_Pennsylvania, newdata = ., type = "response"), 2)
+  )
+
+
+hypothetical_data_Georgia <- hypothetical_data_Georgia %>%
+  mutate(
+    harris_win_prob = round(100*predict(logistic_Georgia, newdata = ., type = "response"), 2)
+  )
+
+
+hypothetical_data_North_Carolina <- hypothetical_data_North_Carolina %>%
+  mutate(
+    harris_win_prob = round(100*predict(logistic_North_Carolina, newdata = ., type = "response"), 2)
+  )
+
+
+hypothetical_data_Michigan <- hypothetical_data_Michigan %>%
+  mutate(
+    harris_win_prob = round(100*predict(logistic_Michigan, newdata = ., type = "response"), 2)
+  )
+
+
+hypothetical_data_Arizona <- hypothetical_data_Arizona %>%
+  mutate(
+    harris_win_prob = round(100*predict(logistic_Arizona, newdata = ., type = "response"), 2)
+  )
+
+
+hypothetical_data_Wisconsin <- hypothetical_data_Wisconsin %>%
+  mutate(
+    harris_win_prob = round(100*predict(logistic_Wisconsin, newdata = ., type = "response"), 2)
+  )
+
+
+hypothetical_data_Nevada <- hypothetical_data_Nevada %>%
+  mutate(
+    harris_win_prob = round(100*predict(logistic_Nevada, newdata = ., type = "response"), 2)
+  )
+
+
+# produce a table of mean winning probabilities
+mean_probabilities <- tibble(
+  State = c("Pennsylvania", "Georgia", "North Carolina", "Michigan", "Arizona", "Wisconsin", "Nevada"),
+  Harris_Win_Probability = c(
+    round(mean(hypothetical_data_Pennsylvania$harris_win_prob, na.rm = TRUE), 2),
+    round(mean(hypothetical_data_Georgia$harris_win_prob, na.rm = TRUE), 2),
+    round(mean(hypothetical_data_North_Carolina$harris_win_prob, na.rm = TRUE), 2),
+    round(mean(hypothetical_data_Michigan$harris_win_prob, na.rm = TRUE), 2),
+    round(mean(hypothetical_data_Arizona$harris_win_prob, na.rm = TRUE), 2),
+    round(mean(hypothetical_data_Wisconsin$harris_win_prob, na.rm = TRUE), 2),
+    round(mean(hypothetical_data_Nevada$harris_win_prob, na.rm = TRUE), 2)
+  )
+)
+
+
+# include electoral votes to determine who is in the lead
+state_evs <- tibble::tribble(
+  ~State, ~electoral_votes,
+  "Alaska", 3,
+  "Arizona", 11,
+  "Arkansas", 6,
+  "California", 55,
+  "Colorado", 9,
+  "Connecticut", 7,
+  "Florida", 29,
+  "Georgia", 16,
+  "Illinois", 20,
+  "Indiana", 11,
+  "Iowa", 6,
+  "Kansas", 6,
+  "Louisiana", 8,
+  "Maine", 2,
+  "Maine CD-1", 1,
+  "Maine CD-2", 1,
+  "Maryland", 10,
+  "Massachusetts", 11,
+  "Michigan", 16,
+  "Minnesota", 10,
+  "Mississippi", 6,
+  "Missouri", 10,
+  "Montana", 3,
+  "Nebraska", 2,
+  "Nebraska CD-2", 1,
+  "Nevada", 6,
+  "New Hampshire", 4,
+  "New Mexico", 5,
+  "New York", 29,
+  "North Carolina", 15,
+  "Ohio", 18,
+  "Oklahoma", 7,
+  "Oregon", 7,
+  "Pennsylvania", 20,
+  "Rhode Island", 4,
+  "South Carolina", 9,
+  "South Dakota", 3,
+  "Texas", 38,
+  "Utah", 6,
+  "Vermont", 3,
+  "Virginia", 13,
+  "Washington", 12,
+  "Wisconsin", 10
+)
+
+mean_probabilities <- mean_probabilities %>%
+  left_join(state_evs, by = "State")
+
+#### Overall Probability of Winning ####
+# Harris
+# Create data frame of states
+states <- data.frame(
+  state = c("PA", "GA", "NC", "MI", "WI", "NV", "AZ"),
+  prob = c(0.5551, 0.6801, 0.1033, 0.5151, 0.3792, 0.7679, 0),
+  votes = c(20, 16, 15, 16, 10, 6, 11)
+)
+
+# Function to calculate probability of a specific combination
+calc_combo_prob <- function(combo, states) {
+  prob <- 1
+  for(i in 1:nrow(states)) {
+    if(i %in% combo) {
+      prob <- prob * states$prob[i]
+    } else {
+      prob <- prob * (1 - states$prob[i])
+    }
+  }
+  return(prob)
+}
+
+# Generate all possible combinations
+n_states <- nrow(states)
+total_prob <- 0
+
+# Check each possible combination
+for(i in 1:(2^n_states - 1)) {
+  # Convert number to binary to get combination
+  combo <- which(intToBits(i)[1:n_states] == 1)
+  
+  # Calculate total electoral votes for this combination
+  votes <- sum(states$votes[combo])
+  
+  # If this combination has enough votes, add its probability
+  if(votes >= 44) {
+    prob <- calc_combo_prob(combo, states)
+    total_prob <- total_prob + prob
+  }
+}
+
+# Trump
+# Create data frame of states
+states <- data.frame(
+  state = c("PA", "GA", "NC", "MI", "WI", "NV","AZ"),
+  prob = c(1-0.5551, 1-0.6801, 1-0.1033, 1-0.5151, 1-0.3792, 1-0.7679, 1-0), # Using 1-p for Trump's probabilities
+  votes = c(20, 16, 15, 16, 10, 6, 11)
+)
+
+# Function to calculate probability of a specific combination
+calc_combo_prob <- function(combo, states) {
+  prob <- 1
+  for(i in 1:nrow(states)) {
+    if(i %in% combo) {
+      prob <- prob * states$prob[i]
+    } else {
+      prob <- prob * (1 - states$prob[i])
+    }
+  }
+  return(prob)
+}
+
+# Generate all possible combinations
+n_states <- nrow(states)
+total_prob <- 0
+
+# Check each possible combination
+for(i in 1:(2^n_states - 1)) {
+  # Convert number to binary to get combination
+  combo <- which(intToBits(i)[1:n_states] == 1)
+  
+  # Calculate total electoral votes for this combination
+  votes <- sum(states$votes[combo])
+  
+  # If this combination has enough votes, add its probability
+  if(votes >= 51) {
+    prob <- calc_combo_prob(combo, states)
+    total_prob <- total_prob + prob
+  }
+}
+
+
+```
+
+
+```{r}
+#| label: tbl-result
+#| tbl-cap: Predicted Harris Win Percentage in Swing States
+#| echo: false
+#| message: false
+#| warning: false
+
+mean_probabilities %>%
+  gt() %>%
+  fmt_number(
+    columns = vars(Harris_Win_Probability),
+    decimals = 2
+  ) %>%
+  cols_label(
+    State = "State",
+    Harris_Win_Probability = "Harris Win Probability (%)",
+    electoral_votes = "Electoral Votes"
+  ) %>%
+  tab_options(
+    table.font.size = 12,
+    heading.title.font.size = 16,
+    heading.subtitle.font.size = 12,
+    table.border.top.width = px(2),
+    table.border.bottom.width = px(2)
+  ) 
+
+```
+Combining with the fact that Harris requires 44 electoral votes to win and Trump requires 51, we have found using the probability function that Harris has a 38.3 chance to acquire more than 44 electoral votes, according to the probabilities and electoral votes in @tbl-result. On the other hand, Trump has a 61.7 probability to acquire more than 51 votes. Thus, our conclusion is that while both candidates possess a significant chance of winning, Trump has the greater probability of acquiring the necessary electoral votes from the seven swing states on election day.
+
+
+## Popular vote
+
+@fig-lradj presents the fitted values of the candidates' adjusted national support rates as well as the data points of polled support rates adjusted for historical pollster bias. It indicates that Trump is expected to have higher national support levels, but the two converges as election day approaches. This result is counter intuitive, as most national polls indicate that Harris will have the popular vote. However, the adjusted values for Trump's support level are significantly greater than the polled values because historically, the actual percentage of the popular vote for Trump in 2020 was significantly greater than his polled percentages of the popular vote. Thus, assuming that the 2024 national polls are equally biased against Trump compared to the 2020 polls, it is difficult to tell who will get the popular vote on election day. However, as previously stated, this assumption is likely false, as the candidates have changed.
+
+```{r}
+#| label: fig-lradj
+#| fig-cap: Adjusted Popular Vote Prediction, 2024
+#| echo: false
+#| message: false
+#| warning: false
 # plot model predictions
 # combine the datasets to create a single visual
 combined_data_adj <- bind_rows(harris_2024_national_adj, trump_2024_national_adj)
@@ -804,7 +1115,6 @@ ggplot(combined_data_adj, aes(x = end_date, y = pct_adj, color = candidate_name)
   labs(
     y = "Adjusted Percent Support",
     x = "End Date",
-    title = "Multiple Linear Models for Harris and Trump (2024)",
     color = "Candidate"
   ) +
   theme(
@@ -812,6 +1122,16 @@ ggplot(combined_data_adj, aes(x = end_date, y = pct_adj, color = candidate_name)
     plot.title = element_text(hjust = 0.5, face = "bold")
   )
 
+```
+
+@fig-lr Presents the predicted unadjusted national support rates for Harris and Trump. The conclusions one can make from this plot is similar to those of most polls: Harris is expected to win the popular vote on any day, including the election day. 
+
+```{r}
+#| label: fig-lr
+#| fig-cap: Unadjusted Popular Vote Prediction, 2024
+#| echo: false
+#| message: false
+#| warning: false
 # Unadjusted support percentages
 ggplot(combined_data, aes(x = end_date, y = pct, color = candidate_name)) +
   # Scatter points for actual adjusted percentages
@@ -827,7 +1147,6 @@ ggplot(combined_data, aes(x = end_date, y = pct, color = candidate_name)) +
   labs(
     y = "Adjusted Percent Support",
     x = "End Date",
-    title = "Multiple Linear Models for Harris and Trump (2024)",
     color = "Candidate"
   ) +
   theme(
@@ -837,12 +1156,7 @@ ggplot(combined_data, aes(x = end_date, y = pct, color = candidate_name)) +
 
 
 ```
-
-```{r}
-summary(model_logistic)
-summary(model_logistic_adj)
-```
-
+The regression coefficients for the logistic and linear models are presented in the Appendix because they are not the outcome of interest. Please view @tbl-coe1 to @tbl-coe7.
 
 
 
@@ -860,7 +1174,9 @@ Please don't use these as sub-heading labels - change them to be what your point
 
 ## Weaknesses and next steps
 
-Weaknesses and next steps should also be included.
+The dataset used for this analysis has a number of clear limitations. First of all, there is a lack of high-quality polls. Though FiveThirtyEight distributes each pollster with a rating out of 3.0, almost all pollsters under the rating of 2.7 produces outcomes that are unreliable and highly volatile. For this research, it was only possible for us to use pollsters with a 3.0 rating when analyzing national polls; we had to lower the standards to 2.5 for the analysis of swing states, as the number of high-quality state-specific polls are very limited. The inclusion of unreliable data reduces the predictability of our logistic models and thus our final outcome. The lack of predictability of our Nevada model is a perfect example of how low-quality data and the lack of data points impacts our ability to create effective models. However, we acknowledge that this is beyond the control of FiveThirtyEight, as they do not conduct the polls.
+
+The second major challenge presented by the dataset is the lack of predictors. FiveThirtyEight utilizes predictive variables that are unavailable to us, such as weighted values that represent the extent to which a pollster is partisan [@5383]. The predictors used in this research, such as the transparency score of the pollster, are not related to their bias towards any candidate. This limits the predictive power of our models.
 
 \newpage
 
@@ -1098,7 +1414,6 @@ Your time and participation is greatly appreciated.
 
 
 ## Diagnostics
-
 ```{r}
 #| label: fig-pen
 #| fig-cap: ROC Curve for Harris Win Prediction, Pennsylvania
@@ -1195,6 +1510,112 @@ plot(roc_obj)
 #| warning: false
 
 plot(roc_obj)
+
+```
+
+## Coefficients
+
+```{r}
+#| label: tbl-coe1
+#| fig-cap: Logistic Regression Coefficients for Pennsylvania
+#| echo: false
+#| message: false
+#| warning: false
+# Tidy the logistic regression model
+tidy_Pennsylvania <- tidy(logistic_Pennsylvania)
+
+# Display the table using knitr::kable
+kable(tidy_Pennsylvania, digits = 2, 
+      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"))
+
+```
+```{r}
+#| label: tbl-coe2
+#| fig-cap: Logistic Regression Coefficients for Georgia
+#| echo: false
+#| message: false
+#| warning: false
+# Tidy the logistic regression model
+tidy_Georgia <- tidy(logistic_Georgia)
+
+# Display the table using knitr::kable
+kable(tidy_Georgia, digits = 2, 
+      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"))
+
+```
+
+```{r}
+#| label: tbl-coe3
+#| fig-cap: Logistic Regression Coefficients for Michigan
+#| echo: false
+#| message: false
+#| warning: false
+# Tidy the logistic regression model
+tidy_Michigan <- tidy(logistic_Michigan)
+
+# Display the table using knitr::kable
+kable(tidy_Michigan, digits = 2, 
+      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"))
+
+```
+
+```{r}
+#| label: tbl-coe4
+#| fig-cap: Logistic Regression Coefficients for North_Carolina
+#| echo: false
+#| message: false
+#| warning: false
+# Tidy the logistic regression model
+tidy_North_Carolina <- tidy(logistic_North_Carolina)
+
+# Display the table using knitr::kable
+kable(tidy_North_Carolina, digits = 2, 
+      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"))
+
+```
+
+```{r}
+#| label: tbl-coe5
+#| fig-cap: Logistic Regression Coefficients for Arizona
+#| echo: false
+#| message: false
+#| warning: false
+# Tidy the logistic regression model
+tidy_Arizona <- tidy(logistic_Arizona)
+
+# Display the table using knitr::kable
+kable(tidy_Arizona, digits = 2, 
+      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"))
+
+```
+
+```{r}
+#| label: tbl-coe6
+#| fig-cap: Logistic Regression Coefficients for Wisconsin
+#| echo: false
+#| message: false
+#| warning: false
+# Tidy the logistic regression model
+tidy_Wisconsin <- tidy(logistic_Wisconsin)
+
+# Display the table using knitr::kable
+kable(tidy_Wisconsin, digits = 2, 
+      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"))
+
+```
+
+```{r}
+#| label: tbl-coe7
+#| fig-cap: Logistic Regression Coefficients for Nevada
+#| echo: false
+#| message: false
+#| warning: false
+# Tidy the logistic regression model
+tidy_Nevada <- tidy(logistic_Nevada)
+
+# Display the table using knitr::kable
+kable(tidy_Nevada, digits = 2, 
+      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"))
 
 ```
 

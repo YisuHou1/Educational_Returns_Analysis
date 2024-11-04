@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repo provides students with a foundation for their own projects associated with *Telling Stories with Data*. You do not need every aspect for every paper and you should delete aspects that you do not need.
+This project analyzes the probability of winning for presidential candidates Kamala Harris and Donald Trump on election day. By examining the aggregated polls in the seven swing states and national polls on candidates' support rate, this project identifies that Harris has a slightly lower chance of winning from electoral votes in swing states. This project also explores the temporal trend of candidates' national support rate to predict the popular vote.
 
 
 ## File Structure

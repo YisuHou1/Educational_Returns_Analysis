@@ -18,6 +18,7 @@ library(nnet)
 library(lubridate)
 library(pROC)
 library(stringr)
+library(gt)
 
 
 #### Read data ####
@@ -160,8 +161,6 @@ trump_2024_national_adj <- trump_2024_national_adj %>% mutate(
 # Unadjusted datasets
 model_harris <- lm(pct ~ end_date + has_sponsor +
                          transparency_score + sample_size, data = harris_2024_national)
-model_trump <- lm(pct ~ end_date + has_sponsor +
-                        transparency_score + sample_size, data = trump_2024_national)
 
 harris_2024_national <- harris_2024_national %>% mutate(
   fitted_date = predict(model_harris)
@@ -816,3 +815,89 @@ mean_probabilities %>%
     table.border.top.width = px(2),
     table.border.bottom.width = px(2)
   ) 
+
+#### Overall Probability of Winning ####
+# Harris
+# Create data frame of states
+states <- data.frame(
+  state = c("PA", "GA", "NC", "MI", "WI", "NV", "AZ"),
+  prob = c(0.5551, 0.6801, 0.1033, 0.5151, 0.3792, 0.7679, 0),
+  votes = c(20, 16, 15, 16, 10, 6, 11)
+)
+
+# Function to calculate probability of a specific combination
+calc_combo_prob <- function(combo, states) {
+  prob <- 1
+  for(i in 1:nrow(states)) {
+    if(i %in% combo) {
+      prob <- prob * states$prob[i]
+    } else {
+      prob <- prob * (1 - states$prob[i])
+    }
+  }
+  return(prob)
+}
+
+# Generate all possible combinations
+n_states <- nrow(states)
+total_prob <- 0
+
+# Check each possible combination
+for(i in 1:(2^n_states - 1)) {
+  # Convert number to binary to get combination
+  combo <- which(intToBits(i)[1:n_states] == 1)
+  
+  # Calculate total electoral votes for this combination
+  votes <- sum(states$votes[combo])
+  
+  # If this combination has enough votes, add its probability
+  if(votes >= 44) {
+    prob <- calc_combo_prob(combo, states)
+    total_prob <- total_prob + prob
+  }
+}
+
+print(paste("Probability of Harris winning at least 44 electoral votes:", round(total_prob * 100, 2), "%"))
+
+# Trump
+# Create data frame of states
+states <- data.frame(
+  state = c("PA", "GA", "NC", "MI", "WI", "NV","AZ"),
+  prob = c(1-0.5551, 1-0.6801, 1-0.1033, 1-0.5151, 1-0.3792, 1-0.7679, 1-0), # Using 1-p for Trump's probabilities
+  votes = c(20, 16, 15, 16, 10, 6, 11)
+)
+
+# Function to calculate probability of a specific combination
+calc_combo_prob <- function(combo, states) {
+  prob <- 1
+  for(i in 1:nrow(states)) {
+    if(i %in% combo) {
+      prob <- prob * states$prob[i]
+    } else {
+      prob <- prob * (1 - states$prob[i])
+    }
+  }
+  return(prob)
+}
+
+# Generate all possible combinations
+n_states <- nrow(states)
+total_prob <- 0
+
+# Check each possible combination
+for(i in 1:(2^n_states - 1)) {
+  # Convert number to binary to get combination
+  combo <- which(intToBits(i)[1:n_states] == 1)
+  
+  # Calculate total electoral votes for this combination
+  votes <- sum(states$votes[combo])
+  
+  # If this combination has enough votes, add its probability
+  if(votes >= 51) {
+    prob <- calc_combo_prob(combo, states)
+    total_prob <- total_prob + prob
+  }
+}
+
+print(paste("Probability of Trump winning at least 51 electoral votes:", round(total_prob * 100, 2), "%"))
+

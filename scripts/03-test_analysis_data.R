@@ -1,11 +1,12 @@
 #### Preamble ####
-# Purpose: Tests... [...UPDATE THIS...]
+# Purpose: Tests data used for analysis
 # Author: Andrew Goh, Yisu Hou
 # Date: 3 November 2024
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
-# License: MIT
+# Contact: yisu.hou@mail.utoronto.ca
+# License: None
 # Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+  # - Packages `tidyverse` and `testthat` must be installed
+  # - 02-clean_data.R must have been run
 
 
 #### Workspace setup ####

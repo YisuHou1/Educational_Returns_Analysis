@@ -2,9 +2,13 @@
 # Purpose: Cleans the raw US presidential election polls data from FiveThirtyEight
 # Author: Andrew Goh, Yisu Hou
 # Date: 3 November 2024
-# Contact: rohan.alexander@utoronto.ca
-# License: MIT
-# Pre-requisites:
+# Contact: yisu.hou@mail.utoronto.ca
+# License: None
+# Pre-requisites:  
+  # - Packages `tidyverse`, `lubridate`, `janitor`, `broom`, `modelsummary`, `rstanarm`, 
+  # and `splines`must be installed
+  # - Raw data downloaded from FiveThirtyEight
+  # - 00-simulate_data.R and 01-test_simulate_data.R must have been run
 
 #### Workspace setup ####
 

@@ -1,11 +1,13 @@
 #### Preamble ####
-# Purpose: Models... [...UPDATE THIS...]
+# Purpose: Exploratory data analysis using analysis data
 # Author: Andrew Goh, Yisu Hou
 # Date: 3 November 2024
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
-# License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Contact: yisu.hou@mail.utoronto.ca
+# License: None
+# Pre-requisites:
+  # - Packages `tidyverse`, `caret`, `glmnet`, `nnet`, `lubridate`, `pROC`, 
+  # and `stringr`must be installed
+  # - 02-clean_data.R and 03-test_analysis_data.R must have been run
 
 
 #### Workspace setup ####

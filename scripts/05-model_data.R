@@ -1,11 +1,14 @@
 #### Preamble ####
-# Purpose: Models... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
-# License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Purpose: Models the probability of Harris winning on election day
+# Author: Andrew Goh, Yisu Hou
+# Date: 3 November 2024
+# Contact: yisu.hou@mail.utoronto.ca
+# License: None
+# Pre-requisites:
+  # - Packages `tidyverse`, `caret`, `glmnet`, `nnet`, `lubridate`, `pROC`, 
+  # `stringr`, and `gt` must be installed
+  # - 02-clean_data.R, 03-test_analysis_data.R,
+  # and 04-exploratory_data_analysis.R must have been run
 
 
 #### Workspace setup ####

@@ -3,8 +3,8 @@
   # electoral polls dataset.
 # Author: Andrew Goh, Yisu Hou
 # Date: 3 November 2024
-# Contact: rohan.alexander@utoronto.ca
-# License: MIT
+# Contact: yisu.hou@mail.utoronto.ca
+# License: None
 # Pre-requisites: 
   # - Packages `tidyverse`, `lubridate`, and `testthat` must be installed
   # - 00-simulate_data.R must have been run

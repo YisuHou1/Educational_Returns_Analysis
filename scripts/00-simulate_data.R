@@ -2,8 +2,8 @@
 # Purpose: Simulates a dataset of US presidential election polls
 # Author: Andrew Goh, Yisu Hou
 # Date: 3 November 2024
-# Contact: rohan.alexander@utoronto.ca
-# License: MIT
+# Contact: yisu.hou@mail.utoronto.ca
+# License: None
 # Pre-requisites: Packages `tidyverse` and `lubridate` must be installed
 
 

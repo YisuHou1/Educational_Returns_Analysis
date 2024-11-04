@@ -1156,7 +1156,7 @@ ggplot(combined_data, aes(x = end_date, y = pct, color = candidate_name)) +
 
 
 ```
-The regression coefficients for the logistic and linear models are presented in the Appendix because they are not the outcome of interest. Please view @tbl-coe1 to @tbl-coe7.
+The regression coefficients for the logistic and linear models are presented in the Appendix because they are not the outcome of interest.
 
 
 
@@ -1512,12 +1512,11 @@ plot(roc_obj)
 plot(roc_obj)
 
 ```
+\FloatBarrier
 
 ## Coefficients
 
 ```{r}
-#| label: tbl-coe1
-#| fig-cap: Logistic Regression Coefficients for Pennsylvania
 #| echo: false
 #| message: false
 #| warning: false
@@ -1526,12 +1525,11 @@ tidy_Pennsylvania <- tidy(logistic_Pennsylvania)
 
 # Display the table using knitr::kable
 kable(tidy_Pennsylvania, digits = 2, 
-      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"))
+      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"),
+      caption = "Logistic Regression Coefficients for Pennsylvania")
 
 ```
 ```{r}
-#| label: tbl-coe2
-#| fig-cap: Logistic Regression Coefficients for Georgia
 #| echo: false
 #| message: false
 #| warning: false
@@ -1540,13 +1538,12 @@ tidy_Georgia <- tidy(logistic_Georgia)
 
 # Display the table using knitr::kable
 kable(tidy_Georgia, digits = 2, 
-      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"))
+      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"),
+      caption = "Logistic Regression Coefficients for Georgia")
 
 ```
 
 ```{r}
-#| label: tbl-coe3
-#| fig-cap: Logistic Regression Coefficients for Michigan
 #| echo: false
 #| message: false
 #| warning: false
@@ -1555,13 +1552,12 @@ tidy_Michigan <- tidy(logistic_Michigan)
 
 # Display the table using knitr::kable
 kable(tidy_Michigan, digits = 2, 
-      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"))
+      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"),
+      caption = "Logistic Regression Coefficients for Michigan")
 
 ```
 
 ```{r}
-#| label: tbl-coe4
-#| fig-cap: Logistic Regression Coefficients for North_Carolina
 #| echo: false
 #| message: false
 #| warning: false
@@ -1570,13 +1566,12 @@ tidy_North_Carolina <- tidy(logistic_North_Carolina)
 
 # Display the table using knitr::kable
 kable(tidy_North_Carolina, digits = 2, 
-      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"))
+      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"),
+      caption = "Logistic Regression Coefficients for North_Carolina")
 
 ```
 
 ```{r}
-#| label: tbl-coe5
-#| fig-cap: Logistic Regression Coefficients for Arizona
 #| echo: false
 #| message: false
 #| warning: false
@@ -1585,13 +1580,12 @@ tidy_Arizona <- tidy(logistic_Arizona)
 
 # Display the table using knitr::kable
 kable(tidy_Arizona, digits = 2, 
-      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"))
+      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"),
+      caption = "Logistic Regression Coefficients for Arizona")
 
 ```
 
 ```{r}
-#| label: tbl-coe6
-#| fig-cap: Logistic Regression Coefficients for Wisconsin
 #| echo: false
 #| message: false
 #| warning: false
@@ -1600,13 +1594,12 @@ tidy_Wisconsin <- tidy(logistic_Wisconsin)
 
 # Display the table using knitr::kable
 kable(tidy_Wisconsin, digits = 2, 
-      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"))
+      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"),
+      caption = "Logistic Regression Coefficients for Wisconsin")
 
 ```
 
 ```{r}
-#| label: tbl-coe7
-#| fig-cap: Logistic Regression Coefficients for Nevada
 #| echo: false
 #| message: false
 #| warning: false
@@ -1615,7 +1608,8 @@ tidy_Nevada <- tidy(logistic_Nevada)
 
 # Display the table using knitr::kable
 kable(tidy_Nevada, digits = 2, 
-      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"))
+      col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"),
+      caption = "Logistic Regression Coefficients for Nevada")
 
 ```
 

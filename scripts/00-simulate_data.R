@@ -16,11 +16,11 @@ set.seed(114514)
 
 # define the range of pollsters
 pollster_options <- c(
-  "Siena/NYT", 
-  "YouGov", 
-  "CES / YouGov", 
-  "Marquette Law School", 
-  "The Washington Post", 
+  "Siena/NYT",
+  "YouGov",
+  "CES / YouGov",
+  "Marquette Law School",
+  "The Washington Post",
   "McCourtney Institute/YouGov"
 )
 
@@ -31,8 +31,8 @@ us_states <- state.name
 n <- 300
 
 # For the state variable, have half of the values "National"
-n_national <- n / 2  # 50
-n_states <- n - n_national  # 50
+n_national <- n / 2 # 50
+n_states <- n - n_national # 50
 # Create a vector with 50 "National" and 50 random state names
 state_vector <- c(
   rep("National", n_national),
@@ -56,8 +56,11 @@ simulated_data <- tibble(
   # end date between the day Harris announced and the last day of polls
   # recorded in the polls dataset
   end_date = sample(
-    seq.Date(from = as.Date("2024-07-21"), 
-    to = as.Date("2024-10-26"), by = "day"), n, replace = TRUE
+    seq.Date(
+      from = as.Date("2024-07-21"),
+      to = as.Date("2024-10-26"), by = "day"
+    ), n,
+    replace = TRUE
   ),
   # percent support assigned with a normal distribution
   pct_support = round(rnorm(n, mean = 50, sd = 2))
@@ -70,4 +73,3 @@ simulated_data <- simulated_data %>% mutate(
 
 #### Write_csv
 write_csv(simulated_data, file = "data/00-simulated_data/simulated_polls.csv")
-

@@ -5,10 +5,10 @@
 # Contact: yisu.hou@mail.utoronto.ca
 # License: None
 # Pre-requisites:
-  # - Packages `tidyverse`, `caret`, `glmnet`, `nnet`, `lubridate`, `pROC`, 
-  # `stringr`, and `gt` must be installed
-  # - 02-clean_data.R, 03-test_analysis_data.R,
-  # and 04-exploratory_data_analysis.R must have been run
+# - Packages `tidyverse`, `caret`, `glmnet`, `nnet`, `lubridate`, `pROC`,
+# `stringr`, and `gt` must be installed
+# - 02-clean_data.R, 03-test_analysis_data.R,
+# and 04-exploratory_data_analysis.R must have been run
 
 
 #### Workspace setup ####
@@ -27,9 +27,9 @@ library(gt)
 #### Read data ####
 trump_2024 <- read_csv("data/02-analysis_data/trump_2024_analysis_data.csv")
 harris_2024 <- read_csv("data/02-analysis_data/harris_2024_analysis_data.csv")
-trump_2024_lower <- 
+trump_2024_lower <-
   read_csv("data/02-analysis_data/trump_2024_analysis_data_lower.csv")
-harris_2024_lower <- 
+harris_2024_lower <-
   read_csv("data/02-analysis_data/harris_2024_analysis_data_lower.csv")
 trump_2020 <- read_csv("data/02-analysis_data/trump_2020_analysis_data.csv")
 biden_2020 <- read_csv("data/02-analysis_data/biden_2020_analysis_data.csv")
@@ -78,36 +78,40 @@ harris_2024_national_adj <- harris_2024_national %>%
 # model adjusted support percentage by time and control variables
 # first split training and testing dataset using an 80/20 split
 set.seed(11451)
-trainIndex_trump_adj <- createDataPartition(trump_2024_national_adj$pct_adj, 
-                                        p = 0.8, list = FALSE)
+trainIndex_trump_adj <- createDataPartition(trump_2024_national_adj$pct_adj,
+  p = 0.8, list = FALSE
+)
 data_train_trump_adj <- trump_2024_national_adj[trainIndex_trump_adj, ]
-data_test_trump_adj  <- trump_2024_national_adj[-trainIndex_trump_adj, ]
+data_test_trump_adj <- trump_2024_national_adj[-trainIndex_trump_adj, ]
 
-trainIndex_harris_adj <- createDataPartition(harris_2024_national_adj$pct_adj, 
-                                         p = 0.8, list = FALSE)
+trainIndex_harris_adj <- createDataPartition(harris_2024_national_adj$pct_adj,
+  p = 0.8, list = FALSE
+)
 data_train_harris_adj <- harris_2024_national_adj[trainIndex_harris_adj, ]
-data_test_harris_adj  <- harris_2024_national_adj[-trainIndex_harris_adj, ]
+data_test_harris_adj <- harris_2024_national_adj[-trainIndex_harris_adj, ]
 
 model_date_harris_adj <- lm(pct_adj ~ end_date + has_sponsor +
-                          transparency_score + sample_size, data = data_train_harris_adj)
+  transparency_score + sample_size, data = data_train_harris_adj)
 model_date_trump_adj <- lm(pct_adj ~ end_date + has_sponsor +
-                         transparency_score + sample_size, data = data_train_trump_adj)
+  transparency_score + sample_size, data = data_train_trump_adj)
 
 # repeat for unadjusted support levels
-trainIndex_trump <- createDataPartition(trump_2024_national$pct, 
-                                        p = 0.8, list = FALSE)
+trainIndex_trump <- createDataPartition(trump_2024_national$pct,
+  p = 0.8, list = FALSE
+)
 data_train_trump <- trump_2024_national[trainIndex_trump, ]
-data_test_trump  <- trump_2024_national[-trainIndex_trump, ]
+data_test_trump <- trump_2024_national[-trainIndex_trump, ]
 
-trainIndex_harris <- createDataPartition(harris_2024_national$pct, 
-                                         p = 0.8, list = FALSE)
+trainIndex_harris <- createDataPartition(harris_2024_national$pct,
+  p = 0.8, list = FALSE
+)
 data_train_harris <- harris_2024_national[trainIndex_harris, ]
-data_test_harris  <- harris_2024_national[-trainIndex_harris, ]
+data_test_harris <- harris_2024_national[-trainIndex_harris, ]
 
 model_date_harris <- lm(pct ~ end_date + has_sponsor +
-                          transparency_score + sample_size, data = data_train_harris)
+  transparency_score + sample_size, data = data_train_harris)
 model_date_trump <- lm(pct ~ end_date + has_sponsor +
-                         transparency_score + sample_size, data = data_train_trump)
+  transparency_score + sample_size, data = data_train_trump)
 
 
 # Functions to evaluate model using testing dataset
@@ -149,9 +153,9 @@ print(trump_evaluation)
 
 # Augment data with model predictions
 model_harris_adj <- lm(pct_adj ~ end_date + has_sponsor +
-                     transparency_score + sample_size, data = harris_2024_national_adj)
+  transparency_score + sample_size, data = harris_2024_national_adj)
 model_trump_adj <- lm(pct_adj ~ end_date + has_sponsor +
-                    transparency_score + sample_size, data = trump_2024_national_adj)
+  transparency_score + sample_size, data = trump_2024_national_adj)
 
 harris_2024_national_adj <- harris_2024_national_adj %>% mutate(
   fitted_date = predict(model_harris_adj)
@@ -163,7 +167,7 @@ trump_2024_national_adj <- trump_2024_national_adj %>% mutate(
 
 # Unadjusted datasets
 model_harris <- lm(pct ~ end_date + has_sponsor +
-                         transparency_score + sample_size, data = harris_2024_national)
+  transparency_score + sample_size, data = harris_2024_national)
 
 harris_2024_national <- harris_2024_national %>% mutate(
   fitted_date = predict(model_harris)
@@ -187,8 +191,10 @@ ggplot(combined_data_adj, aes(x = end_date, y = pct_adj, color = candidate_name)
   geom_line(aes(y = fitted_date), size = 0.5) +
   xlim(as.Date("2024-07-19"), as.Date("2024-10-25")) +
   # Assign specific colors
-  scale_color_manual(values = 
-                       c("Kamala Harris" = "blue", "Donald Trump" = "red")) +
+  scale_color_manual(
+    values =
+      c("Kamala Harris" = "blue", "Donald Trump" = "red")
+  ) +
   # Customize the plot appearance
   theme_classic() +
   labs(
@@ -210,8 +216,10 @@ ggplot(combined_data, aes(x = end_date, y = pct, color = candidate_name)) +
   geom_line(aes(y = fitted_date), size = 0.5) +
   xlim(as.Date("2024-07-19"), as.Date("2024-10-25")) +
   # Assign specific colors
-  scale_color_manual(values = 
-                       c("Kamala Harris" = "blue", "Donald Trump" = "red")) +
+  scale_color_manual(
+    values =
+      c("Kamala Harris" = "blue", "Donald Trump" = "red")
+  ) +
   # Customize the plot appearance
   theme_classic() +
   labs(
@@ -232,8 +240,10 @@ ggplot(combined_data, aes(x = end_date, y = pct, color = candidate_name)) +
 combined_national <- full_join(
   trump_2024_national,
   harris_2024_national,
-  by = c("pollster", "has_sponsor", "pollscore", 
-         "transparency_score", "sample_size", "end_date", "state", "cycle")
+  by = c(
+    "pollster", "has_sponsor", "pollscore",
+    "transparency_score", "sample_size", "end_date", "state", "cycle"
+  )
 )
 
 combined_national <- combined_national %>% mutate(
@@ -247,8 +257,10 @@ combined_national <- combined_national %>% mutate(
 combined_national_adj <- full_join(
   trump_2024_national_adj,
   harris_2024_national_adj,
-  by = c("pollster", "has_sponsor", "pollscore",
-         "transparency_score", "sample_size", "end_date", "state", "cycle")
+  by = c(
+    "pollster", "has_sponsor", "pollscore",
+    "transparency_score", "sample_size", "end_date", "state", "cycle"
+  )
 )
 
 combined_national_adj <- combined_national_adj %>% mutate(
@@ -279,20 +291,23 @@ summary(model_logistic_adj)
 # include predicted outcomes to the dataframes
 combined_national <- combined_national %>%
   mutate(
-    harris_win_prob = round(100*predict(model_logistic, type = "response"), 2)
+    harris_win_prob = round(100 * predict(model_logistic, type = "response"), 2)
   )
 
 combined_national_adj <- combined_national_adj %>%
   mutate(
-    harris_win_prob = round(100*predict(model_logistic_adj, 
-                                        type = "response"), 2)
+    harris_win_prob = round(100 * predict(model_logistic_adj,
+      type = "response"
+    ), 2)
   )
 
 #### Evaluate the Model ####
 
 # ROC Curve and AUC
-roc_obj <- roc(combined_national$harris_win,
-               combined_national$harris_win_prob)
+roc_obj <- roc(
+  combined_national$harris_win,
+  combined_national$harris_win_prob
+)
 plot(roc_obj, main = "ROC Curve for Harris Win Prediction")
 auc_value <- auc(roc_obj)
 
@@ -301,8 +316,10 @@ auc_value <- auc(roc_obj)
 
 # Check correlation matrix
 cor_matrix <- combined_national %>%
-  select(has_sponsor, 
-         transparency_score, sample_size) %>%
+  select(
+    has_sponsor,
+    transparency_score, sample_size
+  ) %>%
   cor()
 
 print(cor_matrix)
@@ -331,50 +348,64 @@ harris_Nevada <- harris_2024_regional %>% filter(state == "Nevada")
 combined_Pennsylvania <- full_join(
   trump_Pennsylvania,
   harris_Pennsylvania,
-  by = c("pollster", "has_sponsor", "pollscore", 
-         "transparency_score", "sample_size", "end_date", "state", "cycle")
+  by = c(
+    "pollster", "has_sponsor", "pollscore",
+    "transparency_score", "sample_size", "end_date", "state", "cycle"
+  )
 )
 
 combined_Georgia <- full_join(
   trump_Georgia,
   harris_Georgia,
-  by = c("pollster", "has_sponsor", "pollscore", 
-         "transparency_score", "sample_size", "end_date", "state", "cycle")
+  by = c(
+    "pollster", "has_sponsor", "pollscore",
+    "transparency_score", "sample_size", "end_date", "state", "cycle"
+  )
 )
 
 combined_North_Carolina <- full_join(
   trump_North_Carolina,
   harris_North_Carolina,
-  by = c("pollster", "has_sponsor", "pollscore", 
-         "transparency_score", "sample_size", "end_date", "state", "cycle")
+  by = c(
+    "pollster", "has_sponsor", "pollscore",
+    "transparency_score", "sample_size", "end_date", "state", "cycle"
+  )
 )
 
 combined_Michigan <- full_join(
   trump_Michigan,
   harris_Michigan,
-  by = c("pollster", "has_sponsor", "pollscore", 
-         "transparency_score", "sample_size", "end_date", "state", "cycle")
+  by = c(
+    "pollster", "has_sponsor", "pollscore",
+    "transparency_score", "sample_size", "end_date", "state", "cycle"
+  )
 )
 
 combined_Arizona <- full_join(
   trump_Arizona,
   harris_Arizona,
-  by = c("pollster", "has_sponsor", "pollscore", 
-         "transparency_score", "sample_size", "end_date", "state", "cycle")
+  by = c(
+    "pollster", "has_sponsor", "pollscore",
+    "transparency_score", "sample_size", "end_date", "state", "cycle"
+  )
 )
 
 combined_Wisconsin <- full_join(
   trump_Wisconsin,
   harris_Wisconsin,
-  by = c("pollster", "has_sponsor", "pollscore", 
-         "transparency_score", "sample_size", "end_date", "state", "cycle")
+  by = c(
+    "pollster", "has_sponsor", "pollscore",
+    "transparency_score", "sample_size", "end_date", "state", "cycle"
+  )
 )
 
 combined_Nevada <- full_join(
   trump_Nevada,
   harris_Nevada,
-  by = c("pollster", "has_sponsor", "pollscore", 
-         "transparency_score", "sample_size", "end_date", "state", "cycle")
+  by = c(
+    "pollster", "has_sponsor", "pollscore",
+    "transparency_score", "sample_size", "end_date", "state", "cycle"
+  )
 )
 
 # mutate harris_win variable by comparing polled support rates
@@ -477,76 +508,90 @@ logistic_Nevada <- glm(
 
 combined_Pennsylvania <- combined_Pennsylvania %>%
   mutate(
-    harris_win_prob = round(100*predict(logistic_Pennsylvania, type = "response"), 2)
+    harris_win_prob = round(100 * predict(logistic_Pennsylvania, type = "response"), 2)
   )
 
-roc_obj_Pennsylvania <- roc(combined_Pennsylvania$harris_win,
-                  combined_Pennsylvania$harris_win_prob)
+roc_obj_Pennsylvania <- roc(
+  combined_Pennsylvania$harris_win,
+  combined_Pennsylvania$harris_win_prob
+)
 plot(roc_obj_Pennsylvania, main = "ROC Curve for Harris Win Prediction, Pennsylvania")
 auc_value_Pennsylvania <- auc(roc_obj_Pennsylvania)
 
 
 combined_Georgia <- combined_Georgia %>%
   mutate(
-    harris_win_prob = round(100*predict(logistic_Georgia, type = "response"), 2)
+    harris_win_prob = round(100 * predict(logistic_Georgia, type = "response"), 2)
   )
 
-roc_obj_Georgia <- roc(combined_Georgia$harris_win,
-                            combined_Georgia$harris_win_prob)
+roc_obj_Georgia <- roc(
+  combined_Georgia$harris_win,
+  combined_Georgia$harris_win_prob
+)
 plot(roc_obj_Georgia, main = "ROC Curve for Harris Win Prediction, Georgia")
 auc_value_Georgia <- auc(roc_obj_Georgia)
 
 
 combined_North_Carolina <- combined_North_Carolina %>%
   mutate(
-    harris_win_prob = round(100*predict(logistic_North_Carolina, type = "response"), 2)
+    harris_win_prob = round(100 * predict(logistic_North_Carolina, type = "response"), 2)
   )
 
-roc_obj_North_Carolina <- roc(combined_North_Carolina$harris_win,
-                            combined_North_Carolina$harris_win_prob)
+roc_obj_North_Carolina <- roc(
+  combined_North_Carolina$harris_win,
+  combined_North_Carolina$harris_win_prob
+)
 plot(roc_obj_North_Carolina, main = "ROC Curve for Harris Win Prediction, North_Carolina")
 auc_value_North_Carolina <- auc(roc_obj_North_Carolina)
 
 
 combined_Michigan <- combined_Michigan %>%
   mutate(
-    harris_win_prob = round(100*predict(logistic_Michigan, type = "response"), 2)
+    harris_win_prob = round(100 * predict(logistic_Michigan, type = "response"), 2)
   )
 
-roc_obj_Michigan <- roc(combined_Michigan$harris_win,
-                            combined_Michigan$harris_win_prob)
+roc_obj_Michigan <- roc(
+  combined_Michigan$harris_win,
+  combined_Michigan$harris_win_prob
+)
 plot(roc_obj_Michigan, main = "ROC Curve for Harris Win Prediction, Michigan")
 auc_value_Michigan <- auc(roc_obj_Michigan)
 
 combined_Arizona <- combined_Arizona %>%
   mutate(
-    harris_win_prob = round(100*predict(logistic_Arizona, type = "response"), 2)
+    harris_win_prob = round(100 * predict(logistic_Arizona, type = "response"), 2)
   )
 
-roc_obj_Arizona <- roc(combined_Arizona$harris_win,
-                            combined_Arizona$harris_win_prob)
+roc_obj_Arizona <- roc(
+  combined_Arizona$harris_win,
+  combined_Arizona$harris_win_prob
+)
 plot(roc_obj_Arizona, main = "ROC Curve for Harris Win Prediction, Arizona")
 auc_value_Arizona <- auc(roc_obj_Arizona)
 
 
 combined_Wisconsin <- combined_Wisconsin %>%
   mutate(
-    harris_win_prob = round(100*predict(logistic_Wisconsin, type = "response"), 2)
+    harris_win_prob = round(100 * predict(logistic_Wisconsin, type = "response"), 2)
   )
 
-roc_obj_Wisconsin <- roc(combined_Wisconsin$harris_win,
-                            combined_Wisconsin$harris_win_prob)
+roc_obj_Wisconsin <- roc(
+  combined_Wisconsin$harris_win,
+  combined_Wisconsin$harris_win_prob
+)
 plot(roc_obj_Wisconsin, main = "ROC Curve for Harris Win Prediction, Wisconsin")
 auc_value_Wisconsin <- auc(roc_obj_Wisconsin)
 
 
 combined_Nevada <- combined_Nevada %>%
   mutate(
-    harris_win_prob = round(100*predict(logistic_Nevada, type = "response"), 2)
+    harris_win_prob = round(100 * predict(logistic_Nevada, type = "response"), 2)
   )
 
-roc_obj_Nevada <- roc(combined_Nevada$harris_win,
-                            combined_Nevada$harris_win_prob)
+roc_obj_Nevada <- roc(
+  combined_Nevada$harris_win,
+  combined_Nevada$harris_win_prob
+)
 plot(roc_obj_Nevada, main = "ROC Curve for Harris Win Prediction, Nevada")
 auc_value_Nevada <- auc(roc_obj_Nevada)
 
@@ -620,69 +665,97 @@ saveRDS(
 
 #### Results ####
 # To predict the outcome on election day, generate 1000 hypothetical data points
-# using the election day as end_date and the normal curve of other input 
+# using the election day as end_date and the normal curve of other input
 # variables, mimicing all the situations that may happen on election day
 hypothetical_data_Pennsylvania <- tibble(
   end_date = as.Date("2024-11-05"),
   has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Pennsylvania$has_sponsor)),
-  transparency_score = rnorm(1000, mean = mean(combined_Pennsylvania$transparency_score), 
-                             sd = sd(combined_Pennsylvania$transparency_score)),
-  sample_size = rnorm(1000, mean = mean(combined_Pennsylvania$sample_size),
-                      sd = sd(combined_Pennsylvania$sample_size))
+  transparency_score = rnorm(1000,
+    mean = mean(combined_Pennsylvania$transparency_score),
+    sd = sd(combined_Pennsylvania$transparency_score)
+  ),
+  sample_size = rnorm(1000,
+    mean = mean(combined_Pennsylvania$sample_size),
+    sd = sd(combined_Pennsylvania$sample_size)
+  )
 )
 
 hypothetical_data_Georgia <- tibble(
   end_date = as.Date("2024-11-05"),
   has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Georgia$has_sponsor)),
-  transparency_score = rnorm(1000, mean = mean(combined_Georgia$transparency_score), 
-                             sd = sd(combined_Georgia$transparency_score)),
-  sample_size = rnorm(1000, mean = mean(combined_Georgia$sample_size),
-                      sd = sd(combined_Georgia$sample_size))
+  transparency_score = rnorm(1000,
+    mean = mean(combined_Georgia$transparency_score),
+    sd = sd(combined_Georgia$transparency_score)
+  ),
+  sample_size = rnorm(1000,
+    mean = mean(combined_Georgia$sample_size),
+    sd = sd(combined_Georgia$sample_size)
+  )
 )
 
 hypothetical_data_North_Carolina <- tibble(
   end_date = as.Date("2024-11-05"),
   has_sponsor = rbinom(1000, size = 1, prob = mean(combined_North_Carolina$has_sponsor)),
-  transparency_score = rnorm(1000, mean = mean(combined_North_Carolina$transparency_score), 
-                             sd = sd(combined_North_Carolina$transparency_score)),
-  sample_size = rnorm(1000, mean = mean(combined_North_Carolina$sample_size),
-                      sd = sd(combined_North_Carolina$sample_size))
+  transparency_score = rnorm(1000,
+    mean = mean(combined_North_Carolina$transparency_score),
+    sd = sd(combined_North_Carolina$transparency_score)
+  ),
+  sample_size = rnorm(1000,
+    mean = mean(combined_North_Carolina$sample_size),
+    sd = sd(combined_North_Carolina$sample_size)
+  )
 )
 
 hypothetical_data_Michigan <- tibble(
   end_date = as.Date("2024-11-05"),
   has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Michigan$has_sponsor)),
-  transparency_score = rnorm(1000, mean = mean(combined_Michigan$transparency_score), 
-                             sd = sd(combined_Michigan$transparency_score)),
-  sample_size = rnorm(1000, mean = mean(combined_Michigan$sample_size),
-                      sd = sd(combined_Michigan$sample_size))
+  transparency_score = rnorm(1000,
+    mean = mean(combined_Michigan$transparency_score),
+    sd = sd(combined_Michigan$transparency_score)
+  ),
+  sample_size = rnorm(1000,
+    mean = mean(combined_Michigan$sample_size),
+    sd = sd(combined_Michigan$sample_size)
+  )
 )
 
 hypothetical_data_Arizona <- tibble(
   end_date = as.Date("2024-11-05"),
   has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Arizona$has_sponsor)),
-  transparency_score = rnorm(1000, mean = mean(combined_Arizona$transparency_score), 
-                             sd = sd(combined_Arizona$transparency_score)),
-  sample_size = rnorm(1000, mean = mean(combined_Arizona$sample_size),
-                      sd = sd(combined_Arizona$sample_size))
+  transparency_score = rnorm(1000,
+    mean = mean(combined_Arizona$transparency_score),
+    sd = sd(combined_Arizona$transparency_score)
+  ),
+  sample_size = rnorm(1000,
+    mean = mean(combined_Arizona$sample_size),
+    sd = sd(combined_Arizona$sample_size)
+  )
 )
 
 hypothetical_data_Wisconsin <- tibble(
   end_date = as.Date("2024-11-05"),
   has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Wisconsin$has_sponsor)),
-  transparency_score = rnorm(1000, mean = mean(combined_Wisconsin$transparency_score), 
-                             sd = sd(combined_Wisconsin$transparency_score)),
-  sample_size = rnorm(1000, mean = mean(combined_Wisconsin$sample_size),
-                      sd = sd(combined_Wisconsin$sample_size))
+  transparency_score = rnorm(1000,
+    mean = mean(combined_Wisconsin$transparency_score),
+    sd = sd(combined_Wisconsin$transparency_score)
+  ),
+  sample_size = rnorm(1000,
+    mean = mean(combined_Wisconsin$sample_size),
+    sd = sd(combined_Wisconsin$sample_size)
+  )
 )
 
 hypothetical_data_Nevada <- tibble(
   end_date = as.Date("2024-11-05"),
   has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Nevada$has_sponsor)),
-  transparency_score = rnorm(1000, mean = mean(combined_Nevada$transparency_score), 
-                             sd = sd(combined_Nevada$transparency_score)),
-  sample_size = rnorm(1000, mean = mean(combined_Nevada$sample_size),
-                      sd = sd(combined_Nevada$sample_size))
+  transparency_score = rnorm(1000,
+    mean = mean(combined_Nevada$transparency_score),
+    sd = sd(combined_Nevada$transparency_score)
+  ),
+  sample_size = rnorm(1000,
+    mean = mean(combined_Nevada$sample_size),
+    sd = sd(combined_Nevada$sample_size)
+  )
 )
 
 # run the corresponding logistic regression on the hypothetical data of each
@@ -690,43 +763,43 @@ hypothetical_data_Nevada <- tibble(
 # on election day
 hypothetical_data_Pennsylvania <- hypothetical_data_Pennsylvania %>%
   mutate(
-    harris_win_prob = round(100*predict(logistic_Pennsylvania, newdata = ., type = "response"), 2)
+    harris_win_prob = round(100 * predict(logistic_Pennsylvania, newdata = ., type = "response"), 2)
   )
 
 
 hypothetical_data_Georgia <- hypothetical_data_Georgia %>%
   mutate(
-    harris_win_prob = round(100*predict(logistic_Georgia, newdata = ., type = "response"), 2)
+    harris_win_prob = round(100 * predict(logistic_Georgia, newdata = ., type = "response"), 2)
   )
 
 
 hypothetical_data_North_Carolina <- hypothetical_data_North_Carolina %>%
   mutate(
-    harris_win_prob = round(100*predict(logistic_North_Carolina, newdata = ., type = "response"), 2)
+    harris_win_prob = round(100 * predict(logistic_North_Carolina, newdata = ., type = "response"), 2)
   )
 
 
 hypothetical_data_Michigan <- hypothetical_data_Michigan %>%
   mutate(
-    harris_win_prob = round(100*predict(logistic_Michigan, newdata = ., type = "response"), 2)
+    harris_win_prob = round(100 * predict(logistic_Michigan, newdata = ., type = "response"), 2)
   )
 
 
 hypothetical_data_Arizona <- hypothetical_data_Arizona %>%
   mutate(
-    harris_win_prob = round(100*predict(logistic_Arizona, newdata = ., type = "response"), 2)
+    harris_win_prob = round(100 * predict(logistic_Arizona, newdata = ., type = "response"), 2)
   )
 
 
 hypothetical_data_Wisconsin <- hypothetical_data_Wisconsin %>%
   mutate(
-    harris_win_prob = round(100*predict(logistic_Wisconsin, newdata = ., type = "response"), 2)
+    harris_win_prob = round(100 * predict(logistic_Wisconsin, newdata = ., type = "response"), 2)
   )
 
 
 hypothetical_data_Nevada <- hypothetical_data_Nevada %>%
   mutate(
-    harris_win_prob = round(100*predict(logistic_Nevada, newdata = ., type = "response"), 2)
+    harris_win_prob = round(100 * predict(logistic_Nevada, newdata = ., type = "response"), 2)
   )
 
 
@@ -817,7 +890,7 @@ mean_probabilities %>%
     heading.subtitle.font.size = 12,
     table.border.top.width = px(2),
     table.border.bottom.width = px(2)
-  ) 
+  )
 
 #### Overall Probability of Winning ####
 # Harris
@@ -831,8 +904,8 @@ states <- data.frame(
 # Function to calculate probability of a specific combination
 calc_combo_prob <- function(combo, states) {
   prob <- 1
-  for(i in 1:nrow(states)) {
-    if(i %in% combo) {
+  for (i in 1:nrow(states)) {
+    if (i %in% combo) {
       prob <- prob * states$prob[i]
     } else {
       prob <- prob * (1 - states$prob[i])
@@ -846,15 +919,15 @@ n_states <- nrow(states)
 total_prob <- 0
 
 # Check each possible combination
-for(i in 1:(2^n_states - 1)) {
+for (i in 1:(2^n_states - 1)) {
   # Convert number to binary to get combination
   combo <- which(intToBits(i)[1:n_states] == 1)
-  
+
   # Calculate total electoral votes for this combination
   votes <- sum(states$votes[combo])
-  
+
   # If this combination has enough votes, add its probability
-  if(votes >= 44) {
+  if (votes >= 44) {
     prob <- calc_combo_prob(combo, states)
     total_prob <- total_prob + prob
   }
@@ -865,16 +938,16 @@ print(paste("Probability of Harris winning at least 44 electoral votes:", round(
 # Trump
 # Create data frame of states
 states <- data.frame(
-  state = c("PA", "GA", "NC", "MI", "WI", "NV","AZ"),
-  prob = c(1-0.5551, 1-0.6801, 1-0.1033, 1-0.5151, 1-0.3792, 1-0.7679, 1-0), # Using 1-p for Trump's probabilities
+  state = c("PA", "GA", "NC", "MI", "WI", "NV", "AZ"),
+  prob = c(1 - 0.5551, 1 - 0.6801, 1 - 0.1033, 1 - 0.5151, 1 - 0.3792, 1 - 0.7679, 1 - 0), # Using 1-p for Trump's probabilities
   votes = c(20, 16, 15, 16, 10, 6, 11)
 )
 
 # Function to calculate probability of a specific combination
 calc_combo_prob <- function(combo, states) {
   prob <- 1
-  for(i in 1:nrow(states)) {
-    if(i %in% combo) {
+  for (i in 1:nrow(states)) {
+    if (i %in% combo) {
       prob <- prob * states$prob[i]
     } else {
       prob <- prob * (1 - states$prob[i])
@@ -888,19 +961,18 @@ n_states <- nrow(states)
 total_prob <- 0
 
 # Check each possible combination
-for(i in 1:(2^n_states - 1)) {
+for (i in 1:(2^n_states - 1)) {
   # Convert number to binary to get combination
   combo <- which(intToBits(i)[1:n_states] == 1)
-  
+
   # Calculate total electoral votes for this combination
   votes <- sum(states$votes[combo])
-  
+
   # If this combination has enough votes, add its probability
-  if(votes >= 51) {
+  if (votes >= 51) {
     prob <- calc_combo_prob(combo, states)
     total_prob <- total_prob + prob
   }
 }
 
 print(paste("Probability of Trump winning at least 51 electoral votes:", round(total_prob * 100, 2), "%"))
-

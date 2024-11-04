@@ -1174,6 +1174,10 @@ The dataset used for this analysis has a number of clear limitations. First of a
 
 The second major challenge presented by the dataset is the lack of predictors. FiveThirtyEight utilizes predictive variables that are unavailable to us, such as weighted values that represent the extent to which a pollster is partisan [@5383]. The predictors used in this research, such as the transparency score of the pollster, are not related to their bias towards any candidate from a partisanship point of view, limiting the predictive power of our models.
 
+Finally, the lack of data regarding the Harris-Trump race, due to Harris starting her presidential race uncharacteristically late, is also a main reason for the limitations of our model. 
+
+Potential next steps could be taken to improve the model in the future: more data could be aggregated manually (from pollsters not recorded by FiveThirtyEight), stronger predictor variables that are specifically more correlated with partisanship could be marked and utilised in our model, and individual weightings could be utilised and applied to the data based on each pollster's "track record" with regards to the error, bias, and variance in their previous polls and estimates.
+
 \newpage
 
 \appendix

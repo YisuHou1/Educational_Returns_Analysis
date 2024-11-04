@@ -49,7 +49,7 @@ The body of the paper contains the data, model, results, and discussion sections
 
 ## Overview
 
-We use the statistical programming language R [@R] for the graphing, analysis and presentation of the project as a whole. Caret [@caret], glmnet [@glmnet; @glmnet2; @glmnet3], nnet [@nnet], lubridate [@lubridate] and pROC [@pROC] were used directly in the analysis of the data. Tidyverse [@tidyverse], stringr [@stringr], dplyr [@dplyr], and styler [@styler] were used in the presentation and/or styling of the data, graphs, and paper as a whole.
+We use the statistical programming language R [@R] for the graphing, analysis and presentation of the project as a whole. Caret [@caret], glmnet [@glmnet; @glmnet2; @glmnet3], nnet [@nnet], lubridate [@lubridate] and pROC [@pROC] were used directly in the analysis of the data. Tidyverse [@tidyverse], stringr [@stringr], dplyr [@dplyr], gt [@gt], knitr [@knitr], and styler [@styler] were used in the presentation and/or styling of the data, graphs, and paper as a whole.
 
 In order to build a model that predicts the results of the 2024 election, we use survey/poll data on likely voters to inform our insights regarding likely election results, an approach widely accepted in political contexts [@politicalpolling]. We use a poll-of-polls dataset from 538 [@538data], consisting of aggregated polling data from FiveThirtyEight's 2024 presidential election polling database from various national and state-level polls from pollsters all around the country, recording information such as the date when the poll concluded, the entity conducting the poll, and the estimated support rate of the candidate as given by the poll. The data spans national and state-level polls, with particular focus on key battleground states that could determine the Electoral College outcome. This dataset was chosen over alternatives like RealClearPolitics because of 538's comprehensive methodological adjustments and transparent quality standards for included polls.
 
@@ -1117,6 +1117,7 @@ ggplot(combined_data_adj, aes(x = end_date, y = pct_adj, color = candidate_name)
   )
 
 ```
+\FloatBarrier
 
 @fig-lr Presents the predicted unadjusted national support rates for Harris and Trump. The conclusions one can make from this plot is similar to those of most polls: Harris is expected to win the popular vote on any day, including the election day. 
 
@@ -1150,7 +1151,9 @@ ggplot(combined_data, aes(x = end_date, y = pct, color = candidate_name)) +
 
 
 ```
-The regression coefficients for the logistic and linear models are presented in the Appendix because they are not the outcome of interest.
+\FloatBarrier
+
+The regression coefficients for the logistic and linear models are presented in the Additional Data Details section (@sec-model-details) because they are not the outcome of interest.
 
 
 

@@ -1,4 +1,4 @@
-# Starter folder
+# A Logistic Regression Prediction of 2024 Election Odds Gives VP Harris a 38.3% Win Rate
 
 ## Overview
 

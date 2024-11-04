@@ -230,7 +230,7 @@ ggplot(all_combined, aes(x = factor(has_sponsor, levels = c(0,1), labels = c("No
 
 ```{r}
 #| label: fig-transparency
-#| fig-cap: Distribution of Transparency Scores
+#| fig-cap: Distribution of Poll Transparency Scores
 #| echo: false
 #| message: false
 #| warning: false
@@ -254,7 +254,7 @@ ggplot(all_combined, aes(x = factor(transparency_score))) +
 
 ```{r}
 #| label: fig-sample
-#| fig-cap: Distribution of Sample Sizes
+#| fig-cap: Distribution of Poll Sample Sizes
 #| echo: false
 #| message: false
 #| warning: false

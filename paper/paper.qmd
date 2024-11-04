@@ -3,12 +3,15 @@ title: "My title"
 subtitle: "My subtitle if needed"
 author: 
   - First author
-  - Another author
+  - Yisu Hou
 thanks: "Code and data are available at: [https://github.com/RohanAlexander/starter_folder](https://github.com/RohanAlexander/starter_folder)."
 date: today
 date-format: long
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
 format: pdf
+header-includes:
+  - \usepackage{float}
+  - \usepackage{placeins}
 number-sections: true
 bibliography: references.bib
 ---
@@ -19,13 +22,22 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
-library(palmerpenguins)
+library(caret)
+library(glmnet)
+library(nnet)
+library(lubridate)
+library(pROC)
+library(stringr)
 ```
 
 
 # Introduction
 
 Overview paragraph
+
+note: For the literature review/why our thing matters section talk about how other predictions don't consider the biases in polls. Our thing is something new because we attempt to account for the bias in historical predictions for our 2024 prediction. (basically, for all models and predictions, I have an adjusted version that adjusts the support percentage using the difference between 2020 polls and real election outcomes, and a normal version that just uses the percentages from 2024 polls)
+
+There's essentially 3 different levels of analysis: using multiple linear regression to look at the candidates' support over time on the national level, using logistic regression to predict the chance of winning on the national level, using state polls data to see who is ahead in electoral college votes.
 
 Estimand paragraph
 
@@ -52,60 +64,217 @@ Overview text
 	
 Some paragraphs about how we go from a phenomena in the world to an entry in the dataset.
 
-## Outcome variables
+## Outcome variable
 
-Add graphs, tables and text. Use sub-sub-headings for each outcome variable or update the subheading to be singular.
-
-
-
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
+The outcome variable is the level of support for the two leading US presidential candidates, Vice President Kamala Harris and Former President Donald Trump, recorded as a percentage of likely voters. For the national-level analysis, the support percentage represents the percentage of polled individuals who responded in favor of a specific candidate to a question that asked about their preferred presidential candidate in a national-level poll. For the regional datasets, the support percentage represents the percentage of likely voters who preferred a specific candidate in a poll that targets a specific state or congressional district of the United States. @fig-outcome shows the distribution of support percentages in the aggregated polling data from 2020 and 2024 presidential elections.
 
 ```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
 #| echo: false
-
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
-
-```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
-#| echo: false
-#| warning: false
 #| message: false
+#| warning: false
 
-analysis_data <- read_csv(here::here("data/02-analysis_data/analysis_data.csv"))
+trump_2024 <- read_csv(here::here("data/02-analysis_data/trump_2024_analysis_data.csv"))
+harris_2024 <- read_csv(here::here("data/02-analysis_data/harris_2024_analysis_data.csv"))
+trump_2024_lower <- 
+  read_csv(here::here("data/02-analysis_data/trump_2024_analysis_data_lower.csv"))
+harris_2024_lower <- 
+  read_csv(here::here("data/02-analysis_data/harris_2024_analysis_data_lower.csv"))
+trump_2020 <- read_csv(here::here("data/02-analysis_data/trump_2020_analysis_data.csv"))
+biden_2020 <- read_csv(here::here("data/02-analysis_data/biden_2020_analysis_data.csv"))
 
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
+# aggregated dataset for summary statistics
+# datasets with lower numeric scores already includes polls with a score of 3.0
+all_combined <- bind_rows(harris_2024_lower, trump_2024_lower,
+    biden_2020, trump_2020)
+
 ```
 
-Talk way more about it. 
+```{r}
+#| label: fig-outcome
+#| fig-cap: Percentage Support in US Presidential Polls
+#| echo: false
+#| message: false
+#| warning: false
+
+ggplot(all_combined, aes(x = pct)) +
+  geom_histogram(
+    binwidth = 1,                # Adjust bin width for granularity
+    fill = "#2c7bb6",            # Aesthetic fill color (steel blue)
+    color = "white",             # Border color for bins
+    alpha = 0.8                   # Transparency of the fill
+  ) +
+  labs(
+    x = "Percentage Support",
+    y = "Number of Polls"
+  ) +
+  theme_minimal(base_size = 14) +   # Minimal theme with increased base font size
+  theme(
+    plot.title = element_text(
+      size = 16, 
+      face = "bold", 
+      hjust = 0.5,                # Center the title
+      margin = margin(b = 10)     # Add space below the title
+    ),
+    plot.subtitle = element_text(
+      size = 12, 
+      hjust = 0.5, 
+      margin = margin(b = 20)     # Add space below the subtitle
+    ),
+    axis.title = element_text(face = "bold"), # Bold axis titles
+    axis.text = element_text(color = "gray30"), # Dark gray axis text
+    panel.grid.major = element_line(color = "gray80"), # Light gray major grid lines
+    panel.grid.minor = element_blank()                 # Remove minor grid lines
+  ) +
+  # Add a vertical line for the mean percentage support
+  geom_vline(
+    aes(xintercept = mean(pct, na.rm = TRUE)),
+    color = "#d73027",           # Aesthetic color (red)
+    linetype = "dashed", 
+    size = 1
+  ) +
+  # Annotate the mean value on the plot
+  annotate(
+    "text",
+    x = mean(all_combined$pct, na.rm = TRUE) - 7, # Position text slightly to the right of the mean line
+    y = Inf,                                     # Position text at the top of the plot
+    label = paste("Mean:", round(mean(all_combined$pct, na.rm = TRUE), 1), "%"),
+    vjust = 2,                                   # Vertical adjustment
+    color = "#d73027",
+    size = 5,
+    fontface = "bold"
+  )
+
+```
+
+\FloatBarrier
+
+The aggregated polling data includes support percentages of different presidential candidates in polls with different FiveThirtyEight ratings [CITATION HERE https://abcnews.go.com/538/best-pollsters-america/story?id=105563951] across two elections. Please view [UPDATE APPENDIX] for summary statistics of sub-datasets.
+
+As displayed by @fig-outcome, the distribution of support percentages is close to a normal distribution, with most data points between 45 and 52 percent.
 
 ## Predictor variables
 
-Add graphs, tables and text.
+### End Date
+```{r}
+#| label: fig-dates-past
+#| fig-cap: Distribution of Poll End Date, 2020 Cycle
+#| echo: false
+#| message: false
+#| warning: false
 
-Use sub-sub-headings for each outcome variable and feel free to combine a few into one if they go together naturally.
+ggplot(all_combined %>% filter(cycle == 2020), aes(x = end_date)) +
+  geom_histogram(binwidth = 7, fill = "#1f78b4", color = "white", alpha = 0.7) +
+  labs(
+    x = "End Date",
+    y = "Number of Polls"
+  ) +
+  scale_x_date(date_labels = "%b %d, %Y", date_breaks = "1 month") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
 
+```
+\vspace{1em}
+\FloatBarrier
 
+```{r}
+#| label: fig-dates-current
+#| fig-cap: Distribution of Poll End Date, 2024 Cycle
+#| echo: false
+#| message: false
+#| warning: false
 
+ggplot(all_combined %>% filter(cycle == 2024), aes(x = end_date)) +
+  geom_histogram(binwidth = 7, fill = "#1f78b4", color = "white", alpha = 0.7) +
+  labs(
+    x = "End Date",
+    y = "Number of Polls"
+  ) +
+  scale_x_date(date_labels = "%b %d, %Y", date_breaks = "1 month") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
 
+```
+\FloatBarrier
+
+### Sponsored
+
+```{r}
+#| label: fig-sponsored
+#| fig-cap: Number of Polls with and without Sponsors
+#| echo: false
+#| message: false
+#| warning: false
+
+ggplot(all_combined, aes(x = factor(has_sponsor, levels = c(0,1), labels = c("No Sponsor", "Has Sponsor")))) +
+  geom_bar(fill = "#1f78b4", color = "white", alpha = 0.7) +
+  labs(
+    x = "Has Sponsor",
+    y = "Number of Polls"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold")
+  )
+
+```
+
+\FloatBarrier
+
+### Transparency Score
+
+```{r}
+#| label: fig-transparency
+#| fig-cap: Distribution of Transparency Scores
+#| echo: false
+#| message: false
+#| warning: false
+
+ggplot(all_combined, aes(x = factor(transparency_score))) +
+  geom_bar(fill = "#1f78b4", color = "white", alpha = 0.7) +
+  labs(
+    x = "Transparency Score",
+    y = "Number of Polls"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold")
+  )
+
+```
+
+\FloatBarrier
+
+### Sample Size
+
+```{r}
+#| label: fig-sample
+#| fig-cap: Distribution of Sample Sizes
+#| echo: false
+#| message: false
+#| warning: false
+
+ggplot(all_combined, aes(x = sample_size)) +
+  geom_histogram(binwidth = 500, fill = "#1f78b4", color = "white", alpha = 0.7) +
+  labs(
+    x = "Sample Size",
+    y = "Number of Polls"
+  ) +
+  scale_x_continuous(labels = scales::comma) +
+  coord_cartesian(xlim = c(0, 6000)) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold")
+  )
+
+```
+
+\FloatBarrier
 
 
 
@@ -144,31 +313,11 @@ We can use maths by including latex between dollar signs, for instance $\theta$.
 Our results are summarized in @tbl-modelresults.
 
 ```{r}
-#| echo: false
-#| eval: true
-#| warning: false
-#| message: false
 
-library(rstanarm)
-
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
 ```
 
 ```{r}
-#| echo: false
-#| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
-#| warning: false
 
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
-)
 ```
 
 
@@ -431,24 +580,7 @@ In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. 
 In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
 
 ```{r}
-#| eval: true
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
 
-pp_check(first_model) +
-  theme_classic() +
-  theme(legend.position = "bottom")
-
-posterior_vs_prior(first_model) +
-  theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom") +
-  coord_flip()
 ```
 
 ## Diagnostics
@@ -458,18 +590,7 @@ posterior_vs_prior(first_model) +
 @fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
 
 ```{r}
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
-#| layout-ncol: 2
 
-plot(first_model, "trace")
-
-plot(first_model, "rhat")
 ```
 
 

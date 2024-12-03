@@ -1,978 +1,885 @@
 #### Preamble ####
-# Purpose: Models the probability of Harris winning on election day
-# Author: Andrew Goh, Yisu Hou
-# Date: 3 November 2024
+# Purpose: Models the educational returns of working individuals in China
+# Author: Yisu Hou
+# Date: 28 November 2024
 # Contact: yisu.hou@mail.utoronto.ca
 # License: None
 # Pre-requisites:
 # - Packages `tidyverse`, `caret`, `glmnet`, `nnet`, `lubridate`, `pROC`,
-# `stringr`, and `gt` must be installed
+#   `stringr`, and `gt` must be installed
 # - 02-clean_data.R, 03-test_analysis_data.R,
-# and 04-exploratory_data_analysis.R must have been run
+#   and 04-exploratory_data_analysis.R must have been run
 
 
 #### Workspace setup ####
 
-# Load libraries
-library(tidyverse)
-library(caret)
-library(glmnet)
-library(nnet)
-library(lubridate)
-library(pROC)
-library(stringr)
-library(gt)
-
-
-#### Read data ####
-trump_2024 <- read_csv("data/02-analysis_data/trump_2024_analysis_data.csv")
-harris_2024 <- read_csv("data/02-analysis_data/harris_2024_analysis_data.csv")
-trump_2024_lower <-
-  read_csv("data/02-analysis_data/trump_2024_analysis_data_lower.csv")
-harris_2024_lower <-
-  read_csv("data/02-analysis_data/harris_2024_analysis_data_lower.csv")
-trump_2020 <- read_csv("data/02-analysis_data/trump_2020_analysis_data.csv")
-biden_2020 <- read_csv("data/02-analysis_data/biden_2020_analysis_data.csv")
-
-# find biases of pollsters from 2020 national polls data
-# filter out national polls from the datasets
-trump_2024_national <- trump_2024 %>% filter(state == "National")
-harris_2024_national <- harris_2024 %>% filter(state == "National")
-trump_2020_national <- trump_2020 %>% filter(state == "National")
-biden_2020_national <- biden_2020 %>% filter(state == "National")
-
-# Define actual results
-actual_results_2020 <- list(Trump_pct = 47, Biden_pct = 51)
-
-# Calculate bias per pollster
-rep_pollster_bias <- trump_2020_national %>%
-  group_by(pollster) %>%
-  summarize(
-    Trump_bias = mean(pct - actual_results_2020$Trump_pct, na.rm = TRUE)
-  )
-
-dem_pollster_bias <- biden_2020_national %>%
-  group_by(pollster) %>%
-  summarize(
-    Biden_bias = mean(pct - actual_results_2020$Biden_pct, na.rm = TRUE)
-  )
-
-# adjust 2024 national polls percentages by the average pollster biases
-# also mutate has_sponsor variable into dummy variable and remove NA's
-trump_2024_national_adj <- trump_2024_national %>%
-  left_join(rep_pollster_bias, by = "pollster") %>%
-  mutate(
-    pct_adj = pct - ifelse(!is.na(Trump_bias), Trump_bias, 0)
-  ) %>%
-  select(-Trump_bias)
-
-# Adjust Harris 2024 National Polls
-harris_2024_national_adj <- harris_2024_national %>%
-  left_join(dem_pollster_bias, by = "pollster") %>%
-  mutate(
-    pct_adj = pct - ifelse(!is.na(Biden_bias), Biden_bias, 0)
-  ) %>%
-  select(-Biden_bias)
-
-
-# model adjusted support percentage by time and control variables
-# first split training and testing dataset using an 80/20 split
-set.seed(11451)
-trainIndex_trump_adj <- createDataPartition(trump_2024_national_adj$pct_adj,
-  p = 0.8, list = FALSE
-)
-data_train_trump_adj <- trump_2024_national_adj[trainIndex_trump_adj, ]
-data_test_trump_adj <- trump_2024_national_adj[-trainIndex_trump_adj, ]
-
-trainIndex_harris_adj <- createDataPartition(harris_2024_national_adj$pct_adj,
-  p = 0.8, list = FALSE
-)
-data_train_harris_adj <- harris_2024_national_adj[trainIndex_harris_adj, ]
-data_test_harris_adj <- harris_2024_national_adj[-trainIndex_harris_adj, ]
-
-model_date_harris_adj <- lm(pct_adj ~ end_date + has_sponsor +
-  transparency_score + sample_size, data = data_train_harris_adj)
-model_date_trump_adj <- lm(pct_adj ~ end_date + has_sponsor +
-  transparency_score + sample_size, data = data_train_trump_adj)
-
-# repeat for unadjusted support levels
-trainIndex_trump <- createDataPartition(trump_2024_national$pct,
-  p = 0.8, list = FALSE
-)
-data_train_trump <- trump_2024_national[trainIndex_trump, ]
-data_test_trump <- trump_2024_national[-trainIndex_trump, ]
-
-trainIndex_harris <- createDataPartition(harris_2024_national$pct,
-  p = 0.8, list = FALSE
-)
-data_train_harris <- harris_2024_national[trainIndex_harris, ]
-data_test_harris <- harris_2024_national[-trainIndex_harris, ]
-
-model_date_harris <- lm(pct ~ end_date + has_sponsor +
-  transparency_score + sample_size, data = data_train_harris)
-model_date_trump <- lm(pct ~ end_date + has_sponsor +
-  transparency_score + sample_size, data = data_train_trump)
-
-
-# Functions to evaluate model using testing dataset
-evaluate_model_adj <- function(model, test_data) {
-  predictions <- predict(model, newdata = test_data)
-  actuals <- test_data$pct_adj
-  rmse <- sqrt(mean((predictions - actuals)^2, na.rm = TRUE))
-  r_squared <- summary(model)$r.squared
-  return(list(RMSE = rmse, R_squared = r_squared))
-}
-
-evaluate_model <- function(model, test_data) {
-  predictions <- predict(model, newdata = test_data)
-  actuals <- test_data$pct
-  rmse <- sqrt(mean((predictions - actuals)^2, na.rm = TRUE))
-  r_squared <- summary(model)$r.squared
-  return(list(RMSE = rmse, R_squared = r_squared))
-}
-
-# Evaluate Harris model with adjusted support percentages
-harris_evaluation_adj <- evaluate_model_adj(model_date_harris_adj, data_test_harris_adj)
-print("Harris Adjusted Model Evaluation:")
-print(harris_evaluation_adj)
-
-# Evaluate Trump model with adjusted support percentages
-trump_evaluation_adj <- evaluate_model_adj(model_date_trump_adj, data_test_trump_adj)
-print("Trump Adjusted Model Evaluation:")
-print(trump_evaluation_adj)
-
-# Evaluate Harris model with unadjusted support percentages
-harris_evaluation <- evaluate_model(model_date_harris, data_test_harris)
-print("Harris Unadjusted Model Evaluation:")
-print(harris_evaluation)
-
-# Evaluate Trump model with unadjusted support percentages
-trump_evaluation <- evaluate_model(model_date_trump, data_test_trump)
-print("Trump Unadjusted Model Evaluation:")
-print(trump_evaluation)
-
-# Augment data with model predictions
-model_harris_adj <- lm(pct_adj ~ end_date + has_sponsor +
-  transparency_score + sample_size, data = harris_2024_national_adj)
-model_trump_adj <- lm(pct_adj ~ end_date + has_sponsor +
-  transparency_score + sample_size, data = trump_2024_national_adj)
-
-harris_2024_national_adj <- harris_2024_national_adj %>% mutate(
-  fitted_date = predict(model_harris_adj)
-)
-
-trump_2024_national_adj <- trump_2024_national_adj %>% mutate(
-  fitted_date = predict(model_trump_adj)
-)
-
-# Unadjusted datasets
-model_harris <- lm(pct ~ end_date + has_sponsor +
-  transparency_score + sample_size, data = harris_2024_national)
-
-harris_2024_national <- harris_2024_national %>% mutate(
-  fitted_date = predict(model_harris)
-)
-
-trump_2024_national <- trump_2024_national %>% mutate(
-  fitted_date = predict(model_trump)
-)
-
-# plot model predictions
-# combine the datasets to create a single visual
-combined_data_adj <- bind_rows(harris_2024_national_adj, trump_2024_national_adj)
-combined_data <- bind_rows(harris_2024_national, trump_2024_national)
-
-# create the plot that contains scattered points of adjusted percentages
-# and lines for fitted values
-ggplot(combined_data_adj, aes(x = end_date, y = pct_adj, color = candidate_name)) +
-  # Scatter points for actual adjusted percentages
-  geom_point(alpha = 0.6) +
-  # Regression lines
-  geom_line(aes(y = fitted_date), size = 0.5) +
-  xlim(as.Date("2024-07-19"), as.Date("2024-10-25")) +
-  # Assign specific colors
-  scale_color_manual(
-    values =
-      c("Kamala Harris" = "blue", "Donald Trump" = "red")
-  ) +
-  # Customize the plot appearance
-  theme_classic() +
-  labs(
-    y = "Adjusted Percent Support",
-    x = "End Date",
-    title = "Multiple Linear Models for Harris and Trump (2024)",
-    color = "Candidate"
-  ) +
-  theme(
-    text = element_text(size = 12),
-    plot.title = element_text(hjust = 0.5, face = "bold")
-  )
-
-# Unadjusted support percentages
-ggplot(combined_data, aes(x = end_date, y = pct, color = candidate_name)) +
-  # Scatter points for actual adjusted percentages
-  geom_point(alpha = 0.6) +
-  # Regression lines
-  geom_line(aes(y = fitted_date), size = 0.5) +
-  xlim(as.Date("2024-07-19"), as.Date("2024-10-25")) +
-  # Assign specific colors
-  scale_color_manual(
-    values =
-      c("Kamala Harris" = "blue", "Donald Trump" = "red")
-  ) +
-  # Customize the plot appearance
-  theme_classic() +
-  labs(
-    y = "Adjusted Percent Support",
-    x = "End Date",
-    title = "Multiple Linear Models for Harris and Trump (2024)",
-    color = "Candidate"
-  ) +
-  theme(
-    text = element_text(size = 12),
-    plot.title = element_text(hjust = 0.5, face = "bold")
-  )
-
-
-
-#### Logistic regression for national support ####
-
-combined_national <- full_join(
-  trump_2024_national,
-  harris_2024_national,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_national <- combined_national %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-# repeat for adjusted support levels
-combined_national_adj <- full_join(
-  trump_2024_national_adj,
-  harris_2024_national_adj,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_national_adj <- combined_national_adj %>% mutate(
-  harris_win = case_when(
-    pct_adj.y >= pct_adj.x ~ 1,
-    pct_adj.y < pct_adj.x ~ 0
-  )
-)
-
-
-# logistic model to predict the winner
-model_logistic <- glm(
-  harris_win ~ end_date + has_sponsor + transparency_score + sample_size,
-  data = combined_national,
-  family = binomial
-)
-
-summary(model_logistic)
-
-model_logistic_adj <- glm(
-  harris_win ~ end_date + has_sponsor + transparency_score + sample_size,
-  data = combined_national_adj,
-  family = binomial
-)
-
-summary(model_logistic_adj)
-
-# include predicted outcomes to the dataframes
-combined_national <- combined_national %>%
-  mutate(
-    harris_win_prob = round(100 * predict(model_logistic, type = "response"), 2)
-  )
-
-combined_national_adj <- combined_national_adj %>%
-  mutate(
-    harris_win_prob = round(100 * predict(model_logistic_adj,
-      type = "response"
-    ), 2)
-  )
-
-#### Evaluate the Model ####
-
-# ROC Curve and AUC
-roc_obj <- roc(
-  combined_national$harris_win,
-  combined_national$harris_win_prob
-)
-plot(roc_obj, main = "ROC Curve for Harris Win Prediction")
-auc_value <- auc(roc_obj)
-
-# note: roc curve above diagonal line is good
-# auc value closer to 1 is good, closer to 0 is bad
-
-# Check correlation matrix
-cor_matrix <- combined_national %>%
-  select(
-    has_sponsor,
-    transparency_score, sample_size
-  ) %>%
-  cor()
-
-print(cor_matrix)
-
-# Regional polls analysis
-trump_2024_regional <- trump_2024_lower %>% filter(state != "National")
-harris_2024_regional <- harris_2024_lower %>% filter(state != "National")
-
-
-trump_Pennsylvania <- trump_2024_regional %>% filter(state == "Pennsylvania")
-trump_Georgia <- trump_2024_regional %>% filter(state == "Georgia")
-trump_North_Carolina <- trump_2024_regional %>% filter(state == "North Carolina")
-trump_Michigan <- trump_2024_regional %>% filter(state == "Michigan")
-trump_Arizona <- trump_2024_regional %>% filter(state == "Arizona")
-trump_Wisconsin <- trump_2024_regional %>% filter(state == "Wisconsin")
-trump_Nevada <- trump_2024_regional %>% filter(state == "Nevada")
-
-harris_Pennsylvania <- harris_2024_regional %>% filter(state == "Pennsylvania")
-harris_Georgia <- harris_2024_regional %>% filter(state == "Georgia")
-harris_North_Carolina <- harris_2024_regional %>% filter(state == "North Carolina")
-harris_Michigan <- harris_2024_regional %>% filter(state == "Michigan")
-harris_Arizona <- harris_2024_regional %>% filter(state == "Arizona")
-harris_Wisconsin <- harris_2024_regional %>% filter(state == "Wisconsin")
-harris_Nevada <- harris_2024_regional %>% filter(state == "Nevada")
-
-combined_Pennsylvania <- full_join(
-  trump_Pennsylvania,
-  harris_Pennsylvania,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_Georgia <- full_join(
-  trump_Georgia,
-  harris_Georgia,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_North_Carolina <- full_join(
-  trump_North_Carolina,
-  harris_North_Carolina,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_Michigan <- full_join(
-  trump_Michigan,
-  harris_Michigan,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_Arizona <- full_join(
-  trump_Arizona,
-  harris_Arizona,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_Wisconsin <- full_join(
-  trump_Wisconsin,
-  harris_Wisconsin,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_Nevada <- full_join(
-  trump_Nevada,
-  harris_Nevada,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-# mutate harris_win variable by comparing polled support rates
-# preparing data for logistic regression
-combined_Pennsylvania <- combined_Pennsylvania %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-combined_Georgia <- combined_Georgia %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-combined_North_Carolina <- combined_North_Carolina %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-combined_Michigan <- combined_Michigan %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-combined_Arizona <- combined_Arizona %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-combined_Wisconsin <- combined_Wisconsin %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-combined_Nevada <- combined_Nevada %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-# Create 7 different logistic regressions to predict Harris's win rate
-# in each state
-logistic_Pennsylvania <- glm(
-  harris_win ~ end_date + has_sponsor + transparency_score + sample_size,
-  data = combined_Pennsylvania,
-  family = binomial
-)
-
-logistic_Georgia <- glm(
-  harris_win ~ end_date + has_sponsor + transparency_score + sample_size,
-  data = combined_Georgia,
-  family = binomial
-)
-
-logistic_North_Carolina <- glm(
-  harris_win ~ end_date + has_sponsor + transparency_score + sample_size,
-  data = combined_North_Carolina,
-  family = binomial
-)
-
-logistic_Michigan <- glm(
-  harris_win ~ end_date + has_sponsor + transparency_score + sample_size,
-  data = combined_Michigan,
-  family = binomial
-)
-
-logistic_Arizona <- glm(
-  harris_win ~ end_date + has_sponsor + transparency_score + sample_size,
-  data = combined_Arizona,
-  family = binomial
-)
-
-logistic_Wisconsin <- glm(
-  harris_win ~ end_date + has_sponsor + transparency_score + sample_size,
-  data = combined_Wisconsin,
-  family = binomial
-)
-
-logistic_Nevada <- glm(
-  harris_win ~ end_date + has_sponsor + transparency_score + sample_size,
-  data = combined_Nevada,
-  family = binomial
-)
-
-# test logistic models for state specific analysis
-# mutate fitted values
-
-combined_Pennsylvania <- combined_Pennsylvania %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Pennsylvania, type = "response"), 2)
-  )
-
-roc_obj_Pennsylvania <- roc(
-  combined_Pennsylvania$harris_win,
-  combined_Pennsylvania$harris_win_prob
-)
-plot(roc_obj_Pennsylvania, main = "ROC Curve for Harris Win Prediction, Pennsylvania")
-auc_value_Pennsylvania <- auc(roc_obj_Pennsylvania)
-
-
-combined_Georgia <- combined_Georgia %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Georgia, type = "response"), 2)
-  )
-
-roc_obj_Georgia <- roc(
-  combined_Georgia$harris_win,
-  combined_Georgia$harris_win_prob
-)
-plot(roc_obj_Georgia, main = "ROC Curve for Harris Win Prediction, Georgia")
-auc_value_Georgia <- auc(roc_obj_Georgia)
-
-
-combined_North_Carolina <- combined_North_Carolina %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_North_Carolina, type = "response"), 2)
-  )
-
-roc_obj_North_Carolina <- roc(
-  combined_North_Carolina$harris_win,
-  combined_North_Carolina$harris_win_prob
-)
-plot(roc_obj_North_Carolina, main = "ROC Curve for Harris Win Prediction, North_Carolina")
-auc_value_North_Carolina <- auc(roc_obj_North_Carolina)
-
-
-combined_Michigan <- combined_Michigan %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Michigan, type = "response"), 2)
-  )
-
-roc_obj_Michigan <- roc(
-  combined_Michigan$harris_win,
-  combined_Michigan$harris_win_prob
-)
-plot(roc_obj_Michigan, main = "ROC Curve for Harris Win Prediction, Michigan")
-auc_value_Michigan <- auc(roc_obj_Michigan)
-
-combined_Arizona <- combined_Arizona %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Arizona, type = "response"), 2)
-  )
-
-roc_obj_Arizona <- roc(
-  combined_Arizona$harris_win,
-  combined_Arizona$harris_win_prob
-)
-plot(roc_obj_Arizona, main = "ROC Curve for Harris Win Prediction, Arizona")
-auc_value_Arizona <- auc(roc_obj_Arizona)
-
-
-combined_Wisconsin <- combined_Wisconsin %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Wisconsin, type = "response"), 2)
-  )
-
-roc_obj_Wisconsin <- roc(
-  combined_Wisconsin$harris_win,
-  combined_Wisconsin$harris_win_prob
-)
-plot(roc_obj_Wisconsin, main = "ROC Curve for Harris Win Prediction, Wisconsin")
-auc_value_Wisconsin <- auc(roc_obj_Wisconsin)
-
-
-combined_Nevada <- combined_Nevada %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Nevada, type = "response"), 2)
-  )
-
-roc_obj_Nevada <- roc(
-  combined_Nevada$harris_win,
-  combined_Nevada$harris_win_prob
-)
-plot(roc_obj_Nevada, main = "ROC Curve for Harris Win Prediction, Nevada")
-auc_value_Nevada <- auc(roc_obj_Nevada)
-
-
-#### Save model ####
-saveRDS(
-  model_harris_adj,
-  file = "models/MLR_adjusted_harris.rds"
-)
-
-saveRDS(
-  model_trump_adj,
-  file = "models/MLR_adjusted_trump.rds"
-)
-
-saveRDS(
-  model_harris,
-  file = "models/MLR_harris.rds"
-)
-
-saveRDS(
-  model_trump,
-  file = "models/MLR_trump.rds"
-)
-
-saveRDS(
-  model_logistic_adj,
-  file = "models/Logistic_model_adjusted.rds"
-)
-
-saveRDS(
-  model_logistic,
-  file = "models/Logistic_model.rds"
-)
-
-saveRDS(
-  logistic_Pennsylvania,
-  file = "models/Logistic_model_Pennsylvania.rds"
-)
-
-saveRDS(
-  logistic_Georgia,
-  file = "models/Logistic_model_Georgia.rds"
-)
-
-saveRDS(
-  logistic_North_Carolina,
-  file = "models/Logistic_model_North_Carolina.rds"
-)
-
-saveRDS(
-  logistic_Michigan,
-  file = "models/Logistic_model_Michigan.rds"
-)
-
-saveRDS(
-  logistic_Arizona,
-  file = "models/Logistic_model_Arizona.rds"
-)
-
-saveRDS(
-  logistic_Wisconsin,
-  file = "models/Logistic_model_Wisconsin.rds"
-)
-
-saveRDS(
-  logistic_Nevada,
-  file = "models/Logistic_model_Nevada.rds"
-)
-
-
-#### Results ####
-# To predict the outcome on election day, generate 1000 hypothetical data points
-# using the election day as end_date and the normal curve of other input
-# variables, mimicing all the situations that may happen on election day
-hypothetical_data_Pennsylvania <- tibble(
-  end_date = as.Date("2024-11-05"),
-  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Pennsylvania$has_sponsor)),
-  transparency_score = rnorm(1000,
-    mean = mean(combined_Pennsylvania$transparency_score),
-    sd = sd(combined_Pennsylvania$transparency_score)
-  ),
-  sample_size = rnorm(1000,
-    mean = mean(combined_Pennsylvania$sample_size),
-    sd = sd(combined_Pennsylvania$sample_size)
+library("car")
+library("tidyverse")
+library("haven")
+library("dplyr")
+library(MatchIt)
+library("tidyr")
+library(ggplot2)
+
+# 2020 data
+# import datasets
+cfps2020person_raw <- read_sas("/Users/yisuhou/Desktop/cfps2020person_202306.sas7bdat", 
+                               NULL)
+cfps2020famecon <- read_sas("/Users/yisuhou/Desktop/cfps2020famecon_202306.sas7bdat",
+                            NULL)
+
+# Join reshaped family dataset with individual dataset
+cfps2020person <- cfps2020person_raw |>
+  left_join(cfps2020famecon, by = "fid20")
+
+
+# new varialbe: years of education
+cfps2020person <- mutate(cfps2020person, years_of_education = case_when(
+  W01 == 0 ~ 0,
+  W01 == 10 ~ 0,
+  W01 == 3 ~ 6,
+  W01 == 4 ~ 9,
+  W01 == 5 ~ 12,
+  W01 == 6 ~ 15,
+  W01 == 7 ~ 16,
+  W01 == 8 ~ 19,
+  W01 == 9 ~ 22,
+))
+
+# new variable: years out of school
+# 2020 - year of leaving school
+cfps2020person <- mutate(cfps2020person, pot_work_years 
+                         = case_when(
+                           is.na(age) | age < 0 | years_of_education < 0 ~ NA,
+                           years_of_education == 0 ~ age - 16,
+                           years_of_education == 6 ~ age - 16,
+                           years_of_education == 9 ~ age - 17,
+                           years_of_education == 12 ~ age - 19,
+                           years_of_education == 15 ~ age - 22,
+                           years_of_education == 16 ~ age - 23,
+                           years_of_education == 19 ~ age - 26,
+                           years_of_education == 22 ~ age - 29
+                         ))
+
+cfps2020person <- mutate(cfps2020person, exp2 = pot_work_years^2)
+
+# ln hourly income
+# yearly income/52/weekly work hours
+cfps2020person <- mutate(cfps2020person, ln_hourly_wage = 
+                           if_else(QG12 <= 0 | QG6 <= 0, NA, log((QG12/52.1428571429)/QG6)))
+# city hukou
+cfps2020person <- mutate(cfps2020person, city_hukou = case_when(
+  QA301 == 1 ~ 0,
+  QA301 == 3 ~ 1,
+  QA301 == 7 ~ 1,
+))
+
+# marrital status
+cfps2020person <- mutate(cfps2020person, is_married = case_when(
+  QEA0 == 1 ~ 0,
+  QEA0 == 2 ~ 1,
+  QEA0 == 3 ~ 1,
+  QEA0 == 4 ~ 0,
+  QEA0 == 5 ~ 0,
+))
+
+# party member status
+cfps2020person <- mutate(cfps2020person, is_party = case_when(
+  QN4001 == 0 ~ 0,
+  QN4001 == 1 ~ 1,
+))
+
+# east
+cfps2020person <- mutate(cfps2020person, is_east = if_else(
+  provcd20.x == 11 | provcd20.x == 12 | provcd20.x == 13 | provcd20.x == 31 |
+    provcd20.x == 32 | provcd20.x == 33 | provcd20.x == 35 | provcd20.x == 37 |
+    provcd20.x == 44 | provcd20.x == 46, 1, 0))
+
+
+# Have a subset with no missing values
+cfps2020person_noNA <- subset(cfps2020person, !(is.na(ln_hourly_wage)) &
+                                !(is.na(QA002)) & !(is.na(pot_work_years)) 
+                              & !(is.na(city_hukou)) & !(is.na(fincome1_per_p))
+                              & !(is.na(is_married)) & !(is.na(is_party))
+                              & !(is.na(is_east)) & !(is.na(years_of_education)))
+
+
+# 2018 data
+# import datasets
+cfps2018person_raw <- read_sas("/Users/yisuhou/Desktop/cfps2018person_202012.sas7bdat", 
+                               NULL)
+cfps2018famecon <- read_sas("/Users/yisuhou/Desktop/cfps2018famecon_202101.sas7bdat",
+                            NULL)
+
+# Reshape family_data
+reshaped_family_data <- cfps2018famecon |>
+  gather(key = "member", value = "PID", pid_a_1:pid_a_15) |>
+  filter(!is.na(PID)) |>
+  select(-member) |>
+  group_by(PID) |>
+  filter(row_number() == 1)
+
+# Join reshaped family dataset with individual dataset
+cfps2018person <- cfps2018person_raw |>
+  left_join(reshaped_family_data, by = "PID")
+
+# new varialbe: years of education
+cfps2018person <- mutate(cfps2018person, years_of_education = case_when(
+  W01 == 0 ~ 0,
+  W01 == 10 ~ 0,
+  W01 == 3 ~ 6,
+  W01 == 4 ~ 9,
+  W01 == 5 ~ 12,
+  W01 == 6 ~ 15,
+  W01 == 7 ~ 16,
+  W01 == 8 ~ 19,
+  W01 == 9 ~ 22,
+))
+
+# new variable: years out of school
+# 2020 - year of leaving school
+cfps2018person <- mutate(cfps2018person, pot_work_years = case_when(
+  is.na(AGE) | AGE < 0 | years_of_education < 0 ~ NA,
+  years_of_education == 0 ~ AGE - 16,
+  years_of_education == 6 ~ AGE - 16,
+  years_of_education == 9 ~ AGE - 17,
+  years_of_education == 12 ~ AGE - 19,
+  years_of_education == 15 ~ AGE - 22,
+  years_of_education == 16 ~ AGE - 23,
+  years_of_education == 19 ~ AGE - 26,
+  years_of_education == 22 ~ AGE - 29
+))
+
+cfps2018person <- mutate(cfps2018person, exp2 = pot_work_years^2)
+
+
+# ln hourly income
+# yearly income/52/weekly work hours
+cfps2018person <- mutate(cfps2018person, ln_hourly_wage = 
+                           if_else(QG12 <= 0 | QG6 <= 0, NA, log((QG12/52.1428571429)/QG6)))
+# city hukou
+cfps2018person <- mutate(cfps2018person, city_hukou = case_when(
+  QA301 == 1 ~ 0,
+  QA301 == 3 ~ 1,
+  QA301 == 7 ~ 1,
+))
+
+# marrital status
+cfps2018person <- mutate(cfps2018person, is_married = case_when(
+  QEA0 == 1 ~ 0,
+  QEA0 == 2 ~ 1,
+  QEA0 == 3 ~ 1,
+  QEA0 == 4 ~ 0,
+  QEA0 == 5 ~ 0,
+))
+
+# party member status
+cfps2018person <- mutate(cfps2018person, is_party = case_when(
+  QN4001 == 0 ~ 0,
+  QN4001 == 1 ~ 1,
+))
+
+# east
+cfps2018person <- mutate(cfps2018person, is_east = if_else(
+  PROVCD18 == 11 | PROVCD18 == 12 | PROVCD18 == 13 | PROVCD18 == 31 |
+    PROVCD18 == 32 | PROVCD18 == 33 | PROVCD18 == 35 | PROVCD18 == 37 |
+    PROVCD18 == 44 | PROVCD18 == 46, 1, 0))
+
+
+# Have a subset with no missing values
+cfps2018person_noNA <- subset(cfps2018person, !(is.na(ln_hourly_wage)) &
+                                !(is.na(GENDER)) & !(is.na(pot_work_years)) 
+                              & !(is.na(city_hukou)) & !(is.na(fincome1_per_p))
+                              & !(is.na(is_married)) & !(is.na(is_party))
+                              & !(is.na(is_east)) & !(is.na(years_of_education)))
+
+
+# 2016 data
+# import datasets
+cfps2016person_raw <- read_sas("/Users/yisuhou/Desktop/cfps2016adult_201906.sas7bdat", 
+                               NULL)
+cfps2016famecon <- read_sas("/Users/yisuhou/Desktop/cfps2016famecon_201807.sas7bdat",
+                            NULL)
+
+
+# Join reshaped family dataset with individual dataset
+cfps2016person <- cfps2016person_raw |>
+  left_join(cfps2016famecon, by = "fid16")
+
+
+# new varialbe: years of education
+cfps2016person <- mutate(cfps2016person, years_of_education = case_when(
+  cfps2016edu == 1 ~ 0,
+  cfps2016edu == 2 ~ 6,
+  cfps2016edu == 3 ~ 9,
+  cfps2016edu == 4 ~ 12,
+  cfps2016edu == 5 ~ 15,
+  cfps2016edu == 6 ~ 16,
+  cfps2016edu == 7 ~ 19,
+  cfps2016edu == 8 ~ 22,
+))
+
+# new variable: years out of school
+# 2020 - year of leaving school
+cfps2016person <- mutate(cfps2016person, pot_work_years = case_when(
+  is.na(CFPS_AGE) | CFPS_AGE < 0 | years_of_education < 0 ~ NA,
+  years_of_education == 0 ~ CFPS_AGE - 16,
+  years_of_education == 6 ~ CFPS_AGE - 16,
+  years_of_education == 9 ~ CFPS_AGE - 17,
+  years_of_education == 12 ~ CFPS_AGE - 19,
+  years_of_education == 15 ~ CFPS_AGE - 22,
+  years_of_education == 16 ~ CFPS_AGE - 23,
+  years_of_education == 19 ~ CFPS_AGE - 26,
+  years_of_education == 22 ~ CFPS_AGE - 29
+))
+
+cfps2016person <- mutate(cfps2016person, exp2 = pot_work_years^2)
+
+# ln hourly income
+# yearly income/52/weekly work hours
+cfps2016person <- mutate(cfps2016person, ln_hourly_wage = 
+                           if_else(QG12 <= 0 | QG6 <= 0, NA, log((QG12/52.1428571429)/QG6)))
+# city hukou
+cfps2016person <- mutate(cfps2016person, city_hukou = case_when(
+  PA301 == 1 ~ 0,
+  PA301 == 3 ~ 1
+))
+
+# marrital status
+cfps2016person <- mutate(cfps2016person, is_married = case_when(
+  QEA0 == 1 ~ 0,
+  QEA0 == 2 ~ 1,
+  QEA0 == 3 ~ 1,
+  QEA0 == 4 ~ 0,
+  QEA0 == 5 ~ 0
+))
+
+# party member status
+cfps2016person <- mutate(cfps2016person, is_party = case_when(
+  QN4001 == 0 ~ 0,
+  QN4001 == 1 ~ 1
+))
+
+cfps2016person <- mutate(cfps2016person, gender = case_when(
+  CFPS_GENDER == 0 ~ 0,
+  CFPS_GENDER == 1 ~ 1
+))
+
+# east
+cfps2016person <- mutate(cfps2016person, is_east = if_else(
+  provcd16.x == 11 | provcd16.x == 12 | provcd16.x == 13 | provcd16.x == 31 |
+    provcd16.x == 32 | provcd16.x == 33 | provcd16.x == 35 | provcd16.x == 37 |
+    provcd16.x == 44 | provcd16.x == 46, 1, 0))
+
+
+# Have a subset with no missing values
+cfps2016person_noNA <- subset(cfps2016person, 
+                              !(is.na(ln_hourly_wage)) & !(is.na(gender)) & !(is.na(pot_work_years)) & !(is.na(city_hukou)) & !(is.na(fincome1_per_p))
+                              & !(is.na(is_married)) & !(is.na(is_party))
+                              & !(is.na(is_east)) & !(is.na(years_of_education)))
+
+
+# 2014 data
+# import datasets
+cfps2014person_raw <- read_sas("/Users/yisuhou/Desktop/cfps2014adult_201906.sas7bdat", 
+                               NULL)
+cfps2014famecon <- read_sas("/Users/yisuhou/Desktop/cfps2014famecon_201906.sas7bdat",
+                            NULL)
+
+cfps2014person <- cfps2014person_raw |>
+  left_join(cfps2014famecon, by = "fid14")
+
+# new variable: years out of school
+# 2020 - year of leaving school
+cfps2014person <- mutate(cfps2014person, pot_work_years = case_when(
+  is.na(CFPS2014_AGE) | CFPS2014_AGE < 0 | cfps2014eduy < 0 ~ NA,
+  cfps2014eduy < 9 ~ CFPS2014_AGE - 16,
+  cfps2014eduy >= 9 & cfps2014eduy < 12 ~ CFPS2014_AGE - 17,
+  cfps2014eduy >= 12 ~ CFPS2014_AGE - 7 - cfps2014eduy
+))
+
+cfps2014person <- mutate(cfps2014person, exp2 = pot_work_years^2)
+
+# ln hourly income
+# yearly income/52/weekly work hours
+cfps2014person <- mutate(cfps2014person, ln_hourly_wage = 
+                           if_else(QG12 <= 0 | QG6 <= 0, NA, log((QG12/52.1428571429)/QG6)))
+
+# city hukou
+cfps2014person <- mutate(cfps2014person, city_hukou = case_when(
+  QA301 == 1 ~ 0,
+  QA301 == 3 ~ 1,
+))
+
+# marrital status
+cfps2014person <- mutate(cfps2014person, is_married = case_when(
+  QEA0 == 1 ~ 0,
+  QEA0 == 2 ~ 1,
+  QEA0 == 3 ~ 1,
+  QEA0 == 4 ~ 0,
+  QEA0 == 5 ~ 0,
+))
+
+# party member status
+cfps2014person <- mutate(cfps2014person, is_party = case_when(
+  QN401_S_1 == 1 ~ 1,
+  QN401_S_1 == 2 ~ 0,
+  QN401_S_1 == 3 ~ 0,
+  QN401_S_1 == 4 ~ 0,
+  QN401_S_1 == 5 ~ 0,
+  QN401_S_1 == 6 ~ 0,
+  QN401_S_1 == 7 ~ 0,
+  QN401_S_1 == 8 ~ 0,
+  QN401_S_1 == 9 ~ 0,
+  QN401_S_1 == 10 ~ 0,
+  QN401_S_1 == 11 ~ 0,
+  QN401_S_1 == 12 ~ 0,
+  QN401_S_1 == 77 ~ 0,
+  QN401_S_1 == 78 ~ 0
+))
+
+cfps2014person <- mutate(cfps2014person, gender = case_when(
+  CFPS_GENDER == 0 ~ 0,
+  CFPS_GENDER == 1 ~ 1
+))
+
+# east
+cfps2014person <- mutate(cfps2014person, is_east = if_else(
+  provcd14.x == 11 | provcd14.x == 12 | provcd14.x == 13 | provcd14.x == 31 |
+    provcd14.x == 32 | provcd14.x == 33 | provcd14.x == 35 | provcd14.x == 37 |
+    provcd14.x == 44 | provcd14.x == 46, 1, 0))
+
+
+# Have a subset with no missing values
+cfps2014person_noNA <- subset(cfps2014person, !(is.na(ln_hourly_wage)) &
+                                !(is.na(gender)) & !(is.na(pot_work_years)) 
+                              & !(is.na(city_hukou)) & !(is.na(fincome1_per_p))
+                              & !(is.na(is_married)) & !(is.na(is_party))
+                              & !(is.na(is_east)) & !(is.na(cfps2014eduy)))
+
+
+# 2012 data
+# import datasets
+cfps2012person_raw <- read_sas("/Users/yisuhou/Desktop/cfps2012adult_201906.sas7bdat", 
+                               NULL)
+cfps2012famecon <- read_sas("/Users/yisuhou/Desktop/cfps2012famecon_201906.sas7bdat",
+                            NULL)
+
+# Join reshaped family dataset with individual dataset
+cfps2012person <- cfps2012person_raw |>
+  left_join(cfps2012famecon, by = "fid12")
+
+
+# new variable: years out of school
+# 2020 - year of leaving school
+cfps2012person <- mutate(cfps2012person, pot_work_years = case_when(
+  is.na(CFPS2012_AGE) | CFPS2012_AGE < 0 | eduy2012 < 0 ~ NA,
+  eduy2012 < 9 ~ CFPS2012_AGE - 16,
+  eduy2012 >= 9 & eduy2012 < 12 ~ CFPS2012_AGE - 17,
+  eduy2012 >= 12 ~ CFPS2012_AGE - 7 - eduy2012
+))
+
+cfps2012person <- mutate(cfps2012person, exp2 = pot_work_years^2)
+
+# identify last year's total work hours
+# make start and end of 'last year'
+cfps2012person <- mutate(cfps2012person, end_last_year 
+                         = make_date(CYEAR, CMONTH.x))
+cfps2012person <- mutate(cfps2012person, start_last_year 
+                         = end_last_year - years(1))
+
+# now get start and end times of jobs 1-5
+cfps2012person <- mutate(cfps2012person, start_date_job1 =
+                           if_else(QG4121Y_A_1 <= 0 | QG4121M_A_1 <= 0, NA, make_date(QG4121Y_A_1,
+                                                                                      QG4121M_A_1)),
+                         end_date_job1 = if_else(QG4122Y_A_1 <= 0 | QG4122M_A_1 <= 0, NA, 
+                                                 make_date(QG4122Y_A_1, QG4122M_A_1)),
+                         start_date_job2 = if_else(QG4121Y_A_2 <= 0 | QG4121M_A_2 <= 0, NA, 
+                                                   make_date(QG4121Y_A_2, QG4121M_A_2)),
+                         end_date_job2 = if_else(QG4122Y_A_2 <= 0 | QG4122M_A_2 <= 0, NA, 
+                                                 make_date(QG4122Y_A_2, QG4122M_A_2)),
+                         start_date_job3 = if_else(QG4121Y_A_3 <= 0 | QG4121M_A_3 <= 0, NA, 
+                                                   make_date(QG4121Y_A_3, QG4121M_A_3)),
+                         end_date_job3 = if_else(QG4122Y_A_3 <= 0 | QG4122M_A_3 <= 0, NA, 
+                                                 make_date(QG4122Y_A_3, QG4122M_A_3)))
+
+# how long have they been doing each job in the past year
+cfps2012person <- mutate(cfps2012person,
+                         start_date_job1_year = pmax(start_date_job1, start_last_year),
+                         end_date_job1_year = pmin(end_date_job1, end_last_year),
+                         months_job1_year = if_else(start_date_job1_year > end_date_job1_year, NA,    interval(start_date_job1_year, end_date_job1_year) / months(1)),
+                         start_date_job2_year = pmax(start_date_job2, start_last_year),
+                         end_date_job2_year = pmin(end_date_job2, end_last_year),
+                         months_job2_year = if_else(start_date_job2_year > end_date_job2_year, NA,    interval(start_date_job2_year, end_date_job2_year) / months(1)),
+                         start_date_job3_year = pmax(start_date_job3, start_last_year),
+                         end_date_job3_year = pmin(end_date_job3, end_last_year),
+                         months_job3_year = if_else(start_date_job3_year > end_date_job3_year, NA,    interval(start_date_job3_year, end_date_job3_year) / months(1)))
+
+
+# get total work time in the past year
+cfps2012person <- mutate(cfps2012person,
+                         work_time_job1_year = if_else(QG413_A_1 < 0 | QG414_A_1 < 0, NA, 
+                                                       months_job1_year * QG413_A_1 * QG414_A_1),
+                         work_time_job2_year = if_else(QG413_A_2 < 0 | QG414_A_2 < 0, NA, 
+                                                       months_job2_year * QG413_A_2 * QG414_A_2),
+                         work_time_job3_year = if_else(QG413_A_3 < 0 | QG414_A_3 < 0, NA,
+                                                       months_job3_year * QG413_A_3 * QG414_A_3))
+
+cfps2012person <- mutate(cfps2012person, total_work_hours = 
+                           rowSums(cfps2012person[, c("work_time_job1_year", 
+                                                      "work_time_job2_year", "work_time_job3_year")], na.rm = TRUE))
+
+
+# ln hourly income
+# yearly income/52/weekly work hours
+cfps2012person <- mutate(cfps2012person, ln_hourly_wage = 
+                           if_else(INCOME <= 0 | total_work_hours <= 0, NA, 
+                                   log(INCOME/total_work_hours)))
+
+
+
+# city hukou
+cfps2012person <- mutate(cfps2012person, city_hukou = case_when(
+  QA301 == 1 ~ 0,
+  QA301 == 3 ~ 1,
+))
+
+# marrital status
+cfps2012person <- mutate(cfps2012person, is_married = case_when(
+  QE104 == 1 ~ 0,
+  QE104 == 2 ~ 1,
+  QE104 == 3 ~ 1,
+  QE104 == 4 ~ 0,
+  QE104 == 5 ~ 0,
+))
+
+# party member status
+cfps2012person <- mutate(cfps2012person, is_party = case_when(
+  QN401_S_1 == 1 ~ 1,
+  QN401_S_1 == 2 ~ 0,
+  QN401_S_1 == 3 ~ 0,
+  QN401_S_1 == 4 ~ 0,
+  QN401_S_1 == 5 ~ 0,
+  QN401_S_1 == 6 ~ 0,
+  QN401_S_1 == 7 ~ 0,
+  QN401_S_1 == 8 ~ 0,
+  QN401_S_1 == 9 ~ 0,
+  QN401_S_1 == 10 ~ 0,
+  QN401_S_1 == 11 ~ 0,
+  QN401_S_1 == 12 ~ 0,
+  QN401_S_1 == 77 ~ 0,
+  QN401_S_1 == 78 ~ 0
+))
+
+cfps2012person <- mutate(cfps2012person, gender = case_when(
+  CFPS2012_GENDER == 0 ~ 0,
+  CFPS2012_GENDER == 1 ~ 1
+))
+
+# east
+cfps2012person <- mutate(cfps2012person, is_east = if_else(
+  provcd.x == 11 | provcd.x == 12 | provcd.x == 13 | provcd.x == 31 |
+    provcd.x == 32 | provcd.x == 33 | provcd.x == 35 | provcd.x == 37 |
+    provcd.x == 44 | provcd.x == 46, 1, 0))
+
+
+# Have a subset with no missing values
+cfps2012person_noNA <- subset(cfps2012person, 
+                              !(is.na(gender)) & !(is.na(pot_work_years)) 
+                              & !(is.na(city_hukou)) & !(is.na(fincper_p))
+                              & !(is.na(is_married)) & !(is.na(is_party))
+                              & !(is.na(is_east)) & !(is.na(ln_hourly_wage))
+                              & !(is.na(eduy2012)))
+
+
+# 2010 data
+# import datasets
+cfps2010person_raw <- read_sas("/Users/yisuhou/Desktop/cfps2010adult_202008.sas7bdat", 
+                               NULL)
+cfps2010famecon <- read_sas("/Users/yisuhou/Desktop/cfps2010famecon_202008.sas7bdat",
+                            NULL)
+
+# Join reshaped family dataset with individual dataset
+cfps2010person <- cfps2010person_raw |>
+  left_join(cfps2010famecon, by = "fid")
+
+
+# new variable: years out of school
+# 2020 - year of leaving school
+cfps2010person <- mutate(cfps2010person, pot_work_years = case_when(
+  is.na(QA1AGE) | QA1AGE < 0 | cfps2010eduy_best < 0 ~ NA,
+  cfps2010eduy_best < 9 ~ QA1AGE - 16,
+  cfps2010eduy_best >= 9 & cfps2010eduy_best < 12 ~ QA1AGE - 17,
+  cfps2010eduy_best >= 12 ~ QA1AGE - 7 - cfps2010eduy_best
+))
+
+cfps2010person <- mutate(cfps2010person, exp2 = pot_work_years^2)
+
+# ln hourly income
+# yearly income/52/weekly work hours
+cfps2010person <- mutate(cfps2010person, ln_hourly_wage = 
+                           if_else(INCOME <= 0 | QG401 <= 0
+                                   | QG402 <= 0 | QG403 <= 0, NA, 
+                                   log(INCOME/QG401/QG402/QG403)))
+
+# city hukou
+cfps2010person <- mutate(cfps2010person, city_hukou = case_when(
+  QA2 == 1 ~ 0,
+  QA2 == 3 ~ 1,
+))
+
+# marrital status
+cfps2010person <- mutate(cfps2010person, is_married = case_when(
+  QE2 == -8 ~ 0,
+  QE2 == 0 ~ 1,
+  QE2 == 1 ~ 1,
+))
+
+# party member status
+cfps2010person <- mutate(cfps2010person, is_party = case_when(
+  QA7_S_1 == 1 ~ 1,
+  QA7_S_1 == 2 ~ 0,
+  QA7_S_1 == 3 ~ 0,
+  QA7_S_1 == 4 ~ 0,
+  QA7_S_1 == 5 ~ 0,
+  QA7_S_1 == 6 ~ 0,
+  QA7_S_1 == 7 ~ 0,
+  QA7_S_1 == 8 ~ 0,
+  QA7_S_1 == 9 ~ 0,
+  QA7_S_1 == 10 ~ 0,
+  QA7_S_1 == 11 ~ 0,
+  QA7_S_1 == 12 ~ 0,
+  QA7_S_1 == 77 ~ 0,
+  QA7_S_1 == 78 ~ 0
+))
+
+cfps2010person <- mutate(cfps2010person, gender = case_when(
+  GENDER == 0 ~ 0,
+  GENDER == 1 ~ 1
+))
+
+# east
+cfps2010person <- mutate(cfps2010person, is_east = if_else(
+  provcd.x == 11 | provcd.x == 12 | provcd.x == 13 | provcd.x == 31 |
+    provcd.x == 32 | provcd.x == 33 | provcd.x == 35 | provcd.x == 37 |
+    provcd.x == 44 | provcd.x == 46, 1, 0))
+
+# make quartiles
+cfps2010person <- mutate(cfps2010person, fincper_p =
+                           ntile(INDINC, 4))
+
+# Have a subset with no missing values
+cfps2010person_noNA <- subset(cfps2010person, 
+                              !(is.na(gender)) & !(is.na(pot_work_years)) 
+                              & !(is.na(city_hukou)) & !(is.na(fincper_p))
+                              & !(is.na(is_married)) & !(is.na(is_party))
+                              & !(is.na(is_east)) & !(is.na(ln_hourly_wage))
+                              & !(is.na(cfps2010eduy_best)))
+
+
+# split everything into quartiles
+quartile_1_2020 <- subset(cfps2020person_noNA, fincome1_per_p == 1)
+quartile_2_2020 <- subset(cfps2020person_noNA, fincome1_per_p == 2)
+quartile_3_2020 <- subset(cfps2020person_noNA, fincome1_per_p == 3)
+quartile_4_2020 <- subset(cfps2020person_noNA, fincome1_per_p == 4)
+
+quartile_1_2018 <- subset(cfps2018person_noNA, fincome1_per_p == 1)
+quartile_2_2018 <- subset(cfps2018person_noNA, fincome1_per_p == 2)
+quartile_3_2018 <- subset(cfps2018person_noNA, fincome1_per_p == 3)
+quartile_4_2018 <- subset(cfps2018person_noNA, fincome1_per_p == 4)
+
+quartile_1_2016 <- subset(cfps2016person_noNA, fincome1_per_p == 1)
+quartile_2_2016 <- subset(cfps2016person_noNA, fincome1_per_p == 2)
+quartile_3_2016 <- subset(cfps2016person_noNA, fincome1_per_p == 3)
+quartile_4_2016 <- subset(cfps2016person_noNA, fincome1_per_p == 4)
+
+quartile_1_2014 <- subset(cfps2014person_noNA, fincome1_per_p == 1)
+quartile_2_2014 <- subset(cfps2014person_noNA, fincome1_per_p == 2)
+quartile_3_2014 <- subset(cfps2014person_noNA, fincome1_per_p == 3)
+quartile_4_2014 <- subset(cfps2014person_noNA, fincome1_per_p == 4)
+
+quartile_1_2012 <- subset(cfps2012person_noNA, fincper_p == 1)
+quartile_2_2012 <- subset(cfps2012person_noNA, fincper_p == 2)
+quartile_3_2012 <- subset(cfps2012person_noNA, fincper_p == 3)
+quartile_4_2012 <- subset(cfps2012person_noNA, fincper_p == 4)
+
+quartile_1_2010 <- subset(cfps2010person_noNA, fincper_p == 1)
+quartile_2_2010 <- subset(cfps2010person_noNA, fincper_p == 2)
+quartile_3_2010 <- subset(cfps2010person_noNA, fincper_p == 3)
+quartile_4_2010 <- subset(cfps2010person_noNA, fincper_p == 4)
+
+
+# education levels over time
+edu_temporal <- data.frame(
+  year = c(2010, 2010, 2010, 2010, 2012, 2012, 2012, 2012, 2014,
+           2014, 2014, 2014, 2016, 2016, 2016, 2016, 2018, 2018,
+           2018, 2018, 2020, 2020, 2020, 2020),
+  quartile = c("Q1", "Q2", "Q3", "Q4", "Q1", "Q2", "Q3", "Q4", 
+               "Q1", "Q2", "Q3", "Q4", "Q1", "Q2", "Q3", "Q4", 
+               "Q1", "Q2", "Q3", "Q4", "Q1", "Q2", "Q3", "Q4"),
+  edu = c(mean(quartile_1_2010$cfps2010eduy_best), 
+          mean(quartile_2_2010$cfps2010eduy_best),
+          mean(quartile_3_2010$cfps2010eduy_best),
+          mean(quartile_4_2010$cfps2010eduy_best),
+          mean(quartile_1_2012$eduy2012),
+          mean(quartile_2_2012$eduy2012),
+          mean(quartile_3_2012$eduy2012),
+          mean(quartile_4_2012$eduy2012),
+          mean(quartile_1_2014$cfps2014eduy),
+          mean(quartile_2_2014$cfps2014eduy),
+          mean(quartile_3_2014$cfps2014eduy),
+          mean(quartile_4_2014$cfps2014eduy),
+          mean(quartile_1_2016$years_of_education),
+          mean(quartile_2_2016$years_of_education),
+          mean(quartile_3_2016$years_of_education),
+          mean(quartile_4_2016$years_of_education),
+          mean(quartile_1_2018$years_of_education),
+          mean(quartile_2_2018$years_of_education),
+          mean(quartile_3_2018$years_of_education),
+          mean(quartile_4_2018$years_of_education),
+          mean(quartile_1_2020$years_of_education),
+          mean(quartile_2_2020$years_of_education),
+          mean(quartile_3_2020$years_of_education),
+          mean(quartile_4_2020$years_of_education)
   )
 )
 
-hypothetical_data_Georgia <- tibble(
-  end_date = as.Date("2024-11-05"),
-  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Georgia$has_sponsor)),
-  transparency_score = rnorm(1000,
-    mean = mean(combined_Georgia$transparency_score),
-    sd = sd(combined_Georgia$transparency_score)
-  ),
-  sample_size = rnorm(1000,
-    mean = mean(combined_Georgia$sample_size),
-    sd = sd(combined_Georgia$sample_size)
+# income over time
+inc_temporal <- data.frame(
+  year = c(2010, 2010, 2010, 2010, 2012, 2012, 2012, 2012, 2014,
+           2014, 2014, 2014, 2016, 2016, 2016, 2016, 2018, 2018,
+           2018, 2018, 2020, 2020, 2020, 2020),
+  quartile = c("Q1", "Q2", "Q3", "Q4", "Q1", "Q2", "Q3", "Q4", 
+               "Q1", "Q2", "Q3", "Q4", "Q1", "Q2", "Q3", "Q4", 
+               "Q1", "Q2", "Q3", "Q4", "Q1", "Q2", "Q3", "Q4"),
+  inc = c(mean(quartile_1_2010$INDINC), 
+          mean(quartile_2_2010$INDINC),
+          mean(quartile_3_2010$INDINC),
+          mean(quartile_4_2010$INDINC),
+          mean(quartile_1_2012$fincome1_per),
+          mean(quartile_2_2012$fincome1_per),
+          mean(quartile_3_2012$fincome1_per),
+          mean(quartile_4_2012$fincome1_per),
+          mean(quartile_1_2014$fincome1_per),
+          mean(quartile_2_2014$fincome1_per),
+          mean(quartile_3_2014$fincome1_per),
+          mean(quartile_4_2014$fincome1_per),
+          mean(quartile_1_2016$fincome1_per),
+          mean(quartile_2_2016$fincome1_per),
+          mean(quartile_3_2016$fincome1_per),
+          mean(quartile_4_2016$fincome1_per),
+          mean(quartile_1_2018$fincome1_per),
+          mean(quartile_2_2018$fincome1_per),
+          mean(quartile_3_2018$fincome1_per),
+          mean(quartile_4_2018$fincome1_per),
+          mean(quartile_1_2020$fincome1_per),
+          mean(quartile_2_2020$fincome1_per),
+          mean(quartile_3_2020$fincome1_per),
+          mean(quartile_4_2020$fincome1_per)
   )
 )
 
-hypothetical_data_North_Carolina <- tibble(
-  end_date = as.Date("2024-11-05"),
-  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_North_Carolina$has_sponsor)),
-  transparency_score = rnorm(1000,
-    mean = mean(combined_North_Carolina$transparency_score),
-    sd = sd(combined_North_Carolina$transparency_score)
-  ),
-  sample_size = rnorm(1000,
-    mean = mean(combined_North_Carolina$sample_size),
-    sd = sd(combined_North_Carolina$sample_size)
-  )
-)
-
-hypothetical_data_Michigan <- tibble(
-  end_date = as.Date("2024-11-05"),
-  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Michigan$has_sponsor)),
-  transparency_score = rnorm(1000,
-    mean = mean(combined_Michigan$transparency_score),
-    sd = sd(combined_Michigan$transparency_score)
-  ),
-  sample_size = rnorm(1000,
-    mean = mean(combined_Michigan$sample_size),
-    sd = sd(combined_Michigan$sample_size)
-  )
-)
-
-hypothetical_data_Arizona <- tibble(
-  end_date = as.Date("2024-11-05"),
-  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Arizona$has_sponsor)),
-  transparency_score = rnorm(1000,
-    mean = mean(combined_Arizona$transparency_score),
-    sd = sd(combined_Arizona$transparency_score)
-  ),
-  sample_size = rnorm(1000,
-    mean = mean(combined_Arizona$sample_size),
-    sd = sd(combined_Arizona$sample_size)
-  )
-)
-
-hypothetical_data_Wisconsin <- tibble(
-  end_date = as.Date("2024-11-05"),
-  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Wisconsin$has_sponsor)),
-  transparency_score = rnorm(1000,
-    mean = mean(combined_Wisconsin$transparency_score),
-    sd = sd(combined_Wisconsin$transparency_score)
-  ),
-  sample_size = rnorm(1000,
-    mean = mean(combined_Wisconsin$sample_size),
-    sd = sd(combined_Wisconsin$sample_size)
-  )
-)
-
-hypothetical_data_Nevada <- tibble(
-  end_date = as.Date("2024-11-05"),
-  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Nevada$has_sponsor)),
-  transparency_score = rnorm(1000,
-    mean = mean(combined_Nevada$transparency_score),
-    sd = sd(combined_Nevada$transparency_score)
-  ),
-  sample_size = rnorm(1000,
-    mean = mean(combined_Nevada$sample_size),
-    sd = sd(combined_Nevada$sample_size)
-  )
-)
-
-# run the corresponding logistic regression on the hypothetical data of each
-# state and average the outcomes to find the expected win rate of Harris
-# on election day
-hypothetical_data_Pennsylvania <- hypothetical_data_Pennsylvania %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Pennsylvania, newdata = ., type = "response"), 2)
-  )
-
-
-hypothetical_data_Georgia <- hypothetical_data_Georgia %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Georgia, newdata = ., type = "response"), 2)
-  )
-
-
-hypothetical_data_North_Carolina <- hypothetical_data_North_Carolina %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_North_Carolina, newdata = ., type = "response"), 2)
-  )
-
-
-hypothetical_data_Michigan <- hypothetical_data_Michigan %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Michigan, newdata = ., type = "response"), 2)
-  )
-
-
-hypothetical_data_Arizona <- hypothetical_data_Arizona %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Arizona, newdata = ., type = "response"), 2)
-  )
-
-
-hypothetical_data_Wisconsin <- hypothetical_data_Wisconsin %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Wisconsin, newdata = ., type = "response"), 2)
-  )
-
-
-hypothetical_data_Nevada <- hypothetical_data_Nevada %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Nevada, newdata = ., type = "response"), 2)
-  )
-
-
-# produce a table of mean winning probabilities
-mean_probabilities <- tibble(
-  State = c("Pennsylvania", "Georgia", "North Carolina", "Michigan", "Arizona", "Wisconsin", "Nevada"),
-  Harris_Win_Probability = c(
-    round(mean(hypothetical_data_Pennsylvania$harris_win_prob, na.rm = TRUE), 2),
-    round(mean(hypothetical_data_Georgia$harris_win_prob, na.rm = TRUE), 2),
-    round(mean(hypothetical_data_North_Carolina$harris_win_prob, na.rm = TRUE), 2),
-    round(mean(hypothetical_data_Michigan$harris_win_prob, na.rm = TRUE), 2),
-    round(mean(hypothetical_data_Arizona$harris_win_prob, na.rm = TRUE), 2),
-    round(mean(hypothetical_data_Wisconsin$harris_win_prob, na.rm = TRUE), 2),
-    round(mean(hypothetical_data_Nevada$harris_win_prob, na.rm = TRUE), 2)
+# family average income over time
+lninc_temporal <- data.frame(
+  year = c(2010, 2010, 2010, 2010, 2012, 2012, 2012, 2012, 2014,
+           2014, 2014, 2014, 2016, 2016, 2016, 2016, 2018, 2018,
+           2018, 2018, 2020, 2020, 2020, 2020),
+  quartile = c("Q1", "Q2", "Q3", "Q4", "Q1", "Q2", "Q3", "Q4", 
+               "Q1", "Q2", "Q3", "Q4", "Q1", "Q2", "Q3", "Q4", 
+               "Q1", "Q2", "Q3", "Q4", "Q1", "Q2", "Q3", "Q4"),
+  lninc = c(mean(quartile_1_2010$ln_hourly_wage), 
+            mean(quartile_2_2010$ln_hourly_wage),
+            mean(quartile_3_2010$ln_hourly_wage),
+            mean(quartile_4_2010$ln_hourly_wage),
+            mean(quartile_1_2012$ln_hourly_wage),
+            mean(quartile_2_2012$ln_hourly_wage),
+            mean(quartile_3_2012$ln_hourly_wage),
+            mean(quartile_4_2012$ln_hourly_wage),
+            mean(quartile_1_2014$ln_hourly_wage),
+            mean(quartile_2_2014$ln_hourly_wage),
+            mean(quartile_3_2014$ln_hourly_wage),
+            mean(quartile_4_2014$ln_hourly_wage),
+            mean(quartile_1_2016$ln_hourly_wage),
+            mean(quartile_2_2016$ln_hourly_wage),
+            mean(quartile_3_2016$ln_hourly_wage),
+            mean(quartile_4_2016$ln_hourly_wage),
+            mean(quartile_1_2018$ln_hourly_wage),
+            mean(quartile_2_2018$ln_hourly_wage),
+            mean(quartile_3_2018$ln_hourly_wage),
+            mean(quartile_4_2018$ln_hourly_wage),
+            mean(quartile_1_2020$ln_hourly_wage),
+            mean(quartile_2_2020$ln_hourly_wage),
+            mean(quartile_3_2020$ln_hourly_wage),
+            mean(quartile_4_2020$ln_hourly_wage)
   )
 )
 
 
-# include electoral votes to determine who is in the lead
-state_evs <- tibble::tribble(
-  ~State, ~electoral_votes,
-  "Alaska", 3,
-  "Arizona", 11,
-  "Arkansas", 6,
-  "California", 55,
-  "Colorado", 9,
-  "Connecticut", 7,
-  "Florida", 29,
-  "Georgia", 16,
-  "Illinois", 20,
-  "Indiana", 11,
-  "Iowa", 6,
-  "Kansas", 6,
-  "Louisiana", 8,
-  "Maine", 2,
-  "Maine CD-1", 1,
-  "Maine CD-2", 1,
-  "Maryland", 10,
-  "Massachusetts", 11,
-  "Michigan", 16,
-  "Minnesota", 10,
-  "Mississippi", 6,
-  "Missouri", 10,
-  "Montana", 3,
-  "Nebraska", 2,
-  "Nebraska CD-2", 1,
-  "Nevada", 6,
-  "New Hampshire", 4,
-  "New Mexico", 5,
-  "New York", 29,
-  "North Carolina", 15,
-  "Ohio", 18,
-  "Oklahoma", 7,
-  "Oregon", 7,
-  "Pennsylvania", 20,
-  "Rhode Island", 4,
-  "South Carolina", 9,
-  "South Dakota", 3,
-  "Texas", 38,
-  "Utah", 6,
-  "Vermont", 3,
-  "Virginia", 13,
-  "Washington", 12,
-  "Wisconsin", 10
-)
+wdnmd <- ggplot(lninc_temporal, aes(x = year, y = lninc, color = quartile)) +
+  geom_line() + labs(title = "Average Personal ln(w) Over Time", 
+                     x = "Year", y = "ln(w)") +
+  scale_x_continuous(breaks = c(2010, 2012, 2014, 2016, 2018, 2020)) +
+  theme(text = element_text(family = "Times New Roman"), 
+        plot.title = element_text(hjust = 0.5))
 
-mean_probabilities <- mean_probabilities %>%
-  left_join(state_evs, by = "State")
+nmsl <- ggplot(edu_temporal, aes(x = year, y = edu, color = quartile)) +
+  geom_line() + labs(title = "Figure 1: Average Years of Education Over Time", 
+                     x = "Year", y = "Years of Education") +
+  scale_x_continuous(breaks = c(2010, 2012, 2014, 2016, 2018, 2020)) +
+  theme(text = element_text(family = "Times New Roman"), 
+        plot.title = element_text(hjust = 0.5))
 
-mean_probabilities %>%
-  gt() %>%
-  tab_header(
-    title = "Average Probability of Harris Winning by State",
-    subtitle = "Based on Logistic Model Predictions of 1,000 Hypothetical Polls per State"
-  ) %>%
-  fmt_number(
-    columns = vars(Harris_Win_Probability),
-    decimals = 2
-  ) %>%
-  cols_label(
-    State = "State",
-    Harris_Win_Probability = "Harris Win Probability (%)",
-    electoral_votes = "Electoral Votes"
-  ) %>%
-  tab_options(
-    table.font.size = 12,
-    heading.title.font.size = 16,
-    heading.subtitle.font.size = 12,
-    table.border.top.width = px(2),
-    table.border.bottom.width = px(2)
-  )
+wcnm <- ggplot(inc_temporal, aes(x = year, y = inc, color = quartile)) +
+  geom_line() + labs(title = "Figure 2: Average Income Over Time", 
+                     x = "Year", y = "Income") +
+  scale_x_continuous(breaks = c(2010, 2012, 2014, 2016, 2018, 2020)) +
+  theme(text = element_text(family = "Times New Roman"), 
+        plot.title = element_text(hjust = 0.5))
 
-#### Overall Probability of Winning ####
-# Harris
-# Create data frame of states
-states <- data.frame(
-  state = c("PA", "GA", "NC", "MI", "WI", "NV", "AZ"),
-  prob = c(0.5551, 0.6801, 0.1033, 0.5151, 0.3792, 0.7679, 0),
-  votes = c(20, 16, 15, 16, 10, 6, 11)
-)
+ggsave("edu temporal graph.png", plot = nmsl, width = 6, height = 4)
+ggsave("inc temporal graph.png", plot = wcnm, width = 6, height = 4)
+ggsave("lninc temporal graph.png", plot = wdnmd, width = 6, height = 4)
 
-# Function to calculate probability of a specific combination
-calc_combo_prob <- function(combo, states) {
-  prob <- 1
-  for (i in 1:nrow(states)) {
-    if (i %in% combo) {
-      prob <- prob * states$prob[i]
-    } else {
-      prob <- prob * (1 - states$prob[i])
-    }
-  }
-  return(prob)
-}
 
-# Generate all possible combinations
-n_states <- nrow(states)
-total_prob <- 0
+print(mean(quartile_1_2010$cfps2010eduy_best))
+print(mean(quartile_2_2010$cfps2010eduy_best))
+print(mean(quartile_3_2010$cfps2010eduy_best))
+print(mean(quartile_4_2010$cfps2010eduy_best))
 
-# Check each possible combination
-for (i in 1:(2^n_states - 1)) {
-  # Convert number to binary to get combination
-  combo <- which(intToBits(i)[1:n_states] == 1)
+print(mean(quartile_1_2020$years_of_education))
+print(mean(quartile_2_2020$years_of_education))
+print(mean(quartile_3_2020$years_of_education))
+print(mean(quartile_4_2020$years_of_education))
 
-  # Calculate total electoral votes for this combination
-  votes <- sum(states$votes[combo])
 
-  # If this combination has enough votes, add its probability
-  if (votes >= 44) {
-    prob <- calc_combo_prob(combo, states)
-    total_prob <- total_prob + prob
-  }
-}
+print(mean(quartile_1_2020$fincome1_per) - mean(quartile_1_2010$INDINC))
+print(mean(quartile_2_2020$fincome1_per) - mean(quartile_2_2010$INDINC))
+print(mean(quartile_3_2020$fincome1_per) - mean(quartile_3_2010$INDINC))
+print(mean(quartile_4_2020$fincome1_per) - mean(quartile_4_2010$INDINC))
 
-print(paste("Probability of Harris winning at least 44 electoral votes:", round(total_prob * 100, 2), "%"))
 
-# Trump
-# Create data frame of states
-states <- data.frame(
-  state = c("PA", "GA", "NC", "MI", "WI", "NV", "AZ"),
-  prob = c(1 - 0.5551, 1 - 0.6801, 1 - 0.1033, 1 - 0.5151, 1 - 0.3792, 1 - 0.7679, 1 - 0), # Using 1-p for Trump's probabilities
-  votes = c(20, 16, 15, 16, 10, 6, 11)
-)
+undergrad_2020 <- subset(cfps2020person, years_of_education == 16 &
+                           !is.na(QG12) & QG12 >= 0)
+highschool_2020 <- subset(cfps2020person, years_of_education == 12 &
+                            !is.na(QG12) & QG12 >= 0)
+middleschool_2020 <- subset(cfps2020person, years_of_education == 9 &
+                              !is.na(QG12) & QG12 >= 0)
 
-# Function to calculate probability of a specific combination
-calc_combo_prob <- function(combo, states) {
-  prob <- 1
-  for (i in 1:nrow(states)) {
-    if (i %in% combo) {
-      prob <- prob * states$prob[i]
-    } else {
-      prob <- prob * (1 - states$prob[i])
-    }
-  }
-  return(prob)
-}
+print(mean(undergrad_2020$QG12))
+print(mean(highschool_2020$QG12))
+print(mean(middleschool_2020$QG12))
 
-# Generate all possible combinations
-n_states <- nrow(states)
-total_prob <- 0
 
-# Check each possible combination
-for (i in 1:(2^n_states - 1)) {
-  # Convert number to binary to get combination
-  combo <- which(intToBits(i)[1:n_states] == 1)
+lm_10_1 <- lm(ln_hourly_wage ~ cfps2010eduy_best + pot_work_years + exp2
+              + city_hukou + is_married + gender + is_east
+              + is_party, data = quartile_1_2010)
+lm_10_2 <- lm(ln_hourly_wage ~ cfps2010eduy_best + pot_work_years + exp2
+              + city_hukou + is_married + gender + is_east
+              + is_party, data = quartile_2_2010)
+lm_10_3 <- lm(ln_hourly_wage ~ cfps2010eduy_best + pot_work_years + exp2
+              + city_hukou + is_married + gender + is_east
+              + is_party, data = quartile_3_2010)
+lm_10_4 <- lm(ln_hourly_wage ~ cfps2010eduy_best + pot_work_years + exp2
+              + city_hukou + is_married + gender + is_east
+              + is_party, data = quartile_4_2010)
 
-  # Calculate total electoral votes for this combination
-  votes <- sum(states$votes[combo])
+summary(lm_10_1)
+summary(lm_10_2)
+summary(lm_10_3)
+summary(lm_10_4)
 
-  # If this combination has enough votes, add its probability
-  if (votes >= 51) {
-    prob <- calc_combo_prob(combo, states)
-    total_prob <- total_prob + prob
-  }
-}
+lm_12_1 <- lm(ln_hourly_wage ~ eduy2012 + pot_work_years + exp2
+              + city_hukou + is_married + gender + is_east
+              + is_party, data = quartile_1_2012)
+lm_12_2 <- lm(ln_hourly_wage ~ eduy2012 + pot_work_years + exp2
+              + city_hukou + is_married + gender + is_east
+              + is_party, data = quartile_2_2012)
+lm_12_3 <- lm(ln_hourly_wage ~ eduy2012 + pot_work_years + exp2
+              + city_hukou + is_married + gender + is_east
+              + is_party, data = quartile_3_2012)
+lm_12_4 <- lm(ln_hourly_wage ~ eduy2012 + pot_work_years + exp2
+              + city_hukou + is_married + gender + is_east
+              + is_party, data = quartile_4_2012)
 
-print(paste("Probability of Trump winning at least 51 electoral votes:", round(total_prob * 100, 2), "%"))
+summary(lm_12_1)
+summary(lm_12_2)
+summary(lm_12_3)
+summary(lm_12_4)
+
+
+lm_14_1 <- lm(ln_hourly_wage ~ cfps2014eduy + pot_work_years
+              + city_hukou + is_married + gender + is_east + exp2
+              + is_party, data = quartile_1_2014)
+lm_14_2 <- lm(ln_hourly_wage ~ cfps2014eduy + pot_work_years
+              + city_hukou + is_married + gender + is_east + exp2
+              + is_party, data = quartile_2_2014)
+lm_14_3 <- lm(ln_hourly_wage ~ cfps2014eduy + pot_work_years
+              + city_hukou + is_married + gender + is_east + exp2
+              + is_party, data = quartile_3_2014)
+lm_14_4 <- lm(ln_hourly_wage ~ cfps2014eduy + pot_work_years
+              + city_hukou + is_married + gender + is_east + exp2
+              + is_party, data = quartile_4_2014)
+
+summary(lm_14_1)
+summary(lm_14_2)
+summary(lm_14_3)
+summary(lm_14_4)
+
+
+lm_16_1 <- lm(ln_hourly_wage ~ years_of_education + pot_work_years
+              + city_hukou + is_married + gender + is_east + exp2
+              + is_party, data = quartile_1_2016)
+lm_16_2 <- lm(ln_hourly_wage ~ years_of_education + pot_work_years
+              + city_hukou + is_married + gender + is_east + exp2
+              + is_party, data = quartile_2_2016)
+lm_16_3 <- lm(ln_hourly_wage ~ years_of_education + pot_work_years
+              + city_hukou + is_married + gender + is_east + exp2
+              + is_party, data = quartile_3_2016)
+lm_16_4 <- lm(ln_hourly_wage ~ years_of_education + pot_work_years
+              + city_hukou + is_married + gender + is_east + exp2
+              + is_party, data = quartile_4_2016)
+
+summary(lm_16_1)
+summary(lm_16_2)
+summary(lm_16_3)
+summary(lm_16_4)
+
+
+lm_18_1 <- lm(ln_hourly_wage ~ years_of_education + pot_work_years
+              + city_hukou + is_married + GENDER + is_east + exp2
+              + is_party, data = quartile_1_2018)
+lm_18_2 <- lm(ln_hourly_wage ~ years_of_education + pot_work_years
+              + city_hukou + is_married + GENDER + is_east + exp2
+              + is_party, data = quartile_2_2018)
+lm_18_3 <- lm(ln_hourly_wage ~ years_of_education + pot_work_years
+              + city_hukou + is_married + GENDER + is_east + exp2
+              + is_party, data = quartile_3_2018)
+lm_18_4 <- lm(ln_hourly_wage ~ years_of_education + pot_work_years
+              + city_hukou + is_married + GENDER + is_east + exp2
+              + is_party, data = quartile_4_2018)
+
+summary(lm_18_1)
+summary(lm_18_2)
+summary(lm_18_3)
+summary(lm_18_4)
+
+
+lm_20_1 <- lm(ln_hourly_wage ~ years_of_education + pot_work_years + exp2
+              + city_hukou + is_married + QA002 + is_east
+              + is_party, data = quartile_1_2020)
+lm_20_2 <- lm(ln_hourly_wage ~ years_of_education + pot_work_years + exp2
+              + city_hukou + is_married + QA002 + is_east
+              + is_party, data = quartile_2_2020)
+lm_20_3 <- lm(ln_hourly_wage ~ years_of_education + pot_work_years + exp2
+              + city_hukou + is_married + QA002 + is_east
+              + is_party, data = quartile_3_2020)
+lm_20_4 <- lm(ln_hourly_wage ~ years_of_education + pot_work_years + exp2
+              + city_hukou + is_married + QA002 + is_east
+              + is_party, data = quartile_4_2020)
+
+summary(lm_20_1)
+summary(lm_20_2)
+summary(lm_20_3)
+summary(lm_20_4)
+
+

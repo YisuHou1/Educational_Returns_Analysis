@@ -5,7 +5,7 @@
 # Contact: yisu.hou@mail.utoronto.ca
 # License: None
 # Pre-requisites:
-# - Packages `tidyverse`, `arrow` are installed
+# - Packages `tidyverse` and `arrow` are installed
 # - 02-clean_data.R and 03-test_analysis_data.R must have been run
 
 

@@ -5,7 +5,7 @@ author:
 thanks: "Code and data are available at: [https://github.com/YisuHou1/Educational_Returns_Analysis](https://github.com/YisuHou1/Educational_Returns_Analysis)."
 date: today
 date-format: long
-abstract: "Economic returns to education are a key driver of socioeconomic mobility, yet they are not distributed equally across all income groups. Using data from the China Family Panel Studies (CFPS) between 2010 and 2020, this paper examines how family income influences the financial benefits individuals gain from education. The analysis reveals that individuals from wealthier families consistently enjoy significantly higher income returns from education compared to their lower-income counterparts, though this gap did not widen over the decade studied. These findings highlight persistent inequality in education's economic impact, emphasizing the need for policies that ensure education serves as a more effective equalizer in society."
+abstract: "Economic returns to education are a key driver of socioeconomic mobility, yet they are not distributed equally across all income groups. Using data from the China Family Panel Studies (CFPS) between 2010 and 2020, this paper analyzes how family income influences the financial benefits individuals gain from education. The analysis reveals that individuals from wealthier families consistently enjoy significantly higher income returns from education compared to their lower-income counterparts, though this gap did not widen over the decade studied. These findings highlight persistent inequality in education's economic impact, emphasizing the need for policies that ensure education serves as a more effective equalizer in society."
 format: pdf
 header-includes:
   - \usepackage{float}
@@ -55,20 +55,17 @@ The body of the paper contains the data, model, results, and discussion sections
 
 I used the statistical programming language R [@R] for the graphing, analysis and presentation of the project as a whole. Caret [@caret], glmnet [@glmnet; @glmnet2; @glmnet3], nnet [@nnet], tidyverse [@tidyverse], car [@car] MatchIt [@matchit] and arrow [@arrow] were used directly in the analysis of the data. Stringr [@stringr], dplyr [@dplyr], gt [@gt], knitr [@knitr], and styler [@styler] were used in the presentation and/or styling of the data, graphs, and paper as a whole.
 
-All data utilized in this study were sourced from various iterations of the China Family 
-Community Survey [@cfps]. The CFPS is a nationwide community survey funded by 985 Program of Peking University and carried out by the Institute of Social Science Survey of Peking University. CFPS encompasses approximately 15,000 families across 25 provinces and aims to tracks them permanently since 2010. Its main objective is to gather data across three dimensions: individuals, households, and communities. To achieve this, CFPS comprises four sub-surveys that thoroughly investigates families, adults, and children, gathering data for thousands of variables. Given its expansive and representative sample and a wide range of variables, CFPS has become a staple dataset for research in Chinese social sciences. Alternative data sources for this study, such as China General Social Survey (CGSS) and China Social Survey (CSS) are also reliable but do not provide the same width of variables, especially concerning family units. For the purposes of this research, data was extracted from CFPS for the years 2010, 2012, 2014, 2016, 2018, and 2020.
+All data utilized in this study were sourced from various iterations of the China Family Community Survey [@cfps]. The CFPS is a nationwide community survey funded by 985 Program of Peking University and carried out by the Institute of Social Science Survey of Peking University. CFPS encompasses approximately 15,000 families across 25 provinces and aims to tracks them permanently since 2010. Its main objective is to gather data across three dimensions: individuals, households, and communities. To achieve this, CFPS comprises four sub-surveys that thoroughly investigates families, adults, and children, gathering data for thousands of variables. Given its expansive and representative sample and a wide range of variables, CFPS has become a staple dataset for research in Chinese social sciences. Alternative data sources for this study, such as China General Social Survey (CGSS) and China Social Survey (CSS) are also reliable but do not provide the same width of variables, especially concerning family units. For the purposes of this research, data was extracted from CFPS for the years 2010, 2012, 2014, 2016, 2018, and 2020.
 
 After cleaning the data to split results by candidate, removing polls with N/A values and ratings lower than 2.5, and further selecting polls polling likely voters as opposed to the whole population, we are left with 746 data points with the variables pollster, has_sponsor, numeric_grade, pollscore, transparency_score, sample_size, end_date, state, candidate_name, pct (support rate in percentage), and cycle (election cycle, i.e. 2020/2024).
 
 ## Measurement
 
-
-
 ## Outcome variable
 
 The variables presented in this section are variables in the polynomial regression model to identify returns to education, which is a coefficient of the model. This will be specified in @sec-model.
 
-The outcome variable of the model is the natural logarithm of individuals' hourly wages. @fig-outcome shows its distribution in the aggregated survey data from all CFPS iterations between 2010 and 2020.
+The outcome variable of the model is the natural logarithm of individuals' hourly wages. This variable is not directly available in CFPS. It was calculated by dividing individuals' yearly work hours from their yearly income. @fig-outcome shows its distribution in the aggregated survey data from all CFPS iterations between 2010 and 2020.
 
 ```{r}
 #| echo: false
@@ -90,7 +87,7 @@ all_combined <- bind_rows(
 
 ```{r}
 #| label: fig-outcome
-#| fig-cap: Percentage Support in US Presidential Polls
+#| fig-cap: Natural Log of Individual Hourly Wage, CFPS2010 to CFPS2020
 #| echo: false
 #| message: false
 #| warning: false
@@ -134,7 +131,7 @@ ggplot(all_combined, aes(x = ln_hourly_wage)) +
   # Annotate the mean value on the plot
   annotate(
     "text",
-    x = mean(all_combined$ln_hourly_wage, na.rm = TRUE) - 7, # Position text slightly to the right of the mean line
+    x = mean(all_combined$ln_hourly_wage, na.rm = TRUE) - 3, # Position text slightly to the right of the mean line
     y = Inf, # Position text at the top of the plot
     label = paste("Mean:", round(mean(all_combined$ln_hourly_wage, na.rm = TRUE), 1)),
     vjust = 2, # Vertical adjustment
@@ -146,187 +143,429 @@ ggplot(all_combined, aes(x = ln_hourly_wage)) +
 
 \FloatBarrier
 
-The aggregated polling data includes support percentages of different presidential candidates in polls with different FiveThirtyEight ratings [@5382] across two elections.
-
-As displayed by @fig-outcome, the distribution of support percentages is close to a normal distribution, with most data points between 45 and 52 percent.
+As displayed by @fig-outcome, the distribution of the natural log of hourly wage is close to a normal distribution, with a mean of 2.2 and most data points between 0 and 5. However, the range of values extends from around -9 to 12, representing individuals with extremely low and high income.
 
 ## Predictor variables
 
-The predictor variables that we ended up using in our final logistic regression model were the poll end dates, transparency score, and sample sizes of the polls, as well as whether or not a poll was sponsored. The poll end dates were included to capture the temporal changes in candidates' support rate. Transparency score was selected as an identification of the polls' trustworthiness, which must be controlled for in the analysis. Other variables representing the poll quality in the raw dataset, such as the poll score and the FiveThirtyEight rating, were excluded from the models for two reasons. First, the documentation by FiveThirtyEight suggests that the numeric rating, poll score, and transparency score are highly related [@5382]. Second, the data cleaning process filtered data points with high FiveThirtyEight ratings and poll scores. The distributions of selected variables are as follows:
+### Years of Education Received
 
-### End Date
+Years of education is selected as the primary predictor in the model to identify economic returns to education. The theoretical framework for the model will be explained in @sec-model.
 
 ```{r}
-#| label: fig-dates-past
-#| fig-cap: Distribution of Poll End Date, 2020 Cycle
+#| label: fig-edu
+#| fig-cap: Years of Education Received, CFPS2010 to CFPS2020
 #| echo: false
 #| message: false
 #| warning: false
 
-ggplot(all_combined %>% filter(cycle == 2020), aes(x = end_date)) +
-  geom_histogram(binwidth = 7, fill = "#1f78b4", color = "white", alpha = 0.7) +
-  labs(
-    x = "End Date",
-    y = "Number of Polls"
+ggplot(all_combined, aes(x = years_of_education)) +
+  geom_histogram(
+    binwidth = 1,
+    fill = "#2c7bb6", # Aesthetic fill color (steel blue)
+    color = "white", # Border color for bins
+    alpha = 1 # Transparency of the fill
   ) +
-  scale_x_date(date_labels = "%b %d, %Y", date_breaks = "1 month") +
-  theme_minimal() +
+  labs(
+    x = "Years of Education",
+    y = "Frequency"
+  ) +
+  theme_minimal(base_size = 14) + # Minimal theme with increased base font size
   theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    axis.text.x = element_text(angle = 45, hjust = 1)
+    plot.title = element_text(
+      size = 16,
+      face = "bold",
+      hjust = 0.5, # Center the title
+      margin = margin(b = 10) # Add space below the title
+    ),
+    plot.subtitle = element_text(
+      size = 12,
+      hjust = 0.5,
+      margin = margin(b = 20) # Add space below the subtitle
+    ),
+    axis.title = element_text(face = "bold"), # Bold axis titles
+    axis.text = element_text(color = "gray30"), # Dark gray axis text
+    panel.grid.major = element_line(color = "gray80"), # Light gray major grid lines
+    panel.grid.minor = element_blank() # Remove minor grid lines
+  ) +
+  # Add a vertical line for the mean percentage support
+  geom_vline(
+    aes(xintercept = mean(years_of_education, na.rm = TRUE)),
+    color = "#d73027", # Aesthetic color (red)
+    linetype = "dashed",
+    size = 1
+  ) +
+  # Annotate the mean value on the plot
+  annotate(
+    "text",
+    x = mean(all_combined$years_of_education, na.rm = TRUE) + 2.5, # Position text slightly to the right of the mean line
+    y = Inf, # Position text at the top of the plot
+    label = paste("Mean:", round(mean(all_combined$years_of_education, na.rm = TRUE), 1)),
+    vjust = 2, # Vertical adjustment
+    color = "#d73027",
+    size = 5,
+    fontface = "bold"
   )
 ```
 
-```{=tex}
-\vspace{1em}
 \FloatBarrier
-```
+
+As shown in @fig-edu, most individuals in the aggregate dataset take very specific values, such as 9, 12, and 15. This is because most iterations of the CFPS record education received as the highest level of education completed. During the data cleaning process, they were translated to their corresponding number of years. For example, an individual who completed high school receives a 12 for years of education. I am aware that this could be highly inaccurate, as individuals may skip or repeat a grade. This is a limitation of the study that will be fully discussed in @sec-discussion.
+
+### Gender
+
+In light of the burgeoning prominence of the gender wage gap as a global sociological concern in recent decades, extensive research has been undertaken to discern the connection between gender and income. Scholars discovered that Chinese females earned 84.4 percent of male wages in 1988 and 82.5 percent in 1995 [@GustafssonLi2000]. Zhang identified a 38.23 percent wage gap using 2004 data, demonstrating an exacerbation of the issue over time [@Zhang2006].
+
+Beyond merely influencing wage, studies have found a direct bearing of gender on educational returns, particularly in China. Gustafsson and Li found that in 1988, a college diploma raised a woman’s income by 10.2 percent and a man’s income by 8.9 percent compared to high school graduates [@GustafssonLi2000]. In 1995, the values changed to 20.8 percent for women 15.5 percent for men. A more recent study questioned the real magnitude of the gender-based difference in educational returns, as Chinese couples often pool income together, and many females have access to their spouse’s income [@Hannum2013]. Nevertheless, the role of gender as a determinant influencing wage and educational returns is well-established. Thus, it was included as a predictor.
+
 ```{r}
-#| label: fig-dates-current
-#| fig-cap: Distribution of Poll End Date, 2024 Cycle
+#| label: fig-gender
+#| fig-cap: Gender of Respondent, CFPS2010 to CFPS2020
 #| echo: false
 #| message: false
 #| warning: false
 
-ggplot(all_combined %>% filter(cycle == 2024), aes(x = end_date)) +
-  geom_histogram(binwidth = 7, fill = "#1f78b4", color = "white", alpha = 0.7) +
+ggplot(all_combined, aes(x = factor(gender, levels = c(0, 1), labels = c("Female", "Male")))) +
+  geom_bar(fill = "#1f78b4", color = "white", alpha = 1) +
   labs(
-    x = "End Date",
-    y = "Number of Polls"
+    x = "Gender",
+    y = "Frequency"
   ) +
-  scale_x_date(date_labels = "%b %d, %Y", date_breaks = "1 month") +
-  theme_minimal() +
+  theme_minimal(base_size = 14) + # Minimal theme with increased base font size
   theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    axis.text.x = element_text(angle = 45, hjust = 1)
+    plot.title = element_text(
+      size = 16,
+      face = "bold",
+      hjust = 0.5, # Center the title
+      margin = margin(b = 10) # Add space below the title
+    ),
+    plot.subtitle = element_text(
+      size = 12,
+      hjust = 0.5,
+      margin = margin(b = 20) # Add space below the subtitle
+    ),
+    axis.title = element_text(face = "bold"), # Bold axis titles
+    axis.text = element_text(color = "gray30"), # Dark gray axis text
+    panel.grid.major = element_line(color = "gray80"), # Light gray major grid lines
+    panel.grid.minor = element_blank() # Remove minor grid lines
   )
 ```
 
 \FloatBarrier
 
-The end date indicates the date that a poll ends on. The dates are graphed separately between the 2020 and 2024 cycles for ease of viewing. Notice how there is a disproportionately large uptick in the number of polls that end on the end of a month.
+@fig-gender shows that there were significantly more male CFPS respondents than female respondents throughout 2010-2020.
 
-### Sponsors
+### Work Experience
+
+Work experience is another key variable in the model for educational returns. CFPS does not directly provide data for work experience, so potential work experience was created as a substitute.
+
+Potential work experience was deduced with an individual’s age and their years of schooling. Established norms in labor economics prescribe the following age thresholds for labor market entry based on educational attainment: 17 for high-school dropouts, 19 for high-school graduates, 21 for high-school graduates with some college, and 23 for college graduates [@Borjas2003; @OttavianoPeri2012; @EdoRapoport2019]. Thus, potential work experience was calculated by subtracting the corresponding value from an individual's age. This assumes that individuals directly enter the labor market after completing their education, which is a strong assumption.
 
 ```{r}
-#| label: fig-sponsored
-#| fig-cap: Number of Polls with and without Sponsors
+#| label: fig-exp
+#| fig-cap: Potential Years of Work Experience, CFPS2010 to CFPS2020
 #| echo: false
 #| message: false
 #| warning: false
 
-ggplot(all_combined, aes(x = factor(has_sponsor, levels = c(0, 1), labels = c("No Sponsor", "Has Sponsor")))) +
-  geom_bar(fill = "#1f78b4", color = "white", alpha = 0.7) +
-  labs(
-    x = "Has Sponsor",
-    y = "Number of Polls"
+# Potential work experience
+ggplot(all_combined, aes(x = pot_work_years)) +
+  geom_histogram(
+    fill = "#2c7bb6", # Aesthetic fill color (steel blue)
+    color = "white", # Border color for bins
+    alpha = 1 # Transparency of the fill
   ) +
-  theme_minimal() +
+  labs(
+    x = "Potential Years of Work Experience",
+    y = "Frequency"
+  ) +
+  coord_cartesian(xlim = c(0, 60)) +
+  theme_minimal(base_size = 14) + # Minimal theme with increased base font size
   theme(
-    plot.title = element_text(size = 14, face = "bold")
+    plot.title = element_text(
+      size = 16,
+      face = "bold",
+      hjust = 0.5, # Center the title
+      margin = margin(b = 10) # Add space below the title
+    ),
+    plot.subtitle = element_text(
+      size = 12,
+      hjust = 0.5,
+      margin = margin(b = 20) # Add space below the subtitle
+    ),
+    axis.title = element_text(face = "bold"), # Bold axis titles
+    axis.text = element_text(color = "gray30"), # Dark gray axis text
+    panel.grid.major = element_line(color = "gray80"), # Light gray major grid lines
+    panel.grid.minor = element_blank() # Remove minor grid lines
+  ) +
+  # Add a vertical line for the mean percentage support
+  geom_vline(
+    aes(xintercept = mean(pot_work_years, na.rm = TRUE)),
+    color = "#d73027", # Aesthetic color (red)
+    linetype = "dashed",
+    size = 1
+  ) +
+  # Annotate the mean value on the plot
+  annotate(
+    "text",
+    x = mean(all_combined$pot_work_years, na.rm = TRUE) + 6, # Position text slightly to the right of the mean line
+    y = Inf, # Position text at the top of the plot
+    label = paste("Mean:", round(mean(all_combined$pot_work_years, na.rm = TRUE), 1)),
+    vjust = 2, # Vertical adjustment
+    color = "#d73027",
+    size = 5,
+    fontface = "bold"
   )
 ```
 
-Has_sponsor is a categorical variable that keeps track of whether the poll is sponsored by a third party other than the one conducting the poll itself. This is distributed roughly 60-40, with the larger portion of polls being independently funded (i.e. no sponsors).
-
 \FloatBarrier
 
-### Transparency Score
+@fig-exp shows that potential work experience is a right-skewed distribution with a mean of 17.8. This is expected, as it is unlikely for individuals to work for more than 40 years.
+
+### City Hukou Status
+
+The Hukou system in China, a household registration mechanism, classifies individuals into either rural or urban demographics based on their birth registration locale. Individuals with urban Hukou and live in major cities enjoy the lion share of quality education and opportunities to pursue higher education. According to Tam and Jiang, during the recent period of higher education expansion, urban students’ access to higher education rose sharply while rural students’ access stagnated, showing the growing advantage of urban students due to unequal distribution of educational resources [@Tam2015]. The scholars explained the widening gap by pointing to the expansion of vocational education, which were accessible to low-performing urban students who would not have had the opportunity to pursue higher education prior to the expansion. However, rural students were not provided with equal opportunities in vocational education.
+
+How the Hukou system affects educational attainment is a complex topic that must be examined together with other phenomena in China. Local governments are responsible for educational institutions within its region, but rural governments only have a minimal proportion of the capital available to large cities; top universities are disproportionally located in major cities and are more available to individuals possessing a Hukou of those cities; migrant workers, or individuals who live in cities but do not hold a Hukou of the city they live in, do not have access to public schooling in the city and may only attend migrant schools with worse conditions and educational quality [@Wang2007].
+
+Therefore, it is no surprise that urban Hukou holders have higher wages. Using data from 2005, scholars found a rural Hukou worker’s wage per hour is only 64 percent of an urban Hukou worker’s [@Xing2013].
 
 ```{r}
-#| label: fig-transparency
-#| fig-cap: Distribution of Poll Transparency Scores
+#| label: fig-hukou
+#| fig-cap: Hukou Status of Respondent, CFPS2010 to CFPS2020
 #| echo: false
 #| message: false
 #| warning: false
 
-ggplot(all_combined, aes(x = factor(transparency_score))) +
-  geom_bar(fill = "#1f78b4", color = "white", alpha = 0.7) +
+ggplot(all_combined, aes(x = factor(city_hukou, levels = c(0, 1), labels = c("Rural", "Urban")))) +
+  geom_bar(fill = "#1f78b4", color = "white", alpha = 1) +
   labs(
-    x = "Transparency Score",
-    y = "Number of Polls"
+    x = "Hukou Categorization",
+    y = "Frequency"
   ) +
-  theme_minimal() +
+  theme_minimal(base_size = 14) + # Minimal theme with increased base font size
   theme(
-    plot.title = element_text(size = 14, face = "bold")
+    plot.title = element_text(
+      size = 16,
+      face = "bold",
+      hjust = 0.5, # Center the title
+      margin = margin(b = 10) # Add space below the title
+    ),
+    plot.subtitle = element_text(
+      size = 12,
+      hjust = 0.5,
+      margin = margin(b = 20) # Add space below the subtitle
+    ),
+    axis.title = element_text(face = "bold"), # Bold axis titles
+    axis.text = element_text(color = "gray30"), # Dark gray axis text
+    panel.grid.major = element_line(color = "gray80"), # Light gray major grid lines
+    panel.grid.minor = element_blank() # Remove minor grid lines
   )
 ```
 
-The transparency score is a metric given to a poll/pollster by 538 that measures the transparency of the methodology with which the poll is conducted. This is done through a 10-question yes/no checklist on how much of the methodology is available to the public - note how this is completely separate from the quality of the methodology itself. Each question is graded on a 0/0.5/1 scale, for a combined transparency score that ranges from 0 to 10 [@5383]. Most polls in our dataset miss the mark on one or two criteron, netting a final transparency score of 9 - this is partially due to the data cleaning process removing many relatively worsely conducted polls.
-
 \FloatBarrier
 
-### Sample Size
+@fig-hukou shows that there are a greater number of rural Hukou holders than urban Hukou holders among CFPS respondents. This accurately reflects the overall demographics of China, where the rural population is larger than the urban population.
+
+### Marital Status
+
+Studies have shown the magnifying effect of marriage on gendered income gaps, stemming from gender-based roles and expectations within familial settings. Wang and Wang demonstrated that unmarried Chinese men and women in 2015 had an average monthly income gap of 458.612 RMB, and married couples had a gap of 1398.80 RMB [@WangWang2020]. Married couples with children under 18 had an income gap that is more than doubled compared to those without children. Mu and Xie explained the after-marriage changes by addressing that fathers acquire a confidence boost after the birth of their children and dedicate themselves in the pursuit for higher wages and a successful career [@Mu2016]. On the other hand, mothers take the child-rearing role, accumulate less experience in the labor force, and choose less rigorous jobs to reserve energy for household work.
 
 ```{r}
-#| label: fig-sample
-#| fig-cap: Distribution of Poll Sample Sizes
+#| label: fig-marry
+#| fig-cap: Marital Status of Respondent, CFPS2010 to CFPS2020
 #| echo: false
 #| message: false
 #| warning: false
 
-ggplot(all_combined, aes(x = sample_size)) +
-  geom_histogram(binwidth = 500, fill = "#1f78b4", color = "white", alpha = 0.7) +
+ggplot(all_combined, aes(x = factor(is_married, levels = c(0, 1), labels = c("Unmarried", "Married")))) +
+  geom_bar(fill = "#1f78b4", color = "white", alpha = 1) +
   labs(
-    x = "Sample Size",
-    y = "Number of Polls"
+    x = "Marital Status",
+    y = "Frequency"
   ) +
-  scale_x_continuous(labels = scales::comma) +
-  coord_cartesian(xlim = c(0, 6000)) +
-  theme_minimal() +
+  theme_minimal(base_size = 14) + # Minimal theme with increased base font size
   theme(
-    plot.title = element_text(size = 14, face = "bold")
+    plot.title = element_text(
+      size = 16,
+      face = "bold",
+      hjust = 0.5, # Center the title
+      margin = margin(b = 10) # Add space below the title
+    ),
+    plot.subtitle = element_text(
+      size = 12,
+      hjust = 0.5,
+      margin = margin(b = 20) # Add space below the subtitle
+    ),
+    axis.title = element_text(face = "bold"), # Bold axis titles
+    axis.text = element_text(color = "gray30"), # Dark gray axis text
+    panel.grid.major = element_line(color = "gray80"), # Light gray major grid lines
+    panel.grid.minor = element_blank() # Remove minor grid lines
   )
 ```
 
-Sample size, finally, is a measure of the number of participants in each poll. Around 1000 participants seems to overwhelmingly be the final survey size that pollsters decide on, with only single-digit numbers of polls (with rating \>= 2.5) boasting more than four thousand respondents.
+\FloatBarrier
+
+As displayed in @fig-marry, most respondents of CFPS are married.
+
+### Communist Party Membership
+
+Membership in the Communist Party of China (CCP) is frequently included in income related research within China [@GustafssonLi2000; @Hannum2013; @Mu2016]. Being a member of the CCP grants the opportunity for an individual to work in the government positions or state-owned enterprises that provide secure and well-paid jobs [@Dickson2014]. Moreover, party status is also related to the level of education, as the recruitment strategy of the CCP targets elite groups such as college and graduate students. This study followed established protocols and included CCP membership as a predictor, as its unique socio-political status in China necessitates its inclusion.
+
+```{r}
+#| label: fig-ccp
+#| fig-cap: CCP Membership of Respondent, CFPS2010 to CFPS2020
+#| echo: false
+#| message: false
+#| warning: false
+
+ggplot(all_combined, aes(x = factor(is_party, levels = c(0, 1), labels = c("Not CCP Member", "CCP Member")))) +
+  geom_bar(fill = "#1f78b4", color = "white", alpha = 1) +
+  labs(
+    x = "Party Membership",
+    y = "Frequency"
+  ) +
+  theme_minimal(base_size = 14) + # Minimal theme with increased base font size
+  theme(
+    plot.title = element_text(
+      size = 16,
+      face = "bold",
+      hjust = 0.5, # Center the title
+      margin = margin(b = 10) # Add space below the title
+    ),
+    plot.subtitle = element_text(
+      size = 12,
+      hjust = 0.5,
+      margin = margin(b = 20) # Add space below the subtitle
+    ),
+    axis.title = element_text(face = "bold"), # Bold axis titles
+    axis.text = element_text(color = "gray30"), # Dark gray axis text
+    panel.grid.major = element_line(color = "gray80"), # Light gray major grid lines
+    panel.grid.minor = element_blank() # Remove minor grid lines
+  )
+```
 
 \FloatBarrier
+
+@fig-ccp reflects that CCP members are only make up a small proportion of the Chinese population.
+
+### Eastern Provinces
+
+China's geographical East, encompassing 12 economically advanced provinces, is characterized by notable income disparities when compared to Central and Western regions. Scholars found that in 2005, Eastern populations not only had significantly greater income but also enjoyed doubled returns to education compared to other regions [@Xing2013]. Though the values shifted towards the national mean in 2011, significant differences still existed. Recent research endeavors on income and educational returns have increasingly incorporated the geographical East as a control variable, acknowledging its substantial influence on the variables of interest [@Dong2021].
+
+```{r}
+#| label: fig-east
+#| fig-cap: Location of Residence, CFPS2010 to CFPS2020
+#| echo: false
+#| message: false
+#| warning: false
+
+ggplot(all_combined, aes(x = factor(is_east, levels = c(0, 1), labels = c("Other Provinces", "Eastern Provinces")))) +
+  geom_bar(fill = "#1f78b4", color = "white", alpha = 1) +
+  labs(
+    x = "Area of Residency",
+    y = "Frequency"
+  ) +
+  theme_minimal(base_size = 14) + # Minimal theme with increased base font size
+  theme(
+    plot.title = element_text(
+      size = 16,
+      face = "bold",
+      hjust = 0.5, # Center the title
+      margin = margin(b = 10) # Add space below the title
+    ),
+    plot.subtitle = element_text(
+      size = 12,
+      hjust = 0.5,
+      margin = margin(b = 20) # Add space below the subtitle
+    ),
+    axis.title = element_text(face = "bold"), # Bold axis titles
+    axis.text = element_text(color = "gray30"), # Dark gray axis text
+    panel.grid.major = element_line(color = "gray80"), # Light gray major grid lines
+    panel.grid.minor = element_blank() # Remove minor grid lines
+  )
+```
+
+\FloatBarrier
+
+According to @fig-east, there exists a relatively balanced split between respondents residing in Eastern provinces and those living in other provinces. More individuals lived in non-Eastern provinces, counting to more than 20,000.
+
+### Family Income Quartile
+
+Family income quartile is not a variable directly incorporated in the regression model. Rather, data was split into subsets according to family income quartiles and regressed to find the educational returns of each quartile in comparison with one another. This is the focal variable of the study. Within the CFPS's family economics sub-survey, there exists a variable listing family income quartiles. For this study, family economics datasets were merged with the adult individuals dataset of the same CFPS iteration by matching personal IDs, thus deriving a corresponding family income quartile value for each adult participant.
+
+```{r}
+#| label: fig-quartiles
+#| fig-cap: Family Income Quartiles, CFPS2010 to CFPS2020
+#| echo: false
+#| message: false
+#| warning: false
+
+ggplot(all_combined, aes(x = income_quartile)) +
+  geom_bar(fill = "#1f78b4", color = "white", alpha = 1) +
+  labs(
+    x = "Family Income Quartile",
+    y = "Frequency"
+  ) +
+  theme_minimal(base_size = 14) + # Minimal theme with increased base font size
+  theme(
+    plot.title = element_text(
+      size = 16,
+      face = "bold",
+      hjust = 0.5, # Center the title
+      margin = margin(b = 10) # Add space below the title
+    ),
+    plot.subtitle = element_text(
+      size = 12,
+      hjust = 0.5,
+      margin = margin(b = 20) # Add space below the subtitle
+    ),
+    axis.title = element_text(face = "bold"), # Bold axis titles
+    axis.text = element_text(color = "gray30"), # Dark gray axis text
+    panel.grid.major = element_line(color = "gray80"), # Light gray major grid lines
+    panel.grid.minor = element_blank() # Remove minor grid lines
+  )
+```
+
+\FloatBarrier
+
+The distribution shown in @fig-quartiles is counter intuitive, as there are more individuals who belong in upper quartiles. This does not suggest that CFPS uses an unrepresentative sample. The data of individuals in upper family income quartiles are relatively more complete, thus more data points are kept after the data cleaning process. Despite the relative lack of data for the lower quartiles, the number of data points is still sufficient for this study.
 
 # Model {#sec-model}
 
-The goal of our modelling strategy is twofold. Firstly, we seek to predict the winning candidate on election day by calculating the expected win rate of Vice President Kamala Harris and Former President Donald Trump in the seven swing states: Pennsylvania, Georgia, North Carolina, Michigan, Arizona, Wisconsin, and Nevada [@nyt2024polls]. Secondly, we hope to predict the candidate who has the popular vote on election day, controlling for the potential bias of national polls by accounting for the difference between polled popular vote and the actual popular vote on election day for the 2020 cycle.
+The goal of my modelling strategy is twofold. First, I must split the data from each CFPS iteration into family income quartiles and adjust them to be directly comparable with one another. Second, I wish to calculate each quartile's returns to education, in terms of percent income increase per year of education, to complete the comparison.
 
-To achieve the first goal, the polls dataset was divided by individual states, and only data points from the seven swing states were selected, forming seven smaller datasets. Then, for each state, the harris_win variable was constructed by comparing the support rate of the candidates in each poll. The variable was set to 1 if the support rate of Harris is greater than or equal to Trump's support rate and 0 when Trump's support rate is greater. A logistic model was constructed for each state, using harris_win as the outcome and previously stated predictors as inputs.
+To accomplish the first task, Propensity Score Matching was utilized.
 
-Then, after the models were constructed, we conducted 1000 simulations of election results with randomly-generated parameters. The date parameter was set to election day, and the other three predictor variables were simulated from a normal distribution with the mean and standard deviation of the training dataset. We then averaged the values to obtain our final prediction for the probability of a Harris win in the state of interest.
+Historically, research on returns to education primarily relied on directly calculating the rate of return using the Mincer Earnings Function. They incorporated control variables into the regression to account for their influence on income [@Byron1990; @Zhang2006]. When desiring to make group comparisons, scholars generally subdivided data based on specific variables of interest such as gender, location, and industry. They then performed direct regressions to contrast the coefficients [@Gustafsson2000, @Mu2016].
 
-Then, using the probabilities for each state and their respective electoral college votes, we calculated the probability that Vice President Harris successfully obtains the 44 required electoral college votes to secure the presidency. This is done via an R script that can be found in the end of /scripts/05-model_data.R.
+While multivariate regression effectively captures the impact of control variables, its functionality hinges on the linear relationships between the outcome and covariates. Dehejia and Wahba revealed that regressing groups with significant variances in the mean values of covariates could yield misleading results for the variable of interest, potentially overstating the differences between groups [@Dehejia2002]. Propensity Score Matching (PSM) addresses this issue by isolating the treatment effect. Therefore, this study employed a combined method: first balancing covariates using PSM, then executing regressions to adjust for residual differences.
 
-For the popular vote, we utilized the data from 2020 to calculate each pollster's bias by identifying the average difference between the popular vote on election day and their polled national support rates of Trump and President Joe Biden. Next, we adjusted the polled national support rates of pollsters in the 2024 cycle by the calculated gap in 2020. By making this adjustment, we are assuming that the pollsters systematically bias 2024 candidates equally compared to 2020 candidates. We acknowledge that the assumption is most likely false. Ideally, incorporating poll data from earlier election cycles may produce a more accurate indicator of how pollsters systematically bias candidates from the two dominant political parties. However, comprehensive poll data before 2020 is unavailable. Since popular vote is unrelated to the winner of the election, we are using this analysis as an exploration of methods that incorporate historical data without emphasizing predictiveness. Using both adjusted and unadjusted national support levels, multiple linear regressions were created with support levels as the outcome and stated predictors as inputs to predict candidates' support rate over time. Adjusted and unadjusted logistic regressions were made using harris_win as the outcome and the same predictors to predict the candidate with the popular vote on election day. The attempt to control for historical bias was not applied to the swing states due to a lack of data.
+For this study, data from each CFPS iteration were divided into four subsets based on family income quartiles. PSM was then applied to match each subset with others, resulting in six pairs of subsets that exhibited different treatment variable values (family income quartiles) but had similar means for control variables. The matching was conducted using the nearest-neighbor approach with $caliper = 0.1sd$, which is more strict compared to the generally recommended 0.2 threshold for caliper width [@Austin2011]. This choice was intentional, as reducing the caliper width improved the covariate balance without significantly reducing the number of data points. Given that lower family income quartiles had fewer data points, match ratios were adjusted based on the counts within the quartiles being matched.
+
+Table 2 provides a summary of balance for the match between the Quartile 1 and the Quartile 2 subset of CFPS 2020. The match was executed using caliper = 0.1 and a ratio of 2, matching 1041 Quartile 2 instances out of 1324 total instances with all 541 Quartile 1 instances. This matching procedure was repeated 6 times to compare each quartile with every other quartile for all 6 CFPS iterations from 2010 to 2020. The standard mean differences of matches using caliper = 0.2 and 0.5 were included as a comparison. The caliper of 0.1 returned the best standardized mean difference of 0.0139 between propensity scores of Q1 and Q2. Caliper widths of 0.2 and 0.5 returned 0.0338 and 0.0795, respectively.
+
+TABLE HERE IF TIME
+
+For the second task, a multivariate regression model was created using the theoretical framework of the Mincer Earnings Function [@Mincer1974]. The function depicts wage as a function of schooling and work experience. Its original form is:
+$$ln(w) = f(s, x) = ln(w_0) +\rho s + \beta_1x + \beta_2x^2$$
+Where $w$ is hourly wage, $w_0$ is the wage level of an individual with 0 years of schooling and work experience, $s$ is years of schooling, $x$ is work experience, and $\rho$, $\beta_1$, and $\beta_2$ are coefficients that can be viewed as the rates of return to schooling and work experience.
+
+Numerous researchers have since tailored the Mincer equation by incorporating potential confounders, ensuring the mitigation of biased outcomes. A seminal study analyzing Chinese educational returns used the function:
+$$ln(Y) = α_0 +α_1Edu +α_2Exper +α_3Exper^2+∑λ_jX+μ$$
+Which adds $X$ that represents control variables such as age, gender, and geographical location [@Zhang2006]. Analogous modifications can be observed globally, although with variable inclusions that reflect regional societal and cultural differences. For example, an Indian study choose to include caste, relationship to the head of household, and the ability to speak and write English in the equation as control variables [@Bhandari2006]. This research also leaned on a modified version of the Mincer Earnings Function for its calculations on educational returns.
 
 ## Model set-up
 
-### Logistic models
+### Multivariate regression models
 
-Define $y_i$ as the binary outcome variable indicating whether Harris wins (1) or not (0) for the $i^{th}$ observation. $x_{1i}$ is the end_date for the $i^{th}$ observation. $x_{2i}$ is the binary value of has_sponsor for the $i^{th}$ observation. $x_{3i}$ is the transparency_score for the $i^{th}$ observation. $x_{4i}$ is the sample_size for the $i^{th}$ observation.
+Employing PSM-matched subsets, the educational returns for different family income quartile groups were computed using the modified Mincer Function:
+$$ ln(w) = α_0 +α_1Edu +α_2Exp +α_3Exp^2 +α_4Gender \\ +α_5Hukou +α_6Marriage +α_7CCP +α_8East +μ$$
+With $w$ representing hourly wage, $α_1$ representing returns to education and other coefficients representing the effects of previously identified covariates on the natural log of income. 
 
-The logistic regression model can be expressed as follows:
+Next, PSM-matched subset pairs were separated by family income quartiles and regressed independently to identify the differences between educational returns and the coefficients of covariates.
 
-```{=tex}
-\begin{align} y_i &\sim \text{Bernoulli}(p_i) 
-\\ \text{logit}(p_i) &= \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + \beta_3 x_{3i} + \beta_4 x_{4i} \end{align}
-```
-Line (1) specifies that the outcome variable $y_i$ follows a Bernoulli distribution with probability $p_i$ of success (i.e., Harris winning). Line (2) links the linear combination of predictors to the probability $p_i$, where $\beta_0$ is the intercept term, and $\beta_1, \beta_2, \beta_3, \beta_4$ are coefficients corresponding to each predictor variable above.
+Finally, the Delta coefficient $\alpha_1$ from all paired comparisons across every CFPS iteration were compiled together. 5% t-tests were carried out on the data from each iteration to discern if the differences in educational returns between quartiles were statistically significant.
 
-This logistic regression model was applied independently to the data on each swing state and the adjusted and unadjusted popular vote polls.
-
-### Multiple linear regression models
-
-Define $y_i$ as the percentage national support for Harris or Trump for the $i^{th}$ observation. $x_{1i}$ is the end_date for the $i^{th}$ observation. $x_{2i}$ is the binary value of has_sponsor for the $i^{th}$ observation. $x_{3i}$ is the transparency_score for the $i^{th}$ observation. $x_{4i}$ is the sample_size for the $i^{th}$ observation.
-
-The multiple linear regression model can be expressed as follows:
-
-```{=tex}
-\begin{align} y_i &= \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + \beta_3 x_{3i} + \beta_4 x_{4i} \end{align}
-```
-Where $\beta_0$ is the intercept term, and $\beta_1, \beta_2, \beta_3, \beta_4$ are coefficients corresponding to each predictor variable.
-
-Separate multiple linear regression models were applied to the polled national support rate of Harris and Trump, with and without adjustments from historical data.
-
-### Model justification
-
-We decided to use a logistic model to predict the winner on election day because it directly outputs candidates' chance of winning each swing state, enabling us to use a probabilistic function to identify their overall chance of winning. Comparatively, a linear regression model merely predicts the level of support for candidates, which fails to identify a winner.
 
 ```{r}
 #| echo: false

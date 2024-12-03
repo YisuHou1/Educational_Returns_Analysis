@@ -1,12 +1,11 @@
 ---
-title: "A Logistic Regression Prediction of 2024 Election Odds Gives VP Harris a 38.3% Winrate"
+title: "Family Income and Educational Returns in China, 2010-2020: Higher Returns Favor the Wealthy, but Gaps Hold Steady"
 author: 
-  - Andrew Goh
   - Yisu Hou
-thanks: "Code and data are available at: [https://github.com/YisuHou1/US_Election_Statistics](https://github.com/YisuHou1/US_Election_Statistics)."
+thanks: "Code and data are available at: [https://github.com/YisuHou1/Educational_Returns_Analysis](https://github.com/YisuHou1/Educational_Returns_Analysis)."
 date: today
 date-format: long
-abstract: "The 2024 Presidential Election, run between the Democratic candidate Vice President Kamala Harris and Republican candidate Former President Donald Trump, is both widely predicted to be a close race [@538data] and considered to be the “most important election of your life” by a majority of likely voters this election season, as estimated by Quinnipiac [@quinnipiac]. To predict the results of this election, we use a FiveThirtyEight poll-of-polls dataset [@538data], fitting multinomial logistic regression models with the data both at a national level and for each of the 7 swing states. Using these estimates for the probability of Harris winning the popular votes in each of those categories, we find that Vice President Harris has a 38.3% probability of winning the election in the context of the electoral college, a statistically significant result after considering margin of error and various biases."
+abstract: "Economic returns to education are a key driver of socioeconomic mobility, yet they are not distributed equally across all income groups. Using data from the China Family Panel Studies (CFPS) between 2010 and 2020, this paper examines how family income influences the financial benefits individuals gain from education. The analysis reveals that individuals from wealthier families consistently enjoy significantly higher income returns from education compared to their lower-income counterparts, though this gap did not widen over the decade studied. These findings highlight persistent inequality in education's economic impact, emphasizing the need for policies that ensure education serves as a more effective equalizer in society."
 format: pdf
 header-includes:
   - \usepackage{float}
@@ -24,72 +23,68 @@ library(tidyverse)
 library(caret)
 library(glmnet)
 library(nnet)
-library(lubridate)
-library(pROC)
 library(stringr)
 library(gt)
 library(broom)
 library(knitr)
+library(MatchIt)
+library(arrow)
 ```
-
 
 # Introduction
 
-With most polls maintaining close (<1) odds at both the national and statewide level for the seven swing states [@538data; @nyt2024polls], the 2024 Presidential Elections are proving to be an extremely volatile one, with poll predictions regularly flipping and disagreeing with each other, even up until the day before Election Day. The volatility even extends beyond the polling itself – since the January 6 Capitol Attack, prominent figures supporting both parties have painted the 2024 elections specifically as one that underpins the very democratic integrity of the country. Elon Musk, for example, has openly expressed concerns of a Harris win leading to a one-party country [@musk2024x], and Zack Beauchamp from Vox has described a Trump re-election as an “extinction-level threat to democracy” [@vox]. In short, the stakes are high, at least as perceived in the eyes of voters [@quinnipiac]. 
+Since the economic reform in China in 1978, China’s GDP per capita has increased more than 29 times [@NBSC2020]. However, this period of rapid economic growth has been accompanied by greater socioeconomic inequality. The increased stratification, along with a number of China specific policies, has pushed the GINI coefficient close to 0.5, and various studies have demonstrated that the majority of China’s wealth is concentrated in the hands of a few [@XieJin2015].
 
-In order to arrive at such a conclusion, we used poll-by-polls data from FiveThirtyEight [@538data] to fit multinomial logistic regression models for both the nation as a whole and each of the seven swing states. Taking into consideration the mispredictions by pollsters for both the 2016 and 2020 elections, where Trump won the presidential race against Clinton in a 304-227 landslide despite predictions universally predicting a landslide win in the opposite direction [@weighting2], we regress on the characteristics of the poll/pollster such as transparency rating and sponsors and correct the results for systematic polling biases based on past election data, an approach predicted to yield better results this year [@weighting].
+In examining the factors contributing to China’s increasing inequality, a multitude of social scientists highlight China’s education system. The correlation between socioeconomic status and education has been widely scrutinized. According to Esping-Andersen, "in modern capitalist society, the two main exclusionary devices through which the bourgeoisie structures and perpetuates itself as a class, are first, those surrounding the institutions of property, and second, academic or professional qualifications and credentials." [@EspingAndersen1982]
 
-Our estimand, or what we seek to predict, is the probability that Kamala Harris wins the election on the 6th of November. 
+In China, educational attainment directly corresponds to future earnings. Research by Byron and Manaloto showed an approximate 4 percent increase in earnings for each year of schooling [@Byron1990], and Wu and Xie identified a rate of 4.7 percent [@Wu2003]. Jansen and Wu documented a significant rising trend of returns on education during China’s economic reform period from 1978 to 2005 [@Jansen2012]. Concurrently, China significantly expanded its higher education sector, raising the gross enrollment rate from 9.8 percent in 1998 to 24.2 percent in 2009 [@Wang2011]. As of 2022, the enrollment rate stands at 59.7 percent, indicating that China has fully transitioned from elite to mass higher education. Although increased access to higher education and higher returns on education are generally believed to foster social mobility, China’s inequality has worsened. To elucidate this paradoxical outcome, researchers found that the new educational opportunities are predominantly accessed by privileged groups, such as individuals with higher social status, males, and urban populations [@Ou2019].
 
-After obtaining the probabilities that Harris wins each swing state via randomised sampling using our fitted models, we then analysed these probabilities in the context of the electoral college, i.e. the probability that Harris can obtain 44 votes from the swing states, which would all but guarantee her step into office [@nyt2024polls]. We find that Harris has a 38.3% chance of winning the general election, suggesting a likely Trump advantage after accounting for the margin of error in all related processes and observations. 
+Previous research has also investigated the reasons behind the educational gap between high and low-income individuals. In the 20th century, many theorists proposed theories examining the link between socioeconomic status and educational achievement. Some suggest that income-based segregation places low-income children in overcrowded classrooms with less adequately trained educators. Others argue that teachers may harbor negative attitudes towards low-income children, anticipating they will perform poorly academically, thereby creating a self-fulfilling prophecy [@Bond1981]. More recently, Duncan and Murnane suggested that the disparity in child enrichment expenditure influences academic performance, giving children from high-income families an advantage [@Duncan2014].
 
-The body of the paper contains the data, model, results, and discussion sections. In order, @sec-data contains an overview of the data used, the variables involved and the tools used in our analysis and interpretation of the data, @sec-model describes the model in detail and other related miscellaneous musings, @sec-results contains a run-down and explanation of the results and findings from the model, and @sec-discussion contains a discussion of the implications and limitations of the result, among others. The appendices contain a sample of an idealised methodology and survey, as well as a case study of the sample and methodology of Quinnipiac’s Pennsylvania poll [@quinnipiac; @quinnipiacmethodology]. 
+However, while the relationship between financial status and educational attainment is relatively well established, there is a dearth of research, especially in China, to explore the link between family financial status and the rate of return from education. This is an essential connection, as it signifies how effectively education translates into its ultimate outcome: income. The aim of this research is to fill this knowledge gap by examining whether individuals from different socioeconomic backgrounds in the Chinese population receive the same level of returns from education.
+
+The estimand of this investigation is the disparities in educational returns among individuals from different family wealth quartiles during the decade 2020 to 2020, measured in the percent income increase per year of education received.
+
+To arrive at a conclusion, national family and individual data from China Family Panel Studies [@cfps] from the year 2010 to 2020 were extracted. For the data in each CFPS iteration, Propensity Score Matching (PSM) was utilized to balance the control variables across different family wealth quartiles, and separate polynomial regressions were fit to identify the disparities of educational returns across quartiles. It was found that throughout the decade, individuals from wealthier families possessed a significant advantage over individuals from less wealthy families, with disparities reaching more than 3% income increase per year of education between some quartiles.
+
+The body of the paper contains the data, model, results, and discussion sections. In order, @sec-data contains an overview of the data, the variables used, and the programming tools used in my analysis and interpretation of the data. @sec-model describes the model in detail and provides justification for it. @sec-results contains a run-down and explanation of the results and findings from the model, and @sec-discussion contains a discussion of the implications and limitations of the result, among others. The appendices contain a detailed examination of the methodologies of CFPS, as well as aspects of the data and analysis excluded from the body.
 
 # Data {#sec-data}
 
 ## Overview
 
-We use the statistical programming language R [@R] for the graphing, analysis and presentation of the project as a whole. Caret [@caret], glmnet [@glmnet; @glmnet2; @glmnet3], nnet [@nnet], lubridate [@lubridate] and pROC [@pROC] were used directly in the analysis of the data. Tidyverse [@tidyverse], stringr [@stringr], dplyr [@dplyr], gt [@gt], knitr [@knitr], and styler [@styler] were used in the presentation and/or styling of the data, graphs, and paper as a whole.
+I used the statistical programming language R [@R] for the graphing, analysis and presentation of the project as a whole. Caret [@caret], glmnet [@glmnet; @glmnet2; @glmnet3], nnet [@nnet], tidyverse [@tidyverse], car [@car] MatchIt [@matchit] and arrow [@arrow] were used directly in the analysis of the data. Stringr [@stringr], dplyr [@dplyr], gt [@gt], knitr [@knitr], and styler [@styler] were used in the presentation and/or styling of the data, graphs, and paper as a whole.
 
-In order to build a model that predicts the results of the 2024 election, we use survey/poll data on likely voters to inform our insights regarding likely election results, an approach widely accepted in political contexts [@politicalpolling]. We use a poll-of-polls dataset from 538 [@538data], consisting of aggregated polling data from FiveThirtyEight's 2024 presidential election polling database from various national and state-level polls from pollsters all around the country, recording information such as the date when the poll concluded, the entity conducting the poll, and the estimated support rate of the candidate as given by the poll. The data spans national and state-level polls, with particular focus on key battleground states that could determine the Electoral College outcome. This dataset was chosen over alternatives like RealClearPolitics because of 538's comprehensive methodological adjustments and transparent quality standards for included polls.
+All data utilized in this study were sourced from various iterations of the China Family 
+Community Survey [@cfps]. The CFPS is a nationwide community survey funded by 985 Program of Peking University and carried out by the Institute of Social Science Survey of Peking University. CFPS encompasses approximately 15,000 families across 25 provinces and aims to tracks them permanently since 2010. Its main objective is to gather data across three dimensions: individuals, households, and communities. To achieve this, CFPS comprises four sub-surveys that thoroughly investigates families, adults, and children, gathering data for thousands of variables. Given its expansive and representative sample and a wide range of variables, CFPS has become a staple dataset for research in Chinese social sciences. Alternative data sources for this study, such as China General Social Survey (CGSS) and China Social Survey (CSS) are also reliable but do not provide the same width of variables, especially concerning family units. For the purposes of this research, data was extracted from CFPS for the years 2010, 2012, 2014, 2016, 2018, and 2020.
 
 After cleaning the data to split results by candidate, removing polls with N/A values and ratings lower than 2.5, and further selecting polls polling likely voters as opposed to the whole population, we are left with 746 data points with the variables pollster, has_sponsor, numeric_grade, pollscore, transparency_score, sample_size, end_date, state, candidate_name, pct (support rate in percentage), and cycle (election cycle, i.e. 2020/2024).
 
 ## Measurement
 
-The "from-voter-to-data" process for the 538 dataset involves three processes: measurement, where voter responses are collected and adjusted to best provide insight into a true support percentage population parameter, data collection, where data from polls is obtained and cleaned by 538 to only include polls adhering to their set of standards, and aggregation, where additional scores/variables are given to each poll to reflect their accuracy, transparency and bias levels with regards to polling scores [@5381].
 
-The measurement process involves several sequential steps, beginning with initial data collection where pollsters conduct surveys using various modes such as phone, online, or mixed-mode approaches to gather voter preferences. Sample processing follows, involving likely voter screens to identify probable voters, demographic weighting to match population benchmarks, and various adjustments to ensure representativeness [@quinnipiac; @newyorktimes].
-
-The data collection process involves obtaining data from various election polls from around the country, given that they meet specific methodological criteria. Each included poll must provide clear documentation of pollster identity, survey dates, and sampled population, maintain a minimum sample size of 100 respondents, and demonstrate transparent methodology including polling mode, sample source, and weighting procedures. Scientific sampling methods attempting to achieve representative samples are mandatory, as is the disclosure of poll sponsorship and funding sources. The dataset explicitly excludes non-scientific polls lacking representative sampling, MRP-smoothed data, recontact surveys, DIY polls from nonprofessional sources, polls with leading questions or hypothetical matchups, and subsamples from multi-state polls without geographic verification [@5382].
-
-The aggregation phase, finally, involves rating polls by pollster polling quality (ranging from 0.5 to 3.0 stars), with polls with higher historical accuracy, lower consistent partisan biases, and higher transparency of methodology boasting higher ratings [@5383]. Transparency is also a rating and is done through a 10-question yes/no checklist on how much of the methodology is available to the public - note how this is completely separate from the quality of the methodology itself. Each question is graded on a 0/0.5/1 scale, for a combined transparency score that ranges from 0 to 10. Most polls in our dataset miss the mark on one or two criteron, netting a final transparency score of 9 - this is partially due to the data cleaning process removing many relatively worsely conducted polls.
-
-Several important measurement limitations to FiveThirtyEight's methodology must be acknowledged. These include temporal gaps between polls creating discontinuous measurement of voter sentiment, response rates and participation biases potentially skewing samples, and varying geographic coverage with swing states being overrepresented. Additionally, third-party candidate treatment varies across polls, and is difficult to standardise (with respect to other data points) consistently.
 
 ## Outcome variable
 
-The outcome variable is the level of support for the two leading US presidential candidates, Vice President Kamala Harris and Former President Donald Trump, recorded as a percentage of likely voters. For the national-level analysis, the support percentage represents the percentage of polled individuals who responded in favor of a specific candidate to a question that asked about their preferred presidential candidate in a national-level poll. For the regional datasets, the support percentage represents the percentage of likely voters who preferred a specific candidate in a poll that targets a specific state or congressional district of the United States. @fig-outcome shows the distribution of support percentages in the aggregated polling data from 2020 and 2024 presidential elections.
+The variables presented in this section are variables in the polynomial regression model to identify returns to education, which is a coefficient of the model. This will be specified in @sec-model.
+
+The outcome variable of the model is the natural logarithm of individuals' hourly wages. @fig-outcome shows its distribution in the aggregated survey data from all CFPS iterations between 2010 and 2020.
 
 ```{r}
 #| echo: false
 #| message: false
 #| warning: false
 
-trump_2024 <- read_csv(here::here("data/02-analysis_data/trump_2024_analysis_data.csv"))
-harris_2024 <- read_csv(here::here("data/02-analysis_data/harris_2024_analysis_data.csv"))
-trump_2024_lower <-
-  read_csv(here::here("data/02-analysis_data/trump_2024_analysis_data_lower.csv"))
-harris_2024_lower <-
-  read_csv(here::here("data/02-analysis_data/harris_2024_analysis_data_lower.csv"))
-trump_2020 <- read_csv(here::here("data/02-analysis_data/trump_2020_analysis_data.csv"))
-biden_2020 <- read_csv(here::here("data/02-analysis_data/biden_2020_analysis_data.csv"))
+data_2020 <- read_parquet(here::here("data/02-analysis_data/2020_analysis_data.parquet"))
+data_2018 <- read_parquet(here::here("data/02-analysis_data/2018_analysis_data.parquet"))
+data_2016 <- read_parquet(here::here("data/02-analysis_data/2016_analysis_data.parquet"))
+data_2014 <- read_parquet(here::here("data/02-analysis_data/2014_analysis_data.parquet"))
+data_2012 <- read_parquet(here::here("data/02-analysis_data/2012_analysis_data.parquet"))
+data_2010 <- read_parquet(here::here("data/02-analysis_data/2010_analysis_data.parquet"))
 
-# aggregated dataset for summary statistics
-# datasets with lower numeric scores already includes polls with a score of 3.0
+# Make a combined dataset that includes all survey iterations
 all_combined <- bind_rows(
-  harris_2024_lower, trump_2024_lower,
-  biden_2020, trump_2020
+  data_2020, data_2018, data_2016, data_2014, data_2012, data_2010
 )
 ```
 
@@ -100,16 +95,16 @@ all_combined <- bind_rows(
 #| message: false
 #| warning: false
 
-ggplot(all_combined, aes(x = pct)) +
+# Outcome variable: ln hourly wage
+ggplot(all_combined, aes(x = ln_hourly_wage)) +
   geom_histogram(
-    binwidth = 1, # Adjust bin width for granularity
     fill = "#2c7bb6", # Aesthetic fill color (steel blue)
     color = "white", # Border color for bins
-    alpha = 0.8 # Transparency of the fill
+    alpha = 1 # Transparency of the fill
   ) +
   labs(
-    x = "Percentage Support",
-    y = "Number of Polls"
+    x = "ln Hourly Wage",
+    y = "Frequency"
   ) +
   theme_minimal(base_size = 14) + # Minimal theme with increased base font size
   theme(
@@ -131,7 +126,7 @@ ggplot(all_combined, aes(x = pct)) +
   ) +
   # Add a vertical line for the mean percentage support
   geom_vline(
-    aes(xintercept = mean(pct, na.rm = TRUE)),
+    aes(xintercept = mean(ln_hourly_wage, na.rm = TRUE)),
     color = "#d73027", # Aesthetic color (red)
     linetype = "dashed",
     size = 1
@@ -139,9 +134,9 @@ ggplot(all_combined, aes(x = pct)) +
   # Annotate the mean value on the plot
   annotate(
     "text",
-    x = mean(all_combined$pct, na.rm = TRUE) - 7, # Position text slightly to the right of the mean line
+    x = mean(all_combined$ln_hourly_wage, na.rm = TRUE) - 7, # Position text slightly to the right of the mean line
     y = Inf, # Position text at the top of the plot
-    label = paste("Mean:", round(mean(all_combined$pct, na.rm = TRUE), 1), "%"),
+    label = paste("Mean:", round(mean(all_combined$ln_hourly_wage, na.rm = TRUE), 1)),
     vjust = 2, # Vertical adjustment
     color = "#d73027",
     size = 5,
@@ -160,6 +155,7 @@ As displayed by @fig-outcome, the distribution of support percentages is close t
 The predictor variables that we ended up using in our final logistic regression model were the poll end dates, transparency score, and sample sizes of the polls, as well as whether or not a poll was sponsored. The poll end dates were included to capture the temporal changes in candidates' support rate. Transparency score was selected as an identification of the polls' trustworthiness, which must be controlled for in the analysis. Other variables representing the poll quality in the raw dataset, such as the poll score and the FiveThirtyEight rating, were excluded from the models for two reasons. First, the documentation by FiveThirtyEight suggests that the numeric rating, poll score, and transparency score are highly related [@5382]. Second, the data cleaning process filtered data points with high FiveThirtyEight ratings and poll scores. The distributions of selected variables are as follows:
 
 ### End Date
+
 ```{r}
 #| label: fig-dates-past
 #| fig-cap: Distribution of Poll End Date, 2020 Cycle
@@ -180,9 +176,11 @@ ggplot(all_combined %>% filter(cycle == 2020), aes(x = end_date)) +
     axis.text.x = element_text(angle = 45, hjust = 1)
   )
 ```
+
+```{=tex}
 \vspace{1em}
 \FloatBarrier
-
+```
 ```{r}
 #| label: fig-dates-current
 #| fig-cap: Distribution of Poll End Date, 2024 Cycle
@@ -203,7 +201,9 @@ ggplot(all_combined %>% filter(cycle == 2024), aes(x = end_date)) +
     axis.text.x = element_text(angle = 45, hjust = 1)
   )
 ```
+
 \FloatBarrier
+
 The end date indicates the date that a poll ends on. The dates are graphed separately between the 2020 and 2024 cycles for ease of viewing. Notice how there is a disproportionately large uptick in the number of polls that end on the end of a month.
 
 ### Sponsors
@@ -279,7 +279,7 @@ ggplot(all_combined, aes(x = sample_size)) +
   )
 ```
 
-Sample size, finally, is a measure of the number of participants in each poll. Around 1000 participants seems to overwhelmingly be the final survey size that pollsters decide on, with only single-digit numbers of polls (with rating >= 2.5) boasting more than four thousand respondents.
+Sample size, finally, is a measure of the number of participants in each poll. Around 1000 participants seems to overwhelmingly be the final survey size that pollsters decide on, with only single-digit numbers of polls (with rating \>= 2.5) boasting more than four thousand respondents.
 
 \FloatBarrier
 
@@ -287,7 +287,7 @@ Sample size, finally, is a measure of the number of participants in each poll. A
 
 The goal of our modelling strategy is twofold. Firstly, we seek to predict the winning candidate on election day by calculating the expected win rate of Vice President Kamala Harris and Former President Donald Trump in the seven swing states: Pennsylvania, Georgia, North Carolina, Michigan, Arizona, Wisconsin, and Nevada [@nyt2024polls]. Secondly, we hope to predict the candidate who has the popular vote on election day, controlling for the potential bias of national polls by accounting for the difference between polled popular vote and the actual popular vote on election day for the 2020 cycle.
 
-To achieve the first goal, the polls dataset was divided by individual states, and only data points from the seven swing states were selected, forming seven smaller datasets. Then, for each state, the harris_win variable was constructed by comparing the support rate of the candidates in each poll. The variable was set to 1 if the support rate of Harris is greater than or equal to Trump's support rate and 0 when Trump's support rate is greater. A logistic model was constructed for each state, using harris_win as the outcome and previously stated predictors as inputs. 
+To achieve the first goal, the polls dataset was divided by individual states, and only data points from the seven swing states were selected, forming seven smaller datasets. Then, for each state, the harris_win variable was constructed by comparing the support rate of the candidates in each poll. The variable was set to 1 if the support rate of Harris is greater than or equal to Trump's support rate and 0 when Trump's support rate is greater. A logistic model was constructed for each state, using harris_win as the outcome and previously stated predictors as inputs.
 
 Then, after the models were constructed, we conducted 1000 simulations of election results with randomly-generated parameters. The date parameter was set to election day, and the other three predictor variables were simulated from a normal distribution with the mean and standard deviation of the training dataset. We then averaged the values to obtain our final prediction for the probability of a Harris win in the state of interest.
 
@@ -298,31 +298,35 @@ For the popular vote, we utilized the data from 2020 to calculate each pollster'
 ## Model set-up
 
 ### Logistic models
+
 Define $y_i$ as the binary outcome variable indicating whether Harris wins (1) or not (0) for the $i^{th}$ observation. $x_{1i}$ is the end_date for the $i^{th}$ observation. $x_{2i}$ is the binary value of has_sponsor for the $i^{th}$ observation. $x_{3i}$ is the transparency_score for the $i^{th}$ observation. $x_{4i}$ is the sample_size for the $i^{th}$ observation.
 
 The logistic regression model can be expressed as follows:
 
+```{=tex}
 \begin{align} y_i &\sim \text{Bernoulli}(p_i) 
 \\ \text{logit}(p_i) &= \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + \beta_3 x_{3i} + \beta_4 x_{4i} \end{align}
+```
+Line (1) specifies that the outcome variable $y_i$ follows a Bernoulli distribution with probability $p_i$ of success (i.e., Harris winning). Line (2) links the linear combination of predictors to the probability $p_i$, where $\beta_0$ is the intercept term, and $\beta_1, \beta_2, \beta_3, \beta_4$ are coefficients corresponding to each predictor variable above.
 
-Line (1) specifies that the outcome variable $y_i$ follows a Bernoulli distribution with probability $p_i$ of success (i.e., Harris winning). Line (2) links the linear combination of predictors to the probability $p_i$, where $\beta_0$ is the intercept term, and $\beta_1, \beta_2, \beta_3, \beta_4$ are coefficients corresponding to each predictor variable above. 
-
-This logistic regression model was applied independently to the data on each swing state and the adjusted and unadjusted popular vote polls. 
+This logistic regression model was applied independently to the data on each swing state and the adjusted and unadjusted popular vote polls.
 
 ### Multiple linear regression models
+
 Define $y_i$ as the percentage national support for Harris or Trump for the $i^{th}$ observation. $x_{1i}$ is the end_date for the $i^{th}$ observation. $x_{2i}$ is the binary value of has_sponsor for the $i^{th}$ observation. $x_{3i}$ is the transparency_score for the $i^{th}$ observation. $x_{4i}$ is the sample_size for the $i^{th}$ observation.
 
 The multiple linear regression model can be expressed as follows:
 
+```{=tex}
 \begin{align} y_i &= \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + \beta_3 x_{3i} + \beta_4 x_{4i} \end{align}
-
+```
 Where $\beta_0$ is the intercept term, and $\beta_1, \beta_2, \beta_3, \beta_4$ are coefficients corresponding to each predictor variable.
 
-Separate multiple linear regression models were applied to the polled national support rate of Harris and Trump, with and without adjustments from historical data. 
+Separate multiple linear regression models were applied to the polled national support rate of Harris and Trump, with and without adjustments from historical data.
 
 ### Model justification
 
-We decided to use a logistic model to predict the winner on election day because it directly outputs candidates' chance of winning each swing state, enabling us to use a probabilistic function to identify their overall chance of winning. Comparatively, a linear regression model merely predicts the level of support for candidates, which fails to identify a winner. 
+We decided to use a logistic model to predict the winner on election day because it directly outputs candidates' chance of winning each swing state, enabling us to use a probabilistic function to identify their overall chance of winning. Comparatively, a linear regression model merely predicts the level of support for candidates, which fails to identify a winner.
 
 ```{r}
 #| echo: false
@@ -804,10 +808,10 @@ roc_obj_adj <- roc(
 )
 auc_value_adj <- auc(roc_obj_adj)
 ```
-For the analysis of the national popular vote, the logistic model of adjusted polls possess an AUC value of 0.98, and the logistic model of unadjusted polls have an AUC of 0.94, indicating high reliability of categorization. Their respective ROC plots are presented as @fig-log and @fig-logadj. 
+
+For the analysis of the national popular vote, the logistic model of adjusted polls possess an AUC value of 0.98, and the logistic model of unadjusted polls have an AUC of 0.94, indicating high reliability of categorization. Their respective ROC plots are presented as @fig-log and @fig-logadj.
 
 RMSE values and R squared values were calculated for the multiple linear regression models predicting popular vote. The RMSE values for all four models, adjusted and unadjusted support levels of the two candidates, are greater than 1, indicating that the fitted values and the support levels of actual polls are more than 1 percent apart on average, which is significant when analyzing popular vote. Moreover, all R squared values other than the model for the adjusted support rate of Trump, are smaller than 0.3, indicating the inability of the models to account for the variance of national support rates in the data. The model for the adjusted support rate of Trump has a R squared value of 0.69, indicating a relatively high proportion of variance in polled support rates being explained by the multiple linear regression model. This was expected, as the predictors such as a poll's end date and transparency does not necessarily correlate with the outcome of the polls. More predictive variables used by FiveThirtyEight [@5383] for their predictions are unavailable in the raw dataset, which is a key limitation of the data.
-
 
 # Results {#sec-results}
 
@@ -1108,7 +1112,6 @@ for (i in 1:(2^n_states - 1)) {
 }
 ```
 
-
 ```{r}
 #| label: tbl-result
 #| tbl-cap: Predicted Harris Win Percentage in Swing States
@@ -1135,8 +1138,8 @@ mean_probabilities %>%
     table.border.bottom.width = px(2)
   )
 ```
-Combining with the fact that Harris requires 44 electoral votes to win and Trump requires 51, we have found using the probability function that Harris has a 38.3 chance to acquire more than 44 electoral votes, according to the probabilities and electoral votes in @tbl-result. On the other hand, Trump has a 61.7 probability to acquire more than 51 votes. Thus, our conclusion is that while both candidates possess a significant chance of winning, Trump has the greater probability of acquiring the necessary electoral votes from the seven swing states on election day.
 
+Combining with the fact that Harris requires 44 electoral votes to win and Trump requires 51, we have found using the probability function that Harris has a 38.3 chance to acquire more than 44 electoral votes, according to the probabilities and electoral votes in @tbl-result. On the other hand, Trump has a 61.7 probability to acquire more than 51 votes. Thus, our conclusion is that while both candidates possess a significant chance of winning, Trump has the greater probability of acquiring the necessary electoral votes from the seven swing states on election day.
 
 ## Popular vote
 
@@ -1178,9 +1181,10 @@ ggplot(combined_data_adj, aes(x = end_date, y = pct_adj, color = candidate_name)
     plot.title = element_text(hjust = 0.5, face = "bold")
   )
 ```
+
 \FloatBarrier
 
-@fig-lr Presents the predicted unadjusted national support rates for Harris and Trump. The conclusions one can make from this plot is similar to those of most polls: Harris is expected to win the popular vote on any day, including the election day. 
+@fig-lr Presents the predicted unadjusted national support rates for Harris and Trump. The conclusions one can make from this plot is similar to those of most polls: Harris is expected to win the popular vote on any day, including the election day.
 
 ```{r}
 #| label: fig-lr
@@ -1212,25 +1216,24 @@ ggplot(combined_data, aes(x = end_date, y = pct, color = candidate_name)) +
     plot.title = element_text(hjust = 0.5, face = "bold")
   )
 ```
+
 \FloatBarrier
 
 The regression coefficients for the logistic and linear models are presented in the Additional Data Details section (@sec-model-details) because they are not the outcome of interest.
 
+# Discussion {#sec-discussion}
 
+## The illusion of polarization
 
-# Discussion {#sec-discussion   }
+As mentioned in the introduction, one thing that stands out about the 2024 election in particular is just how polarized the two factions are. Instead of merely being a choice over which individual to helm the country over the next four years, this particular election is being framed more and more as a “fight to protect our democracy” from both sides of the debate stand. This, while evidently a new level of polarization, merely mirrors the trend in recent years more than anything else: party loyalty has been on a steady uprise since 1972, with loyalty in weak partisan and leaning independent voters increasing by approximately 50% in the 40 years that followed [@partisanship]. New records were further set in 2016, with Republican validated voters voting Trump a staggering 92% to 4% for Clinton, and Democratic validated voters voting Clinton an equally extreme 94% to 5% Trump support [@pew2018voters].
 
-## The illusion of polarization 
-
-As mentioned in the introduction, one thing that stands out about the 2024 election in particular is just how polarized the two factions are. Instead of merely being a choice over which individual to helm the country over the next four years, this particular election is being framed more and more as a “fight to protect our democracy” from both sides of the debate stand. This, while evidently a new level of polarization, merely mirrors the trend in recent years more than anything else: party loyalty has been on a steady uprise since 1972, with loyalty in weak partisan and leaning independent voters increasing by approximately 50% in the 40 years that followed [@partisanship]. New records were further set in 2016, with Republican validated voters voting Trump a staggering 92% to 4% for Clinton, and Democratic validated voters voting Clinton an equally extreme 94% to 5% Trump support [@pew2018voters]. 
-
-New voting statistics, however, suggest that this polarization is likely only more prominent in the upper echelons of political representation, however: a Washington Post article found that approximately 1 in 8 women and 1 in 10 men are now voting differently from their spouses compared to before [@wapo2024women], a development that suggests a decrease in long-increasing partisanship trends. This is especially pronounced since households in the States overwhelmingly vote together: at least 70% of them do, at least, which means that this value is projected to decrease from 70% to approximately 62% [@households]. In short: while it seems that ideologies are shifting more and more away from each other, the stats say otherwise. So does the Overton window [@overton]. 
+New voting statistics, however, suggest that this polarization is likely only more prominent in the upper echelons of political representation, however: a Washington Post article found that approximately 1 in 8 women and 1 in 10 men are now voting differently from their spouses compared to before [@wapo2024women], a development that suggests a decrease in long-increasing partisanship trends. This is especially pronounced since households in the States overwhelmingly vote together: at least 70% of them do, at least, which means that this value is projected to decrease from 70% to approximately 62% [@households]. In short: while it seems that ideologies are shifting more and more away from each other, the stats say otherwise. So does the Overton window [@overton].
 
 ## Win probabilities versus support ratings: why our predictions are as extreme as they are
 
-Our model led to a win probability prediction with numbers much more skewed towards one side than most pollsters currently predict: under this model, we find that Harris has a 40-60 chance against Trump, whereas most pollsters nowadays hover somewhere between 50-50 to 45-55 (towards either side). This is mainly a consequence of using a multinomial logistic regression model as opposed than other models – instead of predicting the support rates of the two candidates, such a model outputs the probability that a random support rate value from the predicted distribution of Harris support rates is larger than that of the predicted distribution of Trump support rates. This means that in states such as Nevada, where 538 gives Trump a +3 advantage, factoring in for margin of error and standard error means that the probability of Harris winning the state is not in fact 47% but rather much closer to zero, which we decided is a more intuitive way of understanding election odds. 
+Our model led to a win probability prediction with numbers much more skewed towards one side than most pollsters currently predict: under this model, we find that Harris has a 40-60 chance against Trump, whereas most pollsters nowadays hover somewhere between 50-50 to 45-55 (towards either side). This is mainly a consequence of using a multinomial logistic regression model as opposed than other models – instead of predicting the support rates of the two candidates, such a model outputs the probability that a random support rate value from the predicted distribution of Harris support rates is larger than that of the predicted distribution of Trump support rates. This means that in states such as Nevada, where 538 gives Trump a +3 advantage, factoring in for margin of error and standard error means that the probability of Harris winning the state is not in fact 47% but rather much closer to zero, which we decided is a more intuitive way of understanding election odds.
 
-A final reason for this is how swing states are polled much more sample-size-wise than other states, leading to a much higher power value than polls from said other states – a +3 lead in a sample of 1000 people from California’s 39 million might not mean too much, but a +3 lead in a sample of 3000 people from Nevada’s 3 million represents the actual results for 0.3% of the state’s population, holding much more relative weight when it comes to election predictions. 
+A final reason for this is how swing states are polled much more sample-size-wise than other states, leading to a much higher power value than polls from said other states – a +3 lead in a sample of 1000 people from California’s 39 million might not mean too much, but a +3 lead in a sample of 3000 people from Nevada’s 3 million represents the actual results for 0.3% of the state’s population, holding much more relative weight when it comes to election predictions.
 
 ## Weaknesses and next steps
 
@@ -1238,7 +1241,7 @@ The dataset used for this analysis has a number of clear limitations. First of a
 
 The second major challenge presented by the dataset is the lack of predictors. FiveThirtyEight utilizes predictive variables that are unavailable to us, such as weighted values that represent the extent to which a pollster is partisan [@5383]. The predictors used in this research, such as the transparency score of the pollster, are not related to their bias towards any candidate from a partisanship point of view, limiting the predictive power of our models.
 
-Finally, the lack of data regarding the Harris-Trump race, due to Harris starting her presidential race uncharacteristically late, is also a main reason for the limitations of our model. 
+Finally, the lack of data regarding the Harris-Trump race, due to Harris starting her presidential race uncharacteristically late, is also a main reason for the limitations of our model.
 
 Potential next steps could be taken to improve the model in the future: more data could be aggregated manually (from pollsters not recorded by FiveThirtyEight), stronger predictor variables that are specifically more correlated with partisanship could be marked and utilised in our model, and individual weightings could be utilised and applied to the data based on each pollster's "track record" with regards to the error, bias, and variance in their previous polls and estimates.
 
@@ -1246,8 +1249,10 @@ Potential next steps could be taken to improve the model in the future: more dat
 
 \appendix
 
-# Appendix {-}
+# Appendix {.unnumbered}
+
 ## Pollster methodology overview and evaluation
+
 The Quinnipiac University Poll conducts independent polling in swing states. To analyze their methodology, we look specifically into their October 2024 Pennsylvania polls [@quinnipiac].
 
 Their target population is likely voters aged 18 and older in Pennsylvania [@quinnipiacmethodology]. To reach this population, they use likely voters aged 18 and older with phone numbers (both landline and cell) as their sampling frame, i.e. the frame of possible subjects that they sample observations from. Quinnipiac University employed Random Digit Dialing (RDD) to generate their sample of 2,186 respondents. This dual-frame approach reflects modern communication patterns, with 1,644 cell phone and 542 landline completions. However, using phones as a sampling frame means they cannot reach voters without phone access, introducing potential coverage bias.
@@ -1267,217 +1272,119 @@ Finally, the poll also faces common challenges in political polls such as this o
 Overall, Quinnipiac's methodology represents a balanced approach to managing practical constraints and statistical rigor in modern political polling - while some common biases are still likely to skew the poll results off the true support levels for Harris, for example, the poll uses methods such as post-stratification weighting to tradeoff biases at the cost of model variance [@weighting]. Using live interviewers unavoidably introduces social desirability bias, however, and significantly increases poll costs per quota. Modifying the methodology to remove this aspect of the survey would potentially reduce bias and allow for larger samples to be taken, in turn opening up possibilities for cross-validation and the such, which then reduces the effect of increased model variance on the final results.
 
 ## Idealised methodology
-With a $100,000 budget, our approach focuses on producing accurate state-level estimates in key battleground states, which would then inform our national forecast. We prioritize Pennsylvania, Michigan, Wisconsin, Georgia, Arizona, and Nevada, allocating resources proportionally based on each state's electoral importance and expected margin of victory.
 
-Our sampling strategy employs both probability and non-probability methods. Probability sampling (60% of budget, i.e. $60k) means every member of our target population has a known, non-zero chance of being selected - this allows us to calculate proper margins of error and make statistical inferences about the population. For this, we use dual-frame random digit dialing (RDD) for phone surveys and address-based sampling (ABS) for mail-to-web recruitment. RDD involves generating random phone numbers within active area codes, while ABS uses the U.S. Postal Service's delivery database as a sampling frame, both proven methods of sampling [@cummings]. The ABS approach helps reach households without reliable phone access. We stratify our sample by geography, demographics, and previous voting patterns to ensure representation across key subgroups - meaning we divide the population into these subgroups and sample from each independently.
+With a \$100,000 budget, our approach focuses on producing accurate state-level estimates in key battleground states, which would then inform our national forecast. We prioritize Pennsylvania, Michigan, Wisconsin, Georgia, Arizona, and Nevada, allocating resources proportionally based on each state's electoral importance and expected margin of victory.
 
-For non-probability sampling (40% of budget, i.e. $40k), where respondents' selection probabilities are unknown and not everyone has a chance of being selected, we recruit through multiple online panel vendors and use targeted social media advertising to reach traditionally underrepresented groups. While this approach introduces potential selection bias because participants self-select into the sample, it helps reach younger voters who are less responsive to traditional survey methods [@nonprobabilitysampling]. We implement quota sampling within these non-probability samples to match key demographic targets - for example, stopping collection from certain demographic groups once their quota is filled.
+Our sampling strategy employs both probability and non-probability methods. Probability sampling (60% of budget, i.e. \$60k) means every member of our target population has a known, non-zero chance of being selected - this allows us to calculate proper margins of error and make statistical inferences about the population. For this, we use dual-frame random digit dialing (RDD) for phone surveys and address-based sampling (ABS) for mail-to-web recruitment. RDD involves generating random phone numbers within active area codes, while ABS uses the U.S. Postal Service's delivery database as a sampling frame, both proven methods of sampling [@cummings]. The ABS approach helps reach households without reliable phone access. We stratify our sample by geography, demographics, and previous voting patterns to ensure representation across key subgroups - meaning we divide the population into these subgroups and sample from each independently.
 
-Respondent recruitment uses multiple contact methods - mail, email, text, and phone - with attempts made at different times and days to maximize response rates. We offer a $10 gift card incentive for completed surveys and provide both English and Spanish language options. This mixed-mode contact strategy helps reduce non-response bias by providing multiple ways to participate.
+For non-probability sampling (40% of budget, i.e. \$40k), where respondents' selection probabilities are unknown and not everyone has a chance of being selected, we recruit through multiple online panel vendors and use targeted social media advertising to reach traditionally underrepresented groups. While this approach introduces potential selection bias because participants self-select into the sample, it helps reach younger voters who are less responsive to traditional survey methods [@nonprobabilitysampling]. We implement quota sampling within these non-probability samples to match key demographic targets - for example, stopping collection from certain demographic groups once their quota is filled.
+
+Respondent recruitment uses multiple contact methods - mail, email, text, and phone - with attempts made at different times and days to maximize response rates. We offer a \$10 gift card incentive for completed surveys and provide both English and Spanish language options. This mixed-mode contact strategy helps reduce non-response bias by providing multiple ways to participate.
 
 Data validation is crucial for maintaining quality. We cross-reference responses with voter files where available - meaning we check if respondents' self-reported registration status matches official records. We screen for duplicate responses using IP addresses and phone numbers, and implement attention checks within the survey (questions with known correct answers to ensure respondents are reading carefully). Speed checks identify rushed responses that might indicate low-quality data by flagging completions that fall below a minimum reasonable completion time, while consistency checks across related questions help identify potentially fraudulent responses by looking for logical contradictions in answers.
 
 Our weighting approach uses post-stratification to known population benchmarks - this means we adjust the weight given to each response so that our sample matches known population characteristics. For example, if our sample has 30% college graduates but the population has 40%, we would give more weight to responses from college graduates. We include demographics (age, race, education, gender), geographic location, past voting behavior, and party registration in our weighting scheme. We produce daily estimates using a 7-day rolling average, which helps smooth out daily fluctuations while remaining responsive to real changes in voter preferences [@weighting2].
 
-Finally, how ethics are handled is a crucial part of any survey methodology. In this idealised methodology, consent will be asked for at the beginning of the survey, full disclosure of how information is used will be given beforehand and no self-identifiable information will be recorded (so no names, phone numbers, etc.). The $10 incentive is enough to hopefully make it wortile for participants' time, but also not ideally not significant enough of an incentive to make individuals suppress otherwise deal-breaking concerns with the survey purely for the sake of the incentive.
+Finally, how ethics are handled is a crucial part of any survey methodology. In this idealised methodology, consent will be asked for at the beginning of the survey, full disclosure of how information is used will be given beforehand and no self-identifiable information will be recorded (so no names, phone numbers, etc.). The \$10 incentive is enough to hopefully make it wortile for participants' time, but also not ideally not significant enough of an incentive to make individuals suppress otherwise deal-breaking concerns with the survey purely for the sake of the incentive.
 
 The survey instrument itself focuses on six key areas: screening questions to identify likely voters, voting intentions (including direct questions about Trump vs. Harris preferences), political preferences, demographics, issue priorities, and media consumption patterns. We've implemented this survey design in Google Forms, which can be found here: https://forms.gle/pk7vDiMHwEGLMK849
 
 This methodology balances statistical rigor with practical constraints, while acknowledging and attempting to address the key challenges in modern political polling: declining response rates, coverage bias, and the increasing difficulty of reaching a representative sample of likely voters.
 
 ## Idealised survey
-The survey, made using Google Forms, is linked here: https://forms.gle/pk7vDiMHwEGLMK849
-Note that the questions are identical for both the phone and online surveys bar q6.
-A copy of the survey that is identical to the one implemented in the Google Forms above is presented below:
-Thank you for participating in this survey about the 2024 U.S. Presidential Election. This survey is part of a research project at the University of Toronto studying voting intentions and political attitudes.
+
+The survey, made using Google Forms, is linked here: https://forms.gle/pk7vDiMHwEGLMK849 Note that the questions are identical for both the phone and online surveys bar q6. A copy of the survey that is identical to the one implemented in the Google Forms above is presented below: Thank you for participating in this survey about the 2024 U.S. Presidential Election. This survey is part of a research project at the University of Toronto studying voting intentions and political attitudes.
 
 Estimated completion time: 8-10 minutes
 
 Your responses will be kept confidential and used only for research purposes. Email information, and any other information that may personally identify you, is not gathered. You may skip any questions you prefer not to answer, though complete responses are most helpful for our research.
 
-For questions or concerns about this survey, please contact: andrew.goh@mail.utoronto.ca
+For questions or concerns about this survey, please contact: andrew.goh\@mail.utoronto.ca
 
-SCREENING SECTION:
-Q1. Are you 18 years of age or older?
+SCREENING SECTION: Q1. Are you 18 years of age or older?
 
-Yes
-No [END SURVEY]
+Yes No \[END SURVEY\]
 
 Q2. Are you a U.S. citizen?
 
-Yes
-No [END SURVEY]
+Yes No \[END SURVEY\]
 
 Q3. Are you registered to vote at your current address?
 
-Yes
-No
-Not sure
-[If No or Not sure: Do you plan to register before the November 2024 election?]
+Yes No Not sure \[If No or Not sure: Do you plan to register before the November 2024 election?\]
 
-VOTING INTENTION:
-Q4. How likely are you to vote in the 2024 presidential election?
+VOTING INTENTION: Q4. How likely are you to vote in the 2024 presidential election?
 
-Definitely will vote
-Probably will vote
-Might or might not vote
-Probably will not vote
-Definitely will not vote
+Definitely will vote Probably will vote Might or might not vote Probably will not vote Definitely will not vote
 
 Q5. If the 2024 presidential election were held today, and the candidates were Kamala Harris (Democrat) and Donald Trump (Republican), who would you vote for?
 
-Kamala Harris
-Donald Trump
-Another candidate (please specify)
-Would not vote
-Not sure
+Kamala Harris Donald Trump Another candidate (please specify) Would not vote Not sure
 
-ATTENTION CHECK:
-Q6. To ensure you're reading carefully, please select "Somewhat disagree" for this question: "I enjoy following political news."
+ATTENTION CHECK: Q6. To ensure you're reading carefully, please select "Somewhat disagree" for this question: "I enjoy following political news."
 
-Strongly agree
-Somewhat agree
-Somewhat disagree
-Strongly disagree
-No opinion
+Strongly agree Somewhat agree Somewhat disagree Strongly disagree No opinion
 
-POLITICAL PREFERENCES:
-Q7. Generally speaking, you consider yourself a:
+POLITICAL PREFERENCES: Q7. Generally speaking, you consider yourself a:
 
-Democrat
-Republican
-Independent
-Something else (please specify)
+Democrat Republican Independent Something else (please specify)
 
 Q8. How would you rate the current state of the U.S. economy?
 
-Very poor
-Poor
-Fair
-Good
-Excellent
+Very poor Poor Fair Good Excellent
 
-ISSUE PRIORITIES:
-Q9. Which ONE of the following issues is most important to you when deciding how to vote?
+ISSUE PRIORITIES: Q9. Which ONE of the following issues is most important to you when deciding how to vote?
 
-Economy and jobs
-Immigration
-Healthcare
-Climate change
-Crime and public safety
-Education
-National security
-Abortion rights
-Gun policy
-Something else (please specify)
+Economy and jobs Immigration Healthcare Climate change Crime and public safety Education National security Abortion rights Gun policy Something else (please specify)
 
 For each of the following issues, please indicate whether you think Kamala Harris or Donald Trump would do a better job handling it:
 
 Q10. Economy and jobs:
 
-Kamala Harris would do better
-Donald Trump would do better
-No difference
-Not sure
+Kamala Harris would do better Donald Trump would do better No difference Not sure
 
-Q11. Human rights and freedom of speech:
-[Same options]
-Q12. Abortion:
-[Same options]
-Q13. Healthcare:
-[Same options]
-Q14. Immigration:
-[Same options]
-Q15. National security:
-[Same options]
+Q11. Human rights and freedom of speech: \[Same options\] Q12. Abortion: \[Same options\] Q13. Healthcare: \[Same options\] Q14. Immigration: \[Same options\] Q15. National security: \[Same options\]
 
-MEDIA CONSUMPTION:
-Q16. Where do you most often get your news about politics? (Select all that apply)
+MEDIA CONSUMPTION: Q16. Where do you most often get your news about politics? (Select all that apply)
 
-Network TV news (ABC, CBS, NBC)
-Cable TV news (CNN, Fox News, MSNBC)
-Local TV news
-Radio
-Print newspapers
-News websites
-Social media
-Friends and family
-Other (please specify)
+Network TV news (ABC, CBS, NBC) Cable TV news (CNN, Fox News, MSNBC) Local TV news Radio Print newspapers News websites Social media Friends and family Other (please specify)
 
 Q17. How many hours per day do you typically spend following news about politics?
 
-Less than 1 hour
-1-2 hours
-2-4 hours
-More than 4 hours
+Less than 1 hour 1-2 hours 2-4 hours More than 4 hours
 
-DEMOGRAPHICS:
-Q18. What is your age?
+DEMOGRAPHICS: Q18. What is your age?
 
-18-24
-25-34
-35-44
-45-54
-55-64
-65 or older
+18-24 25-34 35-44 45-54 55-64 65 or older
 
 Q19. What is your gender?
 
-Male
-Female
-Non-binary/Other
-Prefer not to say
+Male Female Non-binary/Other Prefer not to say
 
 Q20. What is your race/ethnicity? (Select all that apply)
 
-White
-Black or African American
-Hispanic or Latino
-Asian
-Native American
-Other (please specify)
-Prefer not to say
+White Black or African American Hispanic or Latino Asian Native American Other (please specify) Prefer not to say
 
 Q21. What is the highest level of education you have completed?
 
-Less than high school
-High school graduate
-Some college
-Associate's degree
-Bachelor's degree
-Graduate degree
-Prefer not to say
+Less than high school High school graduate Some college Associate's degree Bachelor's degree Graduate degree Prefer not to say
 
 Q22. What was your total household income before taxes in 2023?
 
-Under $25,000
-$25,000-$49,999
-$50,000-$74,999
-$75,000-$99,999
-$100,000-$149,999
-$150,000 or more
-Prefer not to say
+Under \$25,000 \$25,000-\$49,999 \$50,000-\$74,999 \$75,000-\$99,999 \$100,000-\$149,999 \$150,000 or more Prefer not to say
 
-CONSISTENCY CHECK:
-Q23. Looking ahead to November 2024, if Kamala Harris is the Democratic nominee and Donald Trump is the Republican nominee, how do you think you will vote?
+CONSISTENCY CHECK: Q23. Looking ahead to November 2024, if Kamala Harris is the Democratic nominee and Donald Trump is the Republican nominee, how do you think you will vote?
 
-Kamala Harris
-Donald Trump
-Another candidate (please specify)
-Would not vote
-Not sure
+Kamala Harris Donald Trump Another candidate (please specify) Would not vote Not sure
 
-[END OF SURVEY]
-Thank you for completing this survey about the 2024 U.S. Presidential Election. Your responses will help us better understand voter preferences and political attitudes across the country.
-If you have any questions about this research or would like to be informed about the results, please contact andrew.goh@mail.utoronto.ca.
-Your time and participation is greatly appreciated.
+\[END OF SURVEY\] Thank you for completing this survey about the 2024 U.S. Presidential Election. Your responses will help us better understand voter preferences and political attitudes across the country. If you have any questions about this research or would like to be informed about the results, please contact andrew.goh\@mail.utoronto.ca. Your time and participation is greatly appreciated.
 
 # Additional data details
 
 # Model details {#sec-model-details}
 
-
 ## Diagnostics
+
 ```{r}
 #| label: fig-pen
 #| fig-cap: ROC Curve for Harris Win Prediction, Pennsylvania
@@ -1567,6 +1474,7 @@ plot(roc_obj)
 
 plot(roc_obj)
 ```
+
 \FloatBarrier
 
 ## Coefficients
@@ -1585,6 +1493,7 @@ kable(tidy_Pennsylvania,
   caption = "Logistic Regression Coefficients for Pennsylvania"
 )
 ```
+
 ```{r}
 #| echo: false
 #| message: false
@@ -1677,7 +1586,4 @@ kable(tidy_Nevada,
 
 \newpage
 
-
 # References
-
-

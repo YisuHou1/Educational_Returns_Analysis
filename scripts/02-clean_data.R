@@ -661,3 +661,30 @@ write_parquet(
 )
 
 
+#### Placeholder datasets for the repo (remove when replicating) ####
+# Create empty dataset
+placeholder_df <- tibble(
+  yearly_income = numeric(),  
+  years_of_education = numeric(),  
+  years_of_work = numeric(),    
+  gender = numeric(),         
+  city_hukou = numeric(),      
+  is_party = numeric(),      
+  is_married = numeric(),      
+  is_east = numeric(),
+  income_quartile = numeric()
+)
+
+# Save into repo
+write_csv(
+  placeholder_df,
+  "data/01-raw_data/raw_data_placeholder.csv"
+)
+
+# This is in csv to prevent being ignored
+# Real analysis datasets are stored as parquet files
+write_csv(
+  placeholder_df,
+  "data/02-analysis_data/analysis_data_placeholder.csv"
+)
+

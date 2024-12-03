@@ -68,5 +68,6 @@ simulated_data <- data.frame(
   is_east = is_east
 )
 
-#### Write_csv
+#### Write_csv ####
 write_csv(simulated_data, file = "data/00-simulated_data/simulated_data.csv")
+

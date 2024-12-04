@@ -572,7 +572,7 @@ kable(
   format = "latex"
 ) %>%
   kable_styling(
-    latex_options = c("striped", "hold_position", "scale_down"), 
+    latex_options = c("striped", "hold_position", "scale_down"),
     position = "center",
     full_width = FALSE
   )
@@ -617,8 +617,8 @@ models_path <- here::here("models")
 # List all RDS files in the models folder
 model_files <- list.files(
   path = models_path,
-  pattern = "\\.rds$",    
-  full.names = TRUE       
+  pattern = "\\.rds$",
+  full.names = TRUE
 )
 
 # Load each RDS file and store in a list
@@ -626,7 +626,6 @@ models <- lapply(model_files, readRDS)
 
 # Assign names to the list based on the filenames (without .rds)
 names(models) <- tools::file_path_sans_ext(basename(model_files))
-
 ```
 
 ## Cross-quartile disparities in Educational Returns
@@ -650,7 +649,7 @@ data <- data.frame(
   `Q2vsQ3` = c(1.2350, 1.7767, 1.2912, 0.2706, -0.0212, 2.1727, 1.1208),
   `Q2vsQ4` = c(3.1601, 3.3524, 3.9390, 3.3242, 3.7233, 4.9265, 3.7376),
   `Q3vsQ4` = c(2.2804, 3.7010, 3.1417, 3.1945, 4.4302, 2.1920, 3.1566),
-  `Cross Sectional Mean` = c(2.2833, 2.5673, 2.5001, 0.6623, 2.2413, 3.0872, ' ')
+  `Cross Sectional Mean` = c(2.2833, 2.5673, 2.5001, 0.6623, 2.2413, 3.0872, " ")
 )
 
 # Create the table
@@ -659,12 +658,10 @@ kable(
   format = "latex"
 ) %>%
   kable_styling(
-    latex_options = c("striped", "hold_position", "scale_down"), 
+    latex_options = c("striped", "hold_position", "scale_down"),
     position = "center",
     full_width = FALSE
   )
-
-
 ```
 \FloatBarrier
 Note: In 2012, educational returns for Q1, Q2, and Q3 were insignificant. In 2010, educational returns for Q1 and Q2 were insignificant. 
@@ -687,10 +684,10 @@ library(kableExtra)
 
 data <- data.frame(
   `CFPS Year` = c(2020, 2018, 2016, 2014, 2012, 2010),
-  `Q1 Returns` = c('4.9507***', '4.1730**', '2.5671*', '4.4464**', '-1.0031', '0.1803'),
-  `Q2 Returns` = c('5.8130***', '4.0239***', '3.0501***', '2.5357**', '0.0590', '1.1116'),
-  `Q3 Returns` = c('7.3284***', '6.1466***', '4.1665***', '2.8027***', '0.4928', '3.9577***'),
-  `Q4 Returns` = c('10.3891***', '9.1724***', '6.9051***', '6.3410***', '4.4870***', '8.0710***')
+  `Q1 Returns` = c("4.9507***", "4.1730**", "2.5671*", "4.4464**", "-1.0031", "0.1803"),
+  `Q2 Returns` = c("5.8130***", "4.0239***", "3.0501***", "2.5357**", "0.0590", "1.1116"),
+  `Q3 Returns` = c("7.3284***", "6.1466***", "4.1665***", "2.8027***", "0.4928", "3.9577***"),
+  `Q4 Returns` = c("10.3891***", "9.1724***", "6.9051***", "6.3410***", "4.4870***", "8.0710***")
 )
 
 kable(
@@ -698,12 +695,10 @@ kable(
   format = "latex"
 ) %>%
   kable_styling(
-    latex_options = c("striped", "hold_position", "scale_down"), 
+    latex_options = c("striped", "hold_position", "scale_down"),
     position = "center",
     full_width = FALSE
   )
-
-
 ```
 \FloatBarrier
 Significant codes: * = p < 0.05, ** = p < 0.01,  *** = p < 0.001

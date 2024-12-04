@@ -382,5 +382,3 @@ ggplot(all_combined, aes(x = income_quartile)) +
     panel.grid.major = element_line(color = "gray80"), # Light gray major grid lines
     panel.grid.minor = element_blank() # Remove minor grid lines
   )
-
-

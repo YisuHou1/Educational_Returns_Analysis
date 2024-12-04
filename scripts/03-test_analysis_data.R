@@ -80,7 +80,7 @@ run_sanity_checks <- function(data, dataset_name) {
     # income variable for analysis is measured in natural log, so
     # it can take negative values
     expect_true(all(data$ln_hourly_wage >= -999 & data$ln_hourly_wage <= 100))
-    
+
     # For the analysis datasets, there are no specific values to look for
     # because the data in some iterations of the survey just asks how many
     # years of education someone has received, while other iterations ask
@@ -89,18 +89,18 @@ run_sanity_checks <- function(data, dataset_name) {
     # and they should be whole numbers
     expect_true(all(data$years_of_education >= 0 & data$years_of_education <= 22))
     expect_true(all(data$years_of_education == as.integer(data$years_of_education)))
-    
+
     # Work years are whole numbers and not too large
     expect_true(all(data$pot_work_years <= 80))
     expect_true(all(data$pot_work_years == as.integer(data$pot_work_years)))
-    
+
     # Dummy variables should all be 0 or 1
     binary_vars <- c("gender", "city_hukou", "is_party", "is_married", "is_east")
     for (var in binary_vars) {
       expect_true(all(data[[var]] %in% c(0, 1)), info = paste("Checking values of", var))
     }
 
-    
+
     # Family income quartile variable should be whole numbers between 1 and 4
     expect_true(all(data$income_quartile >= 1 & data$income_quartile <= 4))
     expect_true(all(data$income_quartile == as.integer(data$income_quartile)))
@@ -119,4 +119,3 @@ for (dataset_name in names(datasets_list)) {
   dataset <- datasets_list[[dataset_name]]
   run_sanity_checks(dataset, dataset_name)
 }
-

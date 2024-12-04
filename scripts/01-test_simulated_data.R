@@ -39,16 +39,16 @@ test_that("Simulated Dataset has all required columns with correct types", {
     "is_east"
   )
   expect_true(all(required_cols %in% colnames(dataset)))
-  
+
   # Check data types
-  expect_type(dataset$yearly_income, "double")  # Numeric
-  expect_type(dataset$years_of_education, "double") 
-  expect_type(dataset$years_of_work, "double") 
-  expect_type(dataset$gender, "double") 
-  expect_type(dataset$city_hukou, "double") 
-  expect_type(dataset$is_party, "double") 
-  expect_type(dataset$is_married, "double") 
-  expect_type(dataset$is_east, "double") 
+  expect_type(dataset$yearly_income, "double") # Numeric
+  expect_type(dataset$years_of_education, "double")
+  expect_type(dataset$years_of_work, "double")
+  expect_type(dataset$gender, "double")
+  expect_type(dataset$city_hukou, "double")
+  expect_type(dataset$is_party, "double")
+  expect_type(dataset$is_married, "double")
+  expect_type(dataset$is_east, "double")
 })
 
 
@@ -56,7 +56,7 @@ test_that("Simulated Dataset has all required columns with correct types", {
 
 test_that("yearly_income values are between 0 and 1,000,000 and multiples of 100", {
   expect_true(all(dataset$yearly_income >= 0 & dataset$yearly_income <= 1000000))
-  
+
   # Check if all values are multiples of 100
   expect_true(all(dataset$yearly_income %% 100 == 0))
 })
@@ -80,8 +80,9 @@ test_that("Binary variables contain only 0 or 1", {
 
 test_that("yearly_income has an average close to 50,000", {
   avg_income <- mean(dataset$yearly_income)
-  expect_true(avg_income >= 49000 & avg_income <= 51000, 
-              info = paste("Average income is", avg_income))
+  expect_true(avg_income >= 49000 & avg_income <= 51000,
+    info = paste("Average income is", avg_income)
+  )
 })
 
 test_that("years_of_education has a reasonable distribution", {

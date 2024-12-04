@@ -70,4 +70,3 @@ simulated_data <- data.frame(
 
 #### Write_csv ####
 write_csv(simulated_data, file = "data/00-simulated_data/simulated_data.csv")
-

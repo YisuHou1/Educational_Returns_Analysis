@@ -59,6 +59,12 @@ All data utilized in this study were sourced from various iterations of the Chin
 
 ## Measurement
 
+The CFPS records survey data by directly sending agents to the homes of respondents, aiding respondents in the process of filling out a comprehensive survey about their families and themselves [@cfps]. The agents closely interact with the respondents as they complete the survey, ensuring that the recorded information is complete and appropriate. For example, the agent may require the respondent to input an answer for certain questions, even if the initial response of the respondent is "I don't know". Moreover, the majority of recorded variables in the CFPS surveys are categorical, and they may have ambiguous boundaries.
+
+The direct interactions between respondents and agents may effectively maximize the rate of completion of CFPS surveys, but the forced responses might not accurately reflect the true opinions of the respondents, and the fact that an agent directly observes respondents as they fill our the survey may encourage them to conceal information or select answer choices that are considered ordinary.
+
+Therefore, while the methods of measurement ensures a high level of professionalism and completion, the responses may be biased. This negatively impacts the dataset's capacity to reflect socioeconomic phenomenon in the real world, including the economic returns to education.
+
 ## Outcome variable
 
 The variables presented in this section are variables in the polynomial regression model to identify returns to education, which is a coefficient of the model. This will be specified in @sec-model.

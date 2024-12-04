@@ -25,8 +25,8 @@ library(glmnet)
 library(nnet)
 library(stringr)
 library(gt)
-library(broom)
 library(knitr)
+library(kableExtra)
 library(MatchIt)
 library(arrow)
 ```
@@ -53,11 +53,9 @@ The body of the paper contains the data, model, results, and discussion sections
 
 ## Overview
 
-I used the statistical programming language R [@R] for the graphing, analysis and presentation of the project as a whole. Caret [@caret], glmnet [@glmnet; @glmnet2; @glmnet3], nnet [@nnet], tidyverse [@tidyverse], car [@car] MatchIt [@matchit] and arrow [@arrow] were used directly in the analysis of the data. Stringr [@stringr], dplyr [@dplyr], gt [@gt], knitr [@knitr], and styler [@styler] were used in the presentation and/or styling of the data, graphs, and paper as a whole.
+I used the statistical programming language R [@R] for the graphing, analysis and presentation of the project as a whole. Caret [@caret], glmnet [@glmnet; @glmnet2; @glmnet3], nnet [@nnet], tidyverse [@tidyverse], car [@car] MatchIt [@matchit] and arrow [@arrow] were used directly in the analysis of the data. Stringr [@stringr], dplyr [@dplyr], gt [@gt], knitr [@knitr], kableExtra [@kextra] and styler [@styler] were used in the presentation and/or styling of the data, graphs, and paper as a whole.
 
 All data utilized in this study were sourced from various iterations of the China Family Community Survey [@cfps]. The CFPS is a nationwide community survey funded by 985 Program of Peking University and carried out by the Institute of Social Science Survey of Peking University. CFPS encompasses approximately 15,000 families across 25 provinces and aims to tracks them permanently since 2010. Its main objective is to gather data across three dimensions: individuals, households, and communities. To achieve this, CFPS comprises four sub-surveys that thoroughly investigates families, adults, and children, gathering data for thousands of variables. Given its expansive and representative sample and a wide range of variables, CFPS has become a staple dataset for research in Chinese social sciences. Alternative data sources for this study, such as China General Social Survey (CGSS) and China Social Survey (CSS) are also reliable but do not provide the same width of variables, especially concerning family units. For the purposes of this research, data was extracted from CFPS for the years 2010, 2012, 2014, 2016, 2018, and 2020.
-
-After cleaning the data to split results by candidate, removing polls with N/A values and ratings lower than 2.5, and further selecting polls polling likely voters as opposed to the whole population, we are left with 746 data points with the variables pollster, has_sponsor, numeric_grade, pollscore, transparency_score, sample_size, end_date, state, candidate_name, pct (support rate in percentage), and cycle (election cycle, i.e. 2020/2024).
 
 ## Measurement
 
@@ -542,9 +540,38 @@ While multivariate regression effectively captures the impact of control variabl
 
 For this study, data from each CFPS iteration were divided into four subsets based on family income quartiles. PSM was then applied to match each subset with others, resulting in six pairs of subsets that exhibited different treatment variable values (family income quartiles) but had similar means for control variables. The matching was conducted using the nearest-neighbor approach with $caliper = 0.1sd$, which is more strict compared to the generally recommended 0.2 threshold for caliper width [@Austin2011]. This choice was intentional, as reducing the caliper width improved the covariate balance without significantly reducing the number of data points. Given that lower family income quartiles had fewer data points, match ratios were adjusted based on the counts within the quartiles being matched.
 
-Table 2 provides a summary of balance for the match between the Quartile 1 and the Quartile 2 subset of CFPS 2020. The match was executed using caliper = 0.1 and a ratio of 2, matching 1041 Quartile 2 instances out of 1324 total instances with all 541 Quartile 1 instances. This matching procedure was repeated 6 times to compare each quartile with every other quartile for all 6 CFPS iterations from 2010 to 2020. The standard mean differences of matches using caliper = 0.2 and 0.5 were included as a comparison. The caliper of 0.1 returned the best standardized mean difference of 0.0139 between propensity scores of Q1 and Q2. Caliper widths of 0.2 and 0.5 returned 0.0338 and 0.0795, respectively.
+To show the effects of PSM, @tbl-match provides a summary of balance for the match between the Quartile 1 and the Quartile 2 subset of CFPS 2020. The match was executed using caliper = 0.1 and a ratio of 2, matching 1041 Quartile 2 instances out of 1324 total instances with all 541 Quartile 1 instances. This matching procedure was repeated 6 times to compare each quartile with every other quartile for all 6 CFPS iterations from 2010 to 2020.
 
-TABLE HERE IF TIME
+```{r}
+#| label: tbl-match
+#| tbl-cap: Summary of Balance for Quartile 1 vs Quartile 2 Match, 2020 Data
+#| echo: false
+#| message: false
+#| warning: false
+
+
+# Data computed from model_data script
+data <- data.frame(
+  Variables = c("distance", "Gender", "Work exp", "City Hukou", "Marital Status", "CCP", "East"),
+  `Means Q1` = c(0.3016, 0.5712, 14.8817, 0.1072, 0.7375, 0.0240, 0.2810),
+  `Means Q2` = c(0.2854, 0.5650, 14.1767, 0.1971, 0.7515, 0.0219, 0.3112),
+  `Std Mean Diff` = c(0.3099, 0.0125, 0.0866, -0.2907, -0.0318, 0.0139, -0.0672),
+  `Means Q1 Matched` = c(0.3016, 0.5712, 14.8817, 0.1072, 0.7375, 0.0240, 0.2810),
+  `Means Q2 Matched` = c(0.3009, 0.5675, 14.7902, 0.1100, 0.7366, 0.0222, 0.2810),
+  `Std Mean Diff M` = c(0.0139, 0.0075, 0.0112, -0.0090, 0.0021, 0.0121, 0.0000)
+)
+
+kable(
+  data,
+  format = "latex"
+) %>%
+  kable_styling(
+    latex_options = c("striped", "hold_position", "scale_down"), 
+    position = "center",
+    full_width = FALSE
+  )
+```
+\FloatBarrier
 
 For the second task, a multivariate regression model was created using the theoretical framework of the Mincer Earnings Function [@Mincer1974]. The function depicts wage as a function of schooling and work experience. Its original form is:
 $$ln(w) = f(s, x) = ln(w_0) +\rho s + \beta_1x + \beta_2x^2$$
@@ -553,6 +580,8 @@ Where $w$ is hourly wage, $w_0$ is the wage level of an individual with 0 years 
 Numerous researchers have since tailored the Mincer equation by incorporating potential confounders, ensuring the mitigation of biased outcomes. A seminal study analyzing Chinese educational returns used the function:
 $$ln(Y) = α_0 +α_1Edu +α_2Exper +α_3Exper^2+∑λ_jX+μ$$
 Which adds $X$ that represents control variables such as age, gender, and geographical location [@Zhang2006]. Analogous modifications can be observed globally, although with variable inclusions that reflect regional societal and cultural differences. For example, an Indian study choose to include caste, relationship to the head of household, and the ability to speak and write English in the equation as control variables [@Bhandari2006]. This research also leaned on a modified version of the Mincer Earnings Function for its calculations on educational returns.
+
+It is acknowledged that the regression models may be inconsistent due to the inconsistencies in the variables and measurements of different CFPS iterations. The incorporation of calculated variables is an additional factor impacting the models' ability to calculate returns to education.
 
 ## Model set-up
 
@@ -564,925 +593,132 @@ With $w$ representing hourly wage, $α_1$ representing returns to education and 
 
 Next, PSM-matched subset pairs were separated by family income quartiles and regressed independently to identify the differences between educational returns and the coefficients of covariates.
 
-Finally, the Delta coefficient $\alpha_1$ from all paired comparisons across every CFPS iteration were compiled together. 5% t-tests were carried out on the data from each iteration to discern if the differences in educational returns between quartiles were statistically significant.
+Finally, the Delta coefficient $\alpha_1$ from all paired comparisons across every CFPS iteration were compiled together to identify cross-quartile education return disparities over time.
 
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-# Regional polls analysis
-trump_2024_regional <- trump_2024_lower %>% filter(state != "National")
-harris_2024_regional <- harris_2024_lower %>% filter(state != "National")
-
-
-trump_Pennsylvania <- trump_2024_regional %>% filter(state == "Pennsylvania")
-trump_Georgia <- trump_2024_regional %>% filter(state == "Georgia")
-trump_North_Carolina <- trump_2024_regional %>% filter(state == "North Carolina")
-trump_Michigan <- trump_2024_regional %>% filter(state == "Michigan")
-trump_Arizona <- trump_2024_regional %>% filter(state == "Arizona")
-trump_Wisconsin <- trump_2024_regional %>% filter(state == "Wisconsin")
-trump_Nevada <- trump_2024_regional %>% filter(state == "Nevada")
-
-harris_Pennsylvania <- harris_2024_regional %>% filter(state == "Pennsylvania")
-harris_Georgia <- harris_2024_regional %>% filter(state == "Georgia")
-harris_North_Carolina <- harris_2024_regional %>% filter(state == "North Carolina")
-harris_Michigan <- harris_2024_regional %>% filter(state == "Michigan")
-harris_Arizona <- harris_2024_regional %>% filter(state == "Arizona")
-harris_Wisconsin <- harris_2024_regional %>% filter(state == "Wisconsin")
-harris_Nevada <- harris_2024_regional %>% filter(state == "Nevada")
-
-combined_Pennsylvania <- full_join(
-  trump_Pennsylvania,
-  harris_Pennsylvania,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_Georgia <- full_join(
-  trump_Georgia,
-  harris_Georgia,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_North_Carolina <- full_join(
-  trump_North_Carolina,
-  harris_North_Carolina,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_Michigan <- full_join(
-  trump_Michigan,
-  harris_Michigan,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_Arizona <- full_join(
-  trump_Arizona,
-  harris_Arizona,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_Wisconsin <- full_join(
-  trump_Wisconsin,
-  harris_Wisconsin,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_Nevada <- full_join(
-  trump_Nevada,
-  harris_Nevada,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-# mutate harris_win variable by comparing polled support rates
-# preparing data for logistic regression
-combined_Pennsylvania <- combined_Pennsylvania %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-combined_Georgia <- combined_Georgia %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-combined_North_Carolina <- combined_North_Carolina %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-combined_Michigan <- combined_Michigan %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-combined_Arizona <- combined_Arizona %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-combined_Wisconsin <- combined_Wisconsin %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-combined_Nevada <- combined_Nevada %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-# Create 7 different logistic regressions to predict Harris's win rate
-# in each state
-logistic_Pennsylvania <- readRDS(here::here("models/Logistic_model_Pennsylvania.rds"))
-
-logistic_Georgia <- readRDS(here::here("models/Logistic_model_Georgia.rds"))
-
-logistic_North_Carolina <- readRDS(here::here("models/Logistic_model_North_Carolina.rds"))
-
-logistic_Michigan <- readRDS(here::here("models/Logistic_model_Michigan.rds"))
-
-logistic_Arizona <- readRDS(here::here("models/Logistic_model_Arizona.rds"))
-
-logistic_Wisconsin <- readRDS(here::here("models/Logistic_model_Wisconsin.rds"))
-
-logistic_Nevada <- readRDS(here::here("models/Logistic_model_Nevada.rds"))
-
-# test logistic models for state specific analysis
-# mutate fitted values
-
-combined_Pennsylvania <- combined_Pennsylvania %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Pennsylvania, type = "response"), 2)
-  )
-
-roc_obj_Pennsylvania <- roc(
-  combined_Pennsylvania$harris_win,
-  combined_Pennsylvania$harris_win_prob
-)
-
-auc_value_Pennsylvania <- auc(roc_obj_Pennsylvania)
-
-
-combined_Georgia <- combined_Georgia %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Georgia, type = "response"), 2)
-  )
-
-roc_obj_Georgia <- roc(
-  combined_Georgia$harris_win,
-  combined_Georgia$harris_win_prob
-)
-
-auc_value_Georgia <- auc(roc_obj_Georgia)
-
-
-combined_North_Carolina <- combined_North_Carolina %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_North_Carolina, type = "response"), 2)
-  )
-
-roc_obj_North_Carolina <- roc(
-  combined_North_Carolina$harris_win,
-  combined_North_Carolina$harris_win_prob
-)
-
-auc_value_North_Carolina <- auc(roc_obj_North_Carolina)
-
-
-combined_Michigan <- combined_Michigan %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Michigan, type = "response"), 2)
-  )
-
-roc_obj_Michigan <- roc(
-  combined_Michigan$harris_win,
-  combined_Michigan$harris_win_prob
-)
-
-auc_value_Michigan <- auc(roc_obj_Michigan)
-
-combined_Arizona <- combined_Arizona %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Arizona, type = "response"), 2)
-  )
-
-roc_obj_Arizona <- roc(
-  combined_Arizona$harris_win,
-  combined_Arizona$harris_win_prob
-)
-
-auc_value_Arizona <- auc(roc_obj_Arizona)
-
-
-combined_Wisconsin <- combined_Wisconsin %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Wisconsin, type = "response"), 2)
-  )
-
-roc_obj_Wisconsin <- roc(
-  combined_Wisconsin$harris_win,
-  combined_Wisconsin$harris_win_prob
-)
-
-auc_value_Wisconsin <- auc(roc_obj_Wisconsin)
-
-
-combined_Nevada <- combined_Nevada %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Nevada, type = "response"), 2)
-  )
-
-roc_obj_Nevada <- roc(
-  combined_Nevada$harris_win,
-  combined_Nevada$harris_win_prob
-)
-
-auc_value_Nevada <- auc(roc_obj_Nevada)
-```
-
-We identified the AUC values and ROC plots for each of the seven swing-state logistic regressions. The ROC plots are presented in the Additional Data Details section (@sec-model-details), from @fig-pen to @fig-nev. The AUC values are: 0.90 for Pennsylvania, 0.88 for Georgia, 0.74 for North Carolina, 0.93 for Michigan, 1.00 for Arizona, 0.86 for Wisconsin, and 0.65 for Nevada. All states other than Nevada have acceptable or excellent AUC values, indicating that the respective logistic models are reliable when distinguishing cases where Harris wins. The low AUC value for Nevada is potentially caused by the limited sample size; there are only 9 polls conducted in Nevada.
-
-Moreover, the sample size restrictions were the reason why we did not use training and testing data to validate our logistic models. The state with the greatest number of polls, Pennsylvania, only records 26 polls. Utilizing training and testing datasets implies that the datasets may include only a couple of data points in some states, which is insufficient to construct or test the model. On top of that, according to [@trainingerror], achieving low training error, such as by using a training-MSE-minimising regression model such as our own, is sufficient to ensure the predictive capabilities of a model bounded by some constant variance term.
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-# find biases of pollsters from 2020 national polls data
-# filter out national polls from the datasets
-trump_2024_national <- trump_2024 %>% filter(state == "National")
-harris_2024_national <- harris_2024 %>% filter(state == "National")
-trump_2020_national <- trump_2020 %>% filter(state == "National")
-biden_2020_national <- biden_2020 %>% filter(state == "National")
-
-# Define actual results
-actual_results_2020 <- list(Trump_pct = 47, Biden_pct = 51)
-
-# Calculate bias per pollster
-rep_pollster_bias <- trump_2020_national %>%
-  group_by(pollster) %>%
-  summarize(
-    Trump_bias = mean(pct - actual_results_2020$Trump_pct, na.rm = TRUE)
-  )
-
-dem_pollster_bias <- biden_2020_national %>%
-  group_by(pollster) %>%
-  summarize(
-    Biden_bias = mean(pct - actual_results_2020$Biden_pct, na.rm = TRUE)
-  )
-
-# adjust 2024 national polls percentages by the average pollster biases
-# also mutate has_sponsor variable into dummy variable and remove NA's
-trump_2024_national_adj <- trump_2024_national %>%
-  left_join(rep_pollster_bias, by = "pollster") %>%
-  mutate(
-    pct_adj = pct - ifelse(!is.na(Trump_bias), Trump_bias, 0)
-  ) %>%
-  select(-Trump_bias)
-
-# Adjust Harris 2024 National Polls
-harris_2024_national_adj <- harris_2024_national %>%
-  left_join(dem_pollster_bias, by = "pollster") %>%
-  mutate(
-    pct_adj = pct - ifelse(!is.na(Biden_bias), Biden_bias, 0)
-  ) %>%
-  select(-Biden_bias)
-
-
-# model adjusted support percentage by time and control variables
-# first split training and testing dataset using an 80/20 split
-set.seed(11451)
-trainIndex_trump_adj <- createDataPartition(trump_2024_national_adj$pct_adj,
-  p = 0.8, list = FALSE
-)
-data_train_trump_adj <- trump_2024_national_adj[trainIndex_trump_adj, ]
-data_test_trump_adj <- trump_2024_national_adj[-trainIndex_trump_adj, ]
-
-trainIndex_harris_adj <- createDataPartition(harris_2024_national_adj$pct_adj,
-  p = 0.8, list = FALSE
-)
-data_train_harris_adj <- harris_2024_national_adj[trainIndex_harris_adj, ]
-data_test_harris_adj <- harris_2024_national_adj[-trainIndex_harris_adj, ]
-
-model_date_harris_adj <- lm(pct_adj ~ end_date + has_sponsor +
-  transparency_score + sample_size, data = data_train_harris_adj)
-model_date_trump_adj <- lm(pct_adj ~ end_date + has_sponsor +
-  transparency_score + sample_size, data = data_train_trump_adj)
-
-# repeat for unadjusted support levels
-trainIndex_trump <- createDataPartition(trump_2024_national$pct,
-  p = 0.8, list = FALSE
-)
-data_train_trump <- trump_2024_national[trainIndex_trump, ]
-data_test_trump <- trump_2024_national[-trainIndex_trump, ]
-
-trainIndex_harris <- createDataPartition(harris_2024_national$pct,
-  p = 0.8, list = FALSE
-)
-data_train_harris <- harris_2024_national[trainIndex_harris, ]
-data_test_harris <- harris_2024_national[-trainIndex_harris, ]
-
-model_date_harris <- lm(pct ~ end_date + has_sponsor +
-  transparency_score + sample_size, data = data_train_harris)
-model_date_trump <- lm(pct ~ end_date + has_sponsor +
-  transparency_score + sample_size, data = data_train_trump)
-
-
-# Functions to evaluate model using testing dataset
-evaluate_model_adj <- function(model, test_data) {
-  predictions <- predict(model, newdata = test_data)
-  actuals <- test_data$pct_adj
-  rmse <- sqrt(mean((predictions - actuals)^2, na.rm = TRUE))
-  r_squared <- summary(model)$r.squared
-  return(list(RMSE = rmse, R_squared = r_squared))
-}
-
-evaluate_model <- function(model, test_data) {
-  predictions <- predict(model, newdata = test_data)
-  actuals <- test_data$pct
-  rmse <- sqrt(mean((predictions - actuals)^2, na.rm = TRUE))
-  r_squared <- summary(model)$r.squared
-  return(list(RMSE = rmse, R_squared = r_squared))
-}
-
-# Evaluate Harris model with adjusted support percentages
-harris_evaluation_adj <- evaluate_model_adj(model_date_harris_adj, data_test_harris_adj)
-
-
-# Evaluate Trump model with adjusted support percentages
-trump_evaluation_adj <- evaluate_model_adj(model_date_trump_adj, data_test_trump_adj)
-
-
-# Evaluate Harris model with unadjusted support percentages
-harris_evaluation <- evaluate_model(model_date_harris, data_test_harris)
-
-
-# Evaluate Trump model with unadjusted support percentages
-trump_evaluation <- evaluate_model(model_date_trump, data_test_trump)
-
-
-# Augment data with model predictions
-model_harris_adj <- readRDS(here::here("models/MLR_adjusted_harris.rds"))
-model_trump_adj <- readRDS(here::here("models/MLR_adjusted_trump.rds"))
-
-harris_2024_national_adj <- harris_2024_national_adj %>% mutate(
-  fitted_date = predict(model_harris_adj)
-)
-
-trump_2024_national_adj <- trump_2024_national_adj %>% mutate(
-  fitted_date = predict(model_trump_adj)
-)
-
-# Unadjusted datasets
-model_harris <- readRDS(here::here("models/MLR_harris.rds"))
-model_trump <- readRDS(here::here("models/MLR_trump.rds"))
-
-harris_2024_national <- harris_2024_national %>% mutate(
-  fitted_date = predict(model_harris)
-)
-
-trump_2024_national <- trump_2024_national %>% mutate(
-  fitted_date = predict(model_trump)
-)
-
-# evaluate models without using training and testing data
-harris_eval_adj <- evaluate_model_adj(model_harris_adj, harris_2024_national_adj)
-
-
-harris_eval <- evaluate_model(model_harris, harris_2024_national)
-
-
-trump_eval_adj <- evaluate_model_adj(model_trump_adj, trump_2024_national_adj)
-
-
-trump_eval <- evaluate_model(model_trump, trump_2024_national)
-
-
-
-#### Logistic regression for national support ####
-
-combined_national <- full_join(
-  trump_2024_national,
-  harris_2024_national,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_national <- combined_national %>% mutate(
-  harris_win = case_when(
-    pct.y >= pct.x ~ 1,
-    pct.y < pct.x ~ 0
-  )
-)
-
-# repeat for adjusted support levels
-combined_national_adj <- full_join(
-  trump_2024_national_adj,
-  harris_2024_national_adj,
-  by = c(
-    "pollster", "has_sponsor", "pollscore",
-    "transparency_score", "sample_size", "end_date", "state", "cycle"
-  )
-)
-
-combined_national_adj <- combined_national_adj %>% mutate(
-  harris_win = case_when(
-    pct_adj.y >= pct_adj.x ~ 1,
-    pct_adj.y < pct_adj.x ~ 0
-  )
-)
-
-
-# logistic model to predict the popular vote
-model_logistic <- readRDS(here::here("models/Logistic_model.rds"))
-
-model_logistic_adj <- readRDS(here::here("models/Logistic_model_adjusted.rds"))
-
-
-# include predicted outcomes to the dataframes
-combined_national <- combined_national %>%
-  mutate(
-    harris_win_prob = round(100 * predict(model_logistic, type = "response"), 2)
-  )
-
-combined_national_adj <- combined_national_adj %>%
-  mutate(
-    harris_win_prob = round(100 * predict(model_logistic_adj,
-      type = "response"
-    ), 2)
-  )
-
-
-#### Evaluate the Model ####
-
-# ROC Curve and AUC
-roc_obj <- roc(
-  combined_national$harris_win,
-  combined_national$harris_win_prob
-)
-auc_value <- auc(roc_obj)
-
-roc_obj_adj <- roc(
-  combined_national_adj$harris_win,
-  combined_national_adj$harris_win_prob
-)
-auc_value_adj <- auc(roc_obj_adj)
-```
-
-For the analysis of the national popular vote, the logistic model of adjusted polls possess an AUC value of 0.98, and the logistic model of unadjusted polls have an AUC of 0.94, indicating high reliability of categorization. Their respective ROC plots are presented as @fig-log and @fig-logadj.
-
-RMSE values and R squared values were calculated for the multiple linear regression models predicting popular vote. The RMSE values for all four models, adjusted and unadjusted support levels of the two candidates, are greater than 1, indicating that the fitted values and the support levels of actual polls are more than 1 percent apart on average, which is significant when analyzing popular vote. Moreover, all R squared values other than the model for the adjusted support rate of Trump, are smaller than 0.3, indicating the inability of the models to account for the variance of national support rates in the data. The model for the adjusted support rate of Trump has a R squared value of 0.69, indicating a relatively high proportion of variance in polled support rates being explained by the multiple linear regression model. This was expected, as the predictors such as a poll's end date and transparency does not necessarily correlate with the outcome of the polls. More predictive variables used by FiveThirtyEight [@5383] for their predictions are unavailable in the raw dataset, which is a key limitation of the data.
+As a test of model robustness, another set of regressions were ran without PSM to verify the overall significance of educational returns and the consistent pattern observed between quartiles. This will be discussed further in @sec-results.
 
 # Results {#sec-results}
 
-## Swing states
-
-@tbl-result shows the average likelihood percentage of Harris winning each swing state, calculated by using the logistic model on 1,000 hypothetical data points for each state, generated with the normal distribution of predictors and setting the end_date to election day. It indicates that Harris has a greater probability to win in Pennsylvania, Georgia, and Nevada, while Trump is more likely to win in North Carolina, Michigan, Arizona, and Wisconsin. The electoral votes in each state is also presented.
-
 ```{r}
 #| echo: false
 #| message: false
 #| warning: false
 
-#### Results ####
-# To predict the outcome on election day, generate 1000 hypothetical data points
-# using the election day as end_date and the normal curve of other input
-# variables, mimicing all the situations that may happen on election day
-hypothetical_data_Pennsylvania <- tibble(
-  end_date = as.Date("2024-11-05"),
-  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Pennsylvania$has_sponsor)),
-  transparency_score = rnorm(1000,
-    mean = mean(combined_Pennsylvania$transparency_score),
-    sd = sd(combined_Pennsylvania$transparency_score)
-  ),
-  sample_size = rnorm(1000,
-    mean = mean(combined_Pennsylvania$sample_size),
-    sd = sd(combined_Pennsylvania$sample_size)
-  )
+# Load all the models
+# Define the path to the models folder
+models_path <- here::here("models")
+
+# List all RDS files in the models folder
+model_files <- list.files(
+  path = models_path,
+  pattern = "\\.rds$",    
+  full.names = TRUE       
 )
 
-hypothetical_data_Georgia <- tibble(
-  end_date = as.Date("2024-11-05"),
-  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Georgia$has_sponsor)),
-  transparency_score = rnorm(1000,
-    mean = mean(combined_Georgia$transparency_score),
-    sd = sd(combined_Georgia$transparency_score)
-  ),
-  sample_size = rnorm(1000,
-    mean = mean(combined_Georgia$sample_size),
-    sd = sd(combined_Georgia$sample_size)
-  )
-)
+# Load each RDS file and store in a list
+models <- lapply(model_files, readRDS)
 
-hypothetical_data_North_Carolina <- tibble(
-  end_date = as.Date("2024-11-05"),
-  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_North_Carolina$has_sponsor)),
-  transparency_score = rnorm(1000,
-    mean = mean(combined_North_Carolina$transparency_score),
-    sd = sd(combined_North_Carolina$transparency_score)
-  ),
-  sample_size = rnorm(1000,
-    mean = mean(combined_North_Carolina$sample_size),
-    sd = sd(combined_North_Carolina$sample_size)
-  )
-)
+# Assign names to the list based on the filenames (without .rds)
+names(models) <- tools::file_path_sans_ext(basename(model_files))
 
-hypothetical_data_Michigan <- tibble(
-  end_date = as.Date("2024-11-05"),
-  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Michigan$has_sponsor)),
-  transparency_score = rnorm(1000,
-    mean = mean(combined_Michigan$transparency_score),
-    sd = sd(combined_Michigan$transparency_score)
-  ),
-  sample_size = rnorm(1000,
-    mean = mean(combined_Michigan$sample_size),
-    sd = sd(combined_Michigan$sample_size)
-  )
-)
-
-hypothetical_data_Arizona <- tibble(
-  end_date = as.Date("2024-11-05"),
-  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Arizona$has_sponsor)),
-  transparency_score = rnorm(1000,
-    mean = mean(combined_Arizona$transparency_score),
-    sd = sd(combined_Arizona$transparency_score)
-  ),
-  sample_size = rnorm(1000,
-    mean = mean(combined_Arizona$sample_size),
-    sd = sd(combined_Arizona$sample_size)
-  )
-)
-
-hypothetical_data_Wisconsin <- tibble(
-  end_date = as.Date("2024-11-05"),
-  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Wisconsin$has_sponsor)),
-  transparency_score = rnorm(1000,
-    mean = mean(combined_Wisconsin$transparency_score),
-    sd = sd(combined_Wisconsin$transparency_score)
-  ),
-  sample_size = rnorm(1000,
-    mean = mean(combined_Wisconsin$sample_size),
-    sd = sd(combined_Wisconsin$sample_size)
-  )
-)
-
-hypothetical_data_Nevada <- tibble(
-  end_date = as.Date("2024-11-05"),
-  has_sponsor = rbinom(1000, size = 1, prob = mean(combined_Nevada$has_sponsor)),
-  transparency_score = rnorm(1000,
-    mean = mean(combined_Nevada$transparency_score),
-    sd = sd(combined_Nevada$transparency_score)
-  ),
-  sample_size = rnorm(1000,
-    mean = mean(combined_Nevada$sample_size),
-    sd = sd(combined_Nevada$sample_size)
-  )
-)
-
-# run the corresponding logistic regression on the hypothetical data of each
-# state and average the outcomes to find the expected win rate of Harris
-# on election day
-hypothetical_data_Pennsylvania <- hypothetical_data_Pennsylvania %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Pennsylvania, newdata = ., type = "response"), 2)
-  )
-
-
-hypothetical_data_Georgia <- hypothetical_data_Georgia %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Georgia, newdata = ., type = "response"), 2)
-  )
-
-
-hypothetical_data_North_Carolina <- hypothetical_data_North_Carolina %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_North_Carolina, newdata = ., type = "response"), 2)
-  )
-
-
-hypothetical_data_Michigan <- hypothetical_data_Michigan %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Michigan, newdata = ., type = "response"), 2)
-  )
-
-
-hypothetical_data_Arizona <- hypothetical_data_Arizona %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Arizona, newdata = ., type = "response"), 2)
-  )
-
-
-hypothetical_data_Wisconsin <- hypothetical_data_Wisconsin %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Wisconsin, newdata = ., type = "response"), 2)
-  )
-
-
-hypothetical_data_Nevada <- hypothetical_data_Nevada %>%
-  mutate(
-    harris_win_prob = round(100 * predict(logistic_Nevada, newdata = ., type = "response"), 2)
-  )
-
-
-# produce a table of mean winning probabilities
-mean_probabilities <- tibble(
-  State = c("Pennsylvania", "Georgia", "North Carolina", "Michigan", "Arizona", "Wisconsin", "Nevada"),
-  Harris_Win_Probability = c(
-    round(mean(hypothetical_data_Pennsylvania$harris_win_prob, na.rm = TRUE), 2),
-    round(mean(hypothetical_data_Georgia$harris_win_prob, na.rm = TRUE), 2),
-    round(mean(hypothetical_data_North_Carolina$harris_win_prob, na.rm = TRUE), 2),
-    round(mean(hypothetical_data_Michigan$harris_win_prob, na.rm = TRUE), 2),
-    round(mean(hypothetical_data_Arizona$harris_win_prob, na.rm = TRUE), 2),
-    round(mean(hypothetical_data_Wisconsin$harris_win_prob, na.rm = TRUE), 2),
-    round(mean(hypothetical_data_Nevada$harris_win_prob, na.rm = TRUE), 2)
-  )
-)
-
-
-# include electoral votes to determine who is in the lead
-state_evs <- tibble::tribble(
-  ~State, ~electoral_votes,
-  "Alaska", 3,
-  "Arizona", 11,
-  "Arkansas", 6,
-  "California", 55,
-  "Colorado", 9,
-  "Connecticut", 7,
-  "Florida", 29,
-  "Georgia", 16,
-  "Illinois", 20,
-  "Indiana", 11,
-  "Iowa", 6,
-  "Kansas", 6,
-  "Louisiana", 8,
-  "Maine", 2,
-  "Maine CD-1", 1,
-  "Maine CD-2", 1,
-  "Maryland", 10,
-  "Massachusetts", 11,
-  "Michigan", 16,
-  "Minnesota", 10,
-  "Mississippi", 6,
-  "Missouri", 10,
-  "Montana", 3,
-  "Nebraska", 2,
-  "Nebraska CD-2", 1,
-  "Nevada", 6,
-  "New Hampshire", 4,
-  "New Mexico", 5,
-  "New York", 29,
-  "North Carolina", 15,
-  "Ohio", 18,
-  "Oklahoma", 7,
-  "Oregon", 7,
-  "Pennsylvania", 20,
-  "Rhode Island", 4,
-  "South Carolina", 9,
-  "South Dakota", 3,
-  "Texas", 38,
-  "Utah", 6,
-  "Vermont", 3,
-  "Virginia", 13,
-  "Washington", 12,
-  "Wisconsin", 10
-)
-
-mean_probabilities <- mean_probabilities %>%
-  left_join(state_evs, by = "State")
-
-#### Overall Probability of Winning ####
-# Harris
-# Create data frame of states
-states <- data.frame(
-  state = c("PA", "GA", "NC", "MI", "WI", "NV", "AZ"),
-  prob = c(0.5551, 0.6801, 0.1033, 0.5151, 0.3792, 0.7679, 0),
-  votes = c(20, 16, 15, 16, 10, 6, 11)
-)
-
-# Function to calculate probability of a specific combination
-calc_combo_prob <- function(combo, states) {
-  prob <- 1
-  for (i in 1:nrow(states)) {
-    if (i %in% combo) {
-      prob <- prob * states$prob[i]
-    } else {
-      prob <- prob * (1 - states$prob[i])
-    }
-  }
-  return(prob)
-}
-
-# Generate all possible combinations
-n_states <- nrow(states)
-total_prob <- 0
-
-# Check each possible combination
-for (i in 1:(2^n_states - 1)) {
-  # Convert number to binary to get combination
-  combo <- which(intToBits(i)[1:n_states] == 1)
-
-  # Calculate total electoral votes for this combination
-  votes <- sum(states$votes[combo])
-
-  # If this combination has enough votes, add its probability
-  if (votes >= 44) {
-    prob <- calc_combo_prob(combo, states)
-    total_prob <- total_prob + prob
-  }
-}
-
-# Trump
-# Create data frame of states
-states <- data.frame(
-  state = c("PA", "GA", "NC", "MI", "WI", "NV", "AZ"),
-  prob = c(1 - 0.5551, 1 - 0.6801, 1 - 0.1033, 1 - 0.5151, 1 - 0.3792, 1 - 0.7679, 1 - 0), # Using 1-p for Trump's probabilities
-  votes = c(20, 16, 15, 16, 10, 6, 11)
-)
-
-# Function to calculate probability of a specific combination
-calc_combo_prob <- function(combo, states) {
-  prob <- 1
-  for (i in 1:nrow(states)) {
-    if (i %in% combo) {
-      prob <- prob * states$prob[i]
-    } else {
-      prob <- prob * (1 - states$prob[i])
-    }
-  }
-  return(prob)
-}
-
-# Generate all possible combinations
-n_states <- nrow(states)
-total_prob <- 0
-
-# Check each possible combination
-for (i in 1:(2^n_states - 1)) {
-  # Convert number to binary to get combination
-  combo <- which(intToBits(i)[1:n_states] == 1)
-
-  # Calculate total electoral votes for this combination
-  votes <- sum(states$votes[combo])
-
-  # If this combination has enough votes, add its probability
-  if (votes >= 51) {
-    prob <- calc_combo_prob(combo, states)
-    total_prob <- total_prob + prob
-  }
-}
 ```
 
+## Cross-quartile disparities in Educational Returns
+
 ```{r}
-#| label: tbl-result
-#| tbl-cap: Predicted Harris Win Percentage in Swing States
+#| label: tbl-results
+#| tbl-cap: Cross-Quartile Percentage Disparities of Returns to Education Over Time
 #| echo: false
 #| message: false
 #| warning: false
 
-mean_probabilities %>%
-  gt() %>%
-  fmt_number(
-    columns = vars(Harris_Win_Probability),
-    decimals = 2
-  ) %>%
-  cols_label(
-    State = "State",
-    Harris_Win_Probability = "Harris Win Probability (%)",
-    electoral_votes = "Electoral Votes"
-  ) %>%
-  tab_options(
-    table.font.size = 12,
-    heading.title.font.size = 16,
-    heading.subtitle.font.size = 12,
-    table.border.top.width = px(2),
-    table.border.bottom.width = px(2)
+library(knitr)
+library(kableExtra)
+
+# Data
+data <- data.frame(
+  `CFPS Year` = c(2020, 2018, 2016, 2014, 2012, 2010, "Temporal mean"),
+  `Q1vsQ2` = c(0.9482, 0.2441, 0.7665, -2.3488, 1.2055, 0.4988, 0.2191),
+  `Q1vsQ3` = c(1.9092, 2.3463, 1.2655, -1.1069, 0.9527, 3.0412, 1.4013),
+  `Q1vsQ4` = c(4.1670, 3.9833, 4.5967, 0.6399, 3.1572, 5.6921, 3.7060),
+  `Q2vsQ3` = c(1.2350, 1.7767, 1.2912, 0.2706, -0.0212, 2.1727, 1.1208),
+  `Q2vsQ4` = c(3.1601, 3.3524, 3.9390, 3.3242, 3.7233, 4.9265, 3.7376),
+  `Q3vsQ4` = c(2.2804, 3.7010, 3.1417, 3.1945, 4.4302, 2.1920, 3.1566),
+  `Cross Sectional Mean` = c(2.2833, 2.5673, 2.5001, 0.6623, 2.2413, 3.0872, ' ')
+)
+
+# Create the table
+kable(
+  data,
+  format = "latex"
+) %>%
+  kable_styling(
+    latex_options = c("striped", "hold_position", "scale_down"), 
+    position = "center",
+    full_width = FALSE
   )
+
+
 ```
-
-Combining with the fact that Harris requires 44 electoral votes to win and Trump requires 51, we have found using the probability function that Harris has a 38.3 chance to acquire more than 44 electoral votes, according to the probabilities and electoral votes in @tbl-result. On the other hand, Trump has a 61.7 probability to acquire more than 51 votes. Thus, our conclusion is that while both candidates possess a significant chance of winning, Trump has the greater probability of acquiring the necessary electoral votes from the seven swing states on election day.
-
-## Popular vote
-
-@fig-lradj presents the fitted values of the candidates' adjusted national support rates as well as the data points of polled support rates adjusted for historical pollster bias. It indicates that Trump is expected to have higher national support levels, but the two converges as election day approaches. This result is counter intuitive, as most national polls indicate that Harris will have the popular vote. However, the adjusted values for Trump's support level are significantly greater than the polled values because historically, the actual percentage of the popular vote for Trump in 2020 was significantly greater than his polled percentages of the popular vote. Thus, assuming that the 2024 national polls are equally biased against Trump compared to the 2020 polls, it is difficult to tell who will get the popular vote on election day. However, as previously stated, this assumption is likely false, as the candidates have changed.
-
-```{r}
-#| label: fig-lradj
-#| fig-cap: Adjusted Popular Vote Prediction, 2024
-#| echo: false
-#| message: false
-#| warning: false
-# plot model predictions
-# combine the datasets to create a single visual
-combined_data_adj <- bind_rows(harris_2024_national_adj, trump_2024_national_adj)
-combined_data <- bind_rows(harris_2024_national, trump_2024_national)
-
-# create the plot that contains scattered points of adjusted percentages
-# and lines for fitted values
-ggplot(combined_data_adj, aes(x = end_date, y = pct_adj, color = candidate_name)) +
-  # Scatter points for actual adjusted percentages
-  geom_point(alpha = 0.6) +
-  # Regression lines
-  geom_line(aes(y = fitted_date), size = 0.5) +
-  xlim(as.Date("2024-07-19"), as.Date("2024-10-25")) +
-  # Assign specific colors
-  scale_color_manual(
-    values =
-      c("Kamala Harris" = "blue", "Donald Trump" = "red")
-  ) +
-  # Customize the plot appearance
-  theme_classic() +
-  labs(
-    y = "Adjusted Percent Support",
-    x = "End Date",
-    color = "Candidate"
-  ) +
-  theme(
-    text = element_text(size = 12),
-    plot.title = element_text(hjust = 0.5, face = "bold")
-  )
-```
-
 \FloatBarrier
+Note: In 2012, educational returns for Q1, Q2, and Q3 were insignificant. In 2010, educational returns for Q1 and Q2 were insignificant. 
 
-@fig-lr Presents the predicted unadjusted national support rates for Harris and Trump. The conclusions one can make from this plot is similar to those of most polls: Harris is expected to win the popular vote on any day, including the election day.
+As @tbl-results shows, in most CFPS iterations, individuals from higher family income quartiles demonstrated a significant advantage in terms of returns to education compared to their counterparts in other quartiles. The greatest differences were observed when comparing the highest income quartile (Q4) to other quartiles. Over all CFPS iterations, individuals in the top quartile benefitted from 3.71% more gains in income from an additional year of education compared to the lowest quartile, 3.74% more than the second quartile, and 3.16% more than the third quartile on average. Comparatively, the differences between the other quartiles were less pronounced.
+
+Upon evaluating cross-sectional means, no discernible upward or downward trend was identified. Other than the outlier year 2014, individuals from higher quartiles experienced around 2 to 3 percent greater educational returns on average compared to individuals from relatively lower quartiles. Thus, a general inference can be made: while those in the higher family income quartiles consistently enjoy significant benefits in terms of returns to education, this advantage has not expanded over time.
+
+## Robustness testing
 
 ```{r}
-#| label: fig-lr
-#| fig-cap: Unadjusted Popular Vote Prediction, 2024
+#| label: tbl-robust
+#| tbl-cap: Quartiles’ Percentage Returns to Education Over Time Without PSM
 #| echo: false
 #| message: false
 #| warning: false
-# Unadjusted support percentages
-ggplot(combined_data, aes(x = end_date, y = pct, color = candidate_name)) +
-  # Scatter points for actual adjusted percentages
-  geom_point(alpha = 0.6) +
-  # Regression lines
-  geom_line(aes(y = fitted_date), size = 0.5) +
-  xlim(as.Date("2024-07-19"), as.Date("2024-10-25")) +
-  # Assign specific colors
-  scale_color_manual(
-    values =
-      c("Kamala Harris" = "blue", "Donald Trump" = "red")
-  ) +
-  # Customize the plot appearance
-  theme_classic() +
-  labs(
-    y = "Adjusted Percent Support",
-    x = "End Date",
-    color = "Candidate"
-  ) +
-  theme(
-    text = element_text(size = 12),
-    plot.title = element_text(hjust = 0.5, face = "bold")
+
+library(knitr)
+library(kableExtra)
+
+data <- data.frame(
+  `CFPS Year` = c(2020, 2018, 2016, 2014, 2012, 2010),
+  `Q1 Returns` = c('4.9507***', '4.1730**', '2.5671*', '4.4464**', '-1.0031', '0.1803'),
+  `Q2 Returns` = c('5.8130***', '4.0239***', '3.0501***', '2.5357**', '0.0590', '1.1116'),
+  `Q3 Returns` = c('7.3284***', '6.1466***', '4.1665***', '2.8027***', '0.4928', '3.9577***'),
+  `Q4 Returns` = c('10.3891***', '9.1724***', '6.9051***', '6.3410***', '4.4870***', '8.0710***')
+)
+
+kable(
+  data,
+  format = "latex"
+) %>%
+  kable_styling(
+    latex_options = c("striped", "hold_position", "scale_down"), 
+    position = "center",
+    full_width = FALSE
   )
+
+
 ```
-
 \FloatBarrier
+Significant codes: * = p < 0.05, ** = p < 0.01,  *** = p < 0.001
 
-The regression coefficients for the logistic and linear models are presented in the Additional Data Details section (@sec-model-details) because they are not the outcome of interest.
+When directly regressing without matching, the significance of educational returns coefficients remained the same; the coefficients for Q1, Q2 and Q3 of CFPS2012 and the coefficients for Q1 and Q2 of CFPS2010 are the only ones insignificant at the 5% level. It is uncertain why educational returns are insignificant for these family income quartiles, both in the matched data and the unmatched data. It might be caused by the legacy data collection methods or the changes in variable recording that occurred after the 2012 iteration. Despite that, the outcome of the robustness test demonstrates the model's consistency.
 
 # Discussion {#sec-discussion}
 
-## The illusion of polarization
+## Takeaways
 
-As mentioned in the introduction, one thing that stands out about the 2024 election in particular is just how polarized the two factions are. Instead of merely being a choice over which individual to helm the country over the next four years, this particular election is being framed more and more as a “fight to protect our democracy” from both sides of the debate stand. This, while evidently a new level of polarization, merely mirrors the trend in recent years more than anything else: party loyalty has been on a steady uprise since 1972, with loyalty in weak partisan and leaning independent voters increasing by approximately 50% in the 40 years that followed [@partisanship]. New records were further set in 2016, with Republican validated voters voting Trump a staggering 92% to 4% for Clinton, and Democratic validated voters voting Clinton an equally extreme 94% to 5% Trump support [@pew2018voters].
+This paper investigates how family income influences the economic returns to education in China from 2010 to 2020 using data from the China Family Panel Studies (CFPS). Propensity Score Matching (PSM) and multivariate regression models were utilized to analyze cross-quartile disparities.
 
-New voting statistics, however, suggest that this polarization is likely only more prominent in the upper echelons of political representation, however: a Washington Post article found that approximately 1 in 8 women and 1 in 10 men are now voting differently from their spouses compared to before [@wapo2024women], a development that suggests a decrease in long-increasing partisanship trends. This is especially pronounced since households in the States overwhelmingly vote together: at least 70% of them do, at least, which means that this value is projected to decrease from 70% to approximately 62% [@households]. In short: while it seems that ideologies are shifting more and more away from each other, the stats say otherwise. So does the Overton window [@overton].
+The study reveals that individuals from wealthier families consistently experience significantly higher income returns from education compared to those from lower-income families. These disparities are particularly pronounced when comparing the highest income quartile to the other quartiles. However, the gap in returns has remained stable over the studied decade, suggesting persistent inequality without evidence of widening.
 
-## Win probabilities versus support ratings: why our predictions are as extreme as they are
-
-Our model led to a win probability prediction with numbers much more skewed towards one side than most pollsters currently predict: under this model, we find that Harris has a 40-60 chance against Trump, whereas most pollsters nowadays hover somewhere between 50-50 to 45-55 (towards either side). This is mainly a consequence of using a multinomial logistic regression model as opposed than other models – instead of predicting the support rates of the two candidates, such a model outputs the probability that a random support rate value from the predicted distribution of Harris support rates is larger than that of the predicted distribution of Trump support rates. This means that in states such as Nevada, where 538 gives Trump a +3 advantage, factoring in for margin of error and standard error means that the probability of Harris winning the state is not in fact 47% but rather much closer to zero, which we decided is a more intuitive way of understanding election odds.
-
-A final reason for this is how swing states are polled much more sample-size-wise than other states, leading to a much higher power value than polls from said other states – a +3 lead in a sample of 1000 people from California’s 39 million might not mean too much, but a +3 lead in a sample of 3000 people from Nevada’s 3 million represents the actual results for 0.3% of the state’s population, holding much more relative weight when it comes to election predictions.
+From this research, we learn about the role of socioeconomic background in shaping the economic benefits of education in China. The finding that the highest income quartile produces significantly greater disparities than other quartiles hints that being a member of the middle class does not necessarily imply better social mobility compared to the lower class, but being in the upper class produces greater economic benefits for the working individual. On the large scale, it highlights a fundamental limitation in the equalizing potential of education, as the higher financial returns to education predominantly favor individuals from wealthier families. This underscores the need for targeted policies to address these disparities and enhance education's role as a tool for socioeconomic mobility; merely expanding higher education may not be sufficient.
 
 ## Weaknesses and next steps
 
-The dataset used for this analysis has a number of clear limitations. First of all, there is a lack of high-quality polls. Though FiveThirtyEight distributes each pollster with a rating out of 3.0, almost all pollsters under the rating of 2.7 produces outcomes that are unreliable and highly volatile. For this research, it was only possible for us to use pollsters with a 3.0 rating when analyzing national polls; we had to lower the standards to 2.5 for the analysis of swing states, as the number of high-quality state-specific polls are very limited. The inclusion of unreliable data reduces the predictability of our logistic models and thus our final outcome. The lack of predictability of our Nevada model is a perfect example of how low-quality data and the lack of data points impacts our ability to create effective models. However, we acknowledge that this is beyond the control of FiveThirtyEight, as they do not conduct the polls.
+This research has a number of limitations. First, the data from CFPS has poor completion rates for some of the variables. Many individuals from lower income quartiles did not respond to questions such as weekly hours worked or income. This caused the data used in this research to include more individuals from higher quartiles, increasing bias. The second limitation is that the sample changed over time as individuals responded differently in different CFPS iterations. One of the greatest benefits of CFPS is that it follows the same pool of families over time, but the data for this study did not include the same set of individuals throughout different CFPS iterations because respondents left different questions unanswered in different years. Consequently, the sample sizes and the individuals making up the samples were different for each year, making the temporal analysis less conclusive. Finally, this research calculated returns to education using the Miner equation, which has a set of limitations. Besides the problem of linearity, it also assumes that all covariates influencing income are included in the model, which might not be the case. Additionally, the model only provides a general statement on the overall returns to education of different family income quartiles and does not provide insight to the reasons behind the differences. 
 
-The second major challenge presented by the dataset is the lack of predictors. FiveThirtyEight utilizes predictive variables that are unavailable to us, such as weighted values that represent the extent to which a pollster is partisan [@5383]. The predictors used in this research, such as the transparency score of the pollster, are not related to their bias towards any candidate from a partisanship point of view, limiting the predictive power of our models.
-
-Finally, the lack of data regarding the Harris-Trump race, due to Harris starting her presidential race uncharacteristically late, is also a main reason for the limitations of our model.
-
-Potential next steps could be taken to improve the model in the future: more data could be aggregated manually (from pollsters not recorded by FiveThirtyEight), stronger predictor variables that are specifically more correlated with partisanship could be marked and utilised in our model, and individual weightings could be utilised and applied to the data based on each pollster's "track record" with regards to the error, bias, and variance in their previous polls and estimates.
+For further research, one may execute further divisions in terms of educational stages and examine whether the difference of returns for various educational stages can explain the difference in overall educational returns between income groups.
 
 \newpage
 
@@ -1490,338 +726,11 @@ Potential next steps could be taken to improve the model in the future: more dat
 
 # Appendix {.unnumbered}
 
-## Pollster methodology overview and evaluation
+## Survey methodology overview and evaluation
 
-The Quinnipiac University Poll conducts independent polling in swing states. To analyze their methodology, we look specifically into their October 2024 Pennsylvania polls [@quinnipiac].
-
-Their target population is likely voters aged 18 and older in Pennsylvania [@quinnipiacmethodology]. To reach this population, they use likely voters aged 18 and older with phone numbers (both landline and cell) as their sampling frame, i.e. the frame of possible subjects that they sample observations from. Quinnipiac University employed Random Digit Dialing (RDD) to generate their sample of 2,186 respondents. This dual-frame approach reflects modern communication patterns, with 1,644 cell phone and 542 landline completions. However, using phones as a sampling frame means they cannot reach voters without phone access, introducing potential coverage bias.
-
-Their sampling approach uses stratification by Census division according to area code, meaning that they divide Pennsylvania into geographic regions before using RDD to sample within each region. This strategy ensures even geographic representation but adds complexity to the sampling process [@pollofpolls]. For each selected number, they attempt contact at least three times before marking it as non-responsive. For landline calls, they ask to speak with the household member who has the next birthday, a simple but effective randomization technique. Afterwards, a series of screening questions confirm that the subject is indeed a likely voter, after which the subject's responses are then formally taken as part of the sample.
-
-After collecting responses, Quinnipiac adjusts their data through post-stratification weighting. In this weighting, they compare their sample's demographic composition to known population benchmarks from the Census (like age, gender, education, and race distributions in Pennsylvania) and adjust the weight given to each response to match these benchmarks. For example, if their sample has too few young voters compared to Census data, responses from young voters would be weighted more heavily. While this helps correct for sampling imbalances, it can increase the variance in their estimates if the weights vary substantially [@poststratification].
-
-The survey administration addresses measurement issues through its design. Live interviewers conduct all interviews, enabling question clarification and generating higher response rates compared to automated systems. However, live interviewers may introduce social desirability bias, where respondents might modify their answers to appear more socially acceptable. This becomes particularly relevant in political polling, where respondents might hesitate to express unpopular political views [@politicalpolling].
-
-Several types of bias affect the poll's results. Self-selection bias occurs because certain types of people (typically those more politically engaged or with stronger views) are more likely to agree to participate in the survey. Non-response bias arises when people who respond differ systematically from those who don't - for instance, busier people might be less likely to answer calls, potentially underrepresenting certain occupational groups [@nonresponse]. Coverage bias means some groups (like those without phones) have no chance of being included in the sample.
-
-Ethics-wise, the survey does a good job of informing individuals of the details of the survey, such as its purpose and how participants' data is to be used. Personally-identifiable data (i.e. name, phone number, etc.) is not collected during the survey other than to ensure that repeat numbers are not drawn, and the usage of live interviewers to conduct the survey ensures that concerns about the ethics of the survey can be voiced and answered on-the-spot. Combined with the lack of financial incentive for participants, which suggests that all participants participate of their complete free will and intention, this is an ethically sound methodology for conducting a political survey.
-
-Finally, the poll also faces common challenges in political polls such as this one - the five-day field period (October 24-28) may miss opinion changes close to election day, and while weighting adjustments help correct for demographic imbalances, they may increase variance in the estimates if some groups need to be weighted heavily to match population benchmarks, for example.
-
-Overall, Quinnipiac's methodology represents a balanced approach to managing practical constraints and statistical rigor in modern political polling - while some common biases are still likely to skew the poll results off the true support levels for Harris, for example, the poll uses methods such as post-stratification weighting to tradeoff biases at the cost of model variance [@weighting]. Using live interviewers unavoidably introduces social desirability bias, however, and significantly increases poll costs per quota. Modifying the methodology to remove this aspect of the survey would potentially reduce bias and allow for larger samples to be taken, in turn opening up possibilities for cross-validation and the such, which then reduces the effect of increased model variance on the final results.
 
 ## Idealised methodology
 
-With a \$100,000 budget, our approach focuses on producing accurate state-level estimates in key battleground states, which would then inform our national forecast. We prioritize Pennsylvania, Michigan, Wisconsin, Georgia, Arizona, and Nevada, allocating resources proportionally based on each state's electoral importance and expected margin of victory.
-
-Our sampling strategy employs both probability and non-probability methods. Probability sampling (60% of budget, i.e. \$60k) means every member of our target population has a known, non-zero chance of being selected - this allows us to calculate proper margins of error and make statistical inferences about the population. For this, we use dual-frame random digit dialing (RDD) for phone surveys and address-based sampling (ABS) for mail-to-web recruitment. RDD involves generating random phone numbers within active area codes, while ABS uses the U.S. Postal Service's delivery database as a sampling frame, both proven methods of sampling [@cummings]. The ABS approach helps reach households without reliable phone access. We stratify our sample by geography, demographics, and previous voting patterns to ensure representation across key subgroups - meaning we divide the population into these subgroups and sample from each independently.
-
-For non-probability sampling (40% of budget, i.e. \$40k), where respondents' selection probabilities are unknown and not everyone has a chance of being selected, we recruit through multiple online panel vendors and use targeted social media advertising to reach traditionally underrepresented groups. While this approach introduces potential selection bias because participants self-select into the sample, it helps reach younger voters who are less responsive to traditional survey methods [@nonprobabilitysampling]. We implement quota sampling within these non-probability samples to match key demographic targets - for example, stopping collection from certain demographic groups once their quota is filled.
-
-Respondent recruitment uses multiple contact methods - mail, email, text, and phone - with attempts made at different times and days to maximize response rates. We offer a \$10 gift card incentive for completed surveys and provide both English and Spanish language options. This mixed-mode contact strategy helps reduce non-response bias by providing multiple ways to participate.
-
-Data validation is crucial for maintaining quality. We cross-reference responses with voter files where available - meaning we check if respondents' self-reported registration status matches official records. We screen for duplicate responses using IP addresses and phone numbers, and implement attention checks within the survey (questions with known correct answers to ensure respondents are reading carefully). Speed checks identify rushed responses that might indicate low-quality data by flagging completions that fall below a minimum reasonable completion time, while consistency checks across related questions help identify potentially fraudulent responses by looking for logical contradictions in answers.
-
-Our weighting approach uses post-stratification to known population benchmarks - this means we adjust the weight given to each response so that our sample matches known population characteristics. For example, if our sample has 30% college graduates but the population has 40%, we would give more weight to responses from college graduates. We include demographics (age, race, education, gender), geographic location, past voting behavior, and party registration in our weighting scheme. We produce daily estimates using a 7-day rolling average, which helps smooth out daily fluctuations while remaining responsive to real changes in voter preferences [@weighting2].
-
-Finally, how ethics are handled is a crucial part of any survey methodology. In this idealised methodology, consent will be asked for at the beginning of the survey, full disclosure of how information is used will be given beforehand and no self-identifiable information will be recorded (so no names, phone numbers, etc.). The \$10 incentive is enough to hopefully make it wortile for participants' time, but also not ideally not significant enough of an incentive to make individuals suppress otherwise deal-breaking concerns with the survey purely for the sake of the incentive.
-
-The survey instrument itself focuses on six key areas: screening questions to identify likely voters, voting intentions (including direct questions about Trump vs. Harris preferences), political preferences, demographics, issue priorities, and media consumption patterns. We've implemented this survey design in Google Forms, which can be found here: https://forms.gle/pk7vDiMHwEGLMK849
-
-This methodology balances statistical rigor with practical constraints, while acknowledging and attempting to address the key challenges in modern political polling: declining response rates, coverage bias, and the increasing difficulty of reaching a representative sample of likely voters.
-
-## Idealised survey
-
-The survey, made using Google Forms, is linked here: https://forms.gle/pk7vDiMHwEGLMK849 Note that the questions are identical for both the phone and online surveys bar q6. A copy of the survey that is identical to the one implemented in the Google Forms above is presented below: Thank you for participating in this survey about the 2024 U.S. Presidential Election. This survey is part of a research project at the University of Toronto studying voting intentions and political attitudes.
-
-Estimated completion time: 8-10 minutes
-
-Your responses will be kept confidential and used only for research purposes. Email information, and any other information that may personally identify you, is not gathered. You may skip any questions you prefer not to answer, though complete responses are most helpful for our research.
-
-For questions or concerns about this survey, please contact: andrew.goh\@mail.utoronto.ca
-
-SCREENING SECTION: Q1. Are you 18 years of age or older?
-
-Yes No \[END SURVEY\]
-
-Q2. Are you a U.S. citizen?
-
-Yes No \[END SURVEY\]
-
-Q3. Are you registered to vote at your current address?
-
-Yes No Not sure \[If No or Not sure: Do you plan to register before the November 2024 election?\]
-
-VOTING INTENTION: Q4. How likely are you to vote in the 2024 presidential election?
-
-Definitely will vote Probably will vote Might or might not vote Probably will not vote Definitely will not vote
-
-Q5. If the 2024 presidential election were held today, and the candidates were Kamala Harris (Democrat) and Donald Trump (Republican), who would you vote for?
-
-Kamala Harris Donald Trump Another candidate (please specify) Would not vote Not sure
-
-ATTENTION CHECK: Q6. To ensure you're reading carefully, please select "Somewhat disagree" for this question: "I enjoy following political news."
-
-Strongly agree Somewhat agree Somewhat disagree Strongly disagree No opinion
-
-POLITICAL PREFERENCES: Q7. Generally speaking, you consider yourself a:
-
-Democrat Republican Independent Something else (please specify)
-
-Q8. How would you rate the current state of the U.S. economy?
-
-Very poor Poor Fair Good Excellent
-
-ISSUE PRIORITIES: Q9. Which ONE of the following issues is most important to you when deciding how to vote?
-
-Economy and jobs Immigration Healthcare Climate change Crime and public safety Education National security Abortion rights Gun policy Something else (please specify)
-
-For each of the following issues, please indicate whether you think Kamala Harris or Donald Trump would do a better job handling it:
-
-Q10. Economy and jobs:
-
-Kamala Harris would do better Donald Trump would do better No difference Not sure
-
-Q11. Human rights and freedom of speech: \[Same options\] Q12. Abortion: \[Same options\] Q13. Healthcare: \[Same options\] Q14. Immigration: \[Same options\] Q15. National security: \[Same options\]
-
-MEDIA CONSUMPTION: Q16. Where do you most often get your news about politics? (Select all that apply)
-
-Network TV news (ABC, CBS, NBC) Cable TV news (CNN, Fox News, MSNBC) Local TV news Radio Print newspapers News websites Social media Friends and family Other (please specify)
-
-Q17. How many hours per day do you typically spend following news about politics?
-
-Less than 1 hour 1-2 hours 2-4 hours More than 4 hours
-
-DEMOGRAPHICS: Q18. What is your age?
-
-18-24 25-34 35-44 45-54 55-64 65 or older
-
-Q19. What is your gender?
-
-Male Female Non-binary/Other Prefer not to say
-
-Q20. What is your race/ethnicity? (Select all that apply)
-
-White Black or African American Hispanic or Latino Asian Native American Other (please specify) Prefer not to say
-
-Q21. What is the highest level of education you have completed?
-
-Less than high school High school graduate Some college Associate's degree Bachelor's degree Graduate degree Prefer not to say
-
-Q22. What was your total household income before taxes in 2023?
-
-Under \$25,000 \$25,000-\$49,999 \$50,000-\$74,999 \$75,000-\$99,999 \$100,000-\$149,999 \$150,000 or more Prefer not to say
-
-CONSISTENCY CHECK: Q23. Looking ahead to November 2024, if Kamala Harris is the Democratic nominee and Donald Trump is the Republican nominee, how do you think you will vote?
-
-Kamala Harris Donald Trump Another candidate (please specify) Would not vote Not sure
-
-\[END OF SURVEY\] Thank you for completing this survey about the 2024 U.S. Presidential Election. Your responses will help us better understand voter preferences and political attitudes across the country. If you have any questions about this research or would like to be informed about the results, please contact andrew.goh\@mail.utoronto.ca. Your time and participation is greatly appreciated.
-
-# Additional data details
-
-# Model details {#sec-model-details}
-
-## Diagnostics
-
-```{r}
-#| label: fig-pen
-#| fig-cap: ROC Curve for Harris Win Prediction, Pennsylvania
-#| echo: false
-#| message: false
-#| warning: false
-
-plot(roc_obj_Pennsylvania)
-```
-
-```{r}
-#| label: fig-geo
-#| fig-cap: ROC Curve for Harris Win Prediction, Georgia
-#| echo: false
-#| message: false
-#| warning: false
-
-plot(roc_obj_Georgia)
-```
-
-```{r}
-#| label: fig-nor
-#| fig-cap: ROC Curve for Harris Win Prediction, North Carolina
-#| echo: false
-#| message: false
-#| warning: false
-
-plot(roc_obj_North_Carolina)
-```
-
-```{r}
-#| label: fig-mic
-#| fig-cap: ROC Curve for Harris Win Prediction, Michigan
-#| echo: false
-#| message: false
-#| warning: false
-
-plot(roc_obj_Michigan)
-```
-
-```{r}
-#| label: fig-ari
-#| fig-cap: ROC Curve for Harris Win Prediction, Arizona
-#| echo: false
-#| message: false
-#| warning: false
-
-plot(roc_obj_Arizona)
-```
-
-```{r}
-#| label: fig-wis
-#| fig-cap: ROC Curve for Harris Win Prediction, Wisconsin
-#| echo: false
-#| message: false
-#| warning: false
-
-plot(roc_obj_Wisconsin)
-```
-
-```{r}
-#| label: fig-nev
-#| fig-cap: ROC Curve for Harris Win Prediction, Nevada
-#| echo: false
-#| message: false
-#| warning: false
-
-plot(roc_obj_Nevada)
-```
-
-```{r}
-#| label: fig-log
-#| fig-cap: ROC Curve for Popular Vote Prediction
-#| echo: false
-#| message: false
-#| warning: false
-
-plot(roc_obj)
-```
-
-```{r}
-#| label: fig-logadj
-#| fig-cap: ROC Curve for Popular Vote Prediction, Adjusted
-#| echo: false
-#| message: false
-#| warning: false
-
-plot(roc_obj)
-```
-
-\FloatBarrier
-
-## Coefficients
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-# Tidy the logistic regression model
-tidy_Pennsylvania <- tidy(logistic_Pennsylvania)
-
-# Display the table using knitr::kable
-kable(tidy_Pennsylvania,
-  digits = 2,
-  col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"),
-  caption = "Logistic Regression Coefficients for Pennsylvania"
-)
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-# Tidy the logistic regression model
-tidy_Georgia <- tidy(logistic_Georgia)
-
-# Display the table using knitr::kable
-kable(tidy_Georgia,
-  digits = 2,
-  col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"),
-  caption = "Logistic Regression Coefficients for Georgia"
-)
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-# Tidy the logistic regression model
-tidy_Michigan <- tidy(logistic_Michigan)
-
-# Display the table using knitr::kable
-kable(tidy_Michigan,
-  digits = 2,
-  col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"),
-  caption = "Logistic Regression Coefficients for Michigan"
-)
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-# Tidy the logistic regression model
-tidy_North_Carolina <- tidy(logistic_North_Carolina)
-
-# Display the table using knitr::kable
-kable(tidy_North_Carolina,
-  digits = 2,
-  col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"),
-  caption = "Logistic Regression Coefficients for North_Carolina"
-)
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-# Tidy the logistic regression model
-tidy_Arizona <- tidy(logistic_Arizona)
-
-# Display the table using knitr::kable
-kable(tidy_Arizona,
-  digits = 2,
-  col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"),
-  caption = "Logistic Regression Coefficients for Arizona"
-)
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-# Tidy the logistic regression model
-tidy_Wisconsin <- tidy(logistic_Wisconsin)
-
-# Display the table using knitr::kable
-kable(tidy_Wisconsin,
-  digits = 2,
-  col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"),
-  caption = "Logistic Regression Coefficients for Wisconsin"
-)
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-# Tidy the logistic regression model
-tidy_Nevada <- tidy(logistic_Nevada)
-
-# Display the table using knitr::kable
-kable(tidy_Nevada,
-  digits = 2,
-  col.names = c("Term", "Estimate", "Std. Error", "Statistic", "p-value"),
-  caption = "Logistic Regression Coefficients for Nevada"
-)
-```
 
 \newpage
 

@@ -3,9 +3,9 @@ title: "Family Income and Educational Returns in China, 2010-2020: Higher Return
 author: 
   - Yisu Hou
 thanks: "Code and data are available at: [https://github.com/YisuHou1/Educational_Returns_Analysis](https://github.com/YisuHou1/Educational_Returns_Analysis)."
-date: today
+date: December 14, 2024
 date-format: long
-abstract: "Economic returns to education are a key driver of socioeconomic mobility, yet they are not distributed equally across all income groups. Using data from the China Family Panel Studies (CFPS) between 2010 and 2020, this paper analyzes how family income influences the financial benefits individuals gain from education. The analysis reveals that individuals from wealthier families consistently enjoy significantly higher income returns from education compared to their lower-income counterparts, though this gap did not widen over the decade studied. These findings highlight persistent inequality in education's economic impact, emphasizing the need for policies that ensure education serves as a more effective equalizer in society."
+abstract: "Economic returns to education are a key driver of socioeconomic mobility, yet they are not distributed equally across all income groups. Using data from the China Family Panel Studies (CFPS) between 2010 and 2020, this paper analyzes how family income influences the financial benefits individuals gain from education. The analysis shows that individuals from wealthier families consistently enjoy significantly higher income returns from education compared to their lower-income counterparts, though this gap did not widen over the decade studied. These findings highlight persistent inequality in education's economic impact, emphasizing the need for policies that ensure education serves as a more effective equalizer in society."
 format: pdf
 header-includes:
   - \usepackage{float}
@@ -41,7 +41,7 @@ In China, educational attainment directly corresponds to future earnings. Resear
 
 Previous research has also investigated the reasons behind the educational gap between high and low-income individuals. In the 20th century, many theorists proposed theories examining the link between socioeconomic status and educational achievement. Some suggest that income-based segregation places low-income children in overcrowded classrooms with less adequately trained educators. Others argue that teachers may harbor negative attitudes towards low-income children, anticipating they will perform poorly academically, thereby creating a self-fulfilling prophecy [@Bond1981]. More recently, Duncan and Murnane suggested that the disparity in child enrichment expenditure influences academic performance, giving children from high-income families an advantage [@Duncan2014].
 
-However, while the relationship between financial status and educational attainment is relatively well established, there is a dearth of research, especially in China, to explore the link between family financial status and the rate of return from education. This is an essential connection, as it signifies how effectively education translates into its ultimate outcome: income. The aim of this research is to fill this knowledge gap by examining whether individuals from different socioeconomic backgrounds in the Chinese population receive the same level of returns from education.
+However, while the relationship between financial status and educational attainment is relatively well established, there is a dearth of research, especially in China, to explore the link between family financial status and the rate of return from education. This is an essential connection, as it signifies how effectively education translates into its ultimate outcome: income. The aim of this research is to complete this knowledge gap by examining whether individuals from different socioeconomic backgrounds in the Chinese population receive the same level of returns from education.
 
 The estimand of this investigation is the disparities in educational returns among individuals from different family wealth quartiles during the decade 2020 to 2020, measured in the percent income increase per year of education received.
 
@@ -59,9 +59,13 @@ All data utilized in this study were sourced from various iterations of the Chin
 
 ## Measurement
 
-The CFPS records survey data by directly sending agents to the homes of respondents, aiding respondents in the process of filling out a comprehensive survey about their families and themselves [@cfps]. The agents closely interact with the respondents as they complete the survey, ensuring that the recorded information is complete and appropriate. For example, the agent may require the respondent to input an answer for certain questions, even if the initial response of the respondent is "I don't know". Moreover, the majority of recorded variables in the CFPS surveys are categorical, and they may have ambiguous boundaries.
+The CFPS records survey data by directly sending agents to the homes of respondents, aiding respondents in the process of filling out a comprehensive survey about their families and themselves [@cfps]. The agents closely interact with the respondents as they complete the survey, ensuring that the recorded information is complete and appropriate. For example, the agent may require the respondent to input an answer for certain questions, even if the initial response of the respondent is "I don't know" [@cfps_questions]. Moreover, the majority of recorded variables in the CFPS surveys are categorical, and they may have ambiguous boundaries.
 
-The direct interactions between respondents and agents may effectively maximize the rate of completion of CFPS surveys, but the forced responses might not accurately reflect the true opinions of the respondents, and the fact that an agent directly observes respondents as they fill our the survey may encourage them to conceal information or select answer choices that are considered ordinary.
+A portion of surveys were conducted through phone calls, utilizing the same procedure as physical interview sessions. All interviews were facilitated by computer assisted personal interviewing (CAPI) technology provided by the Survey Research Center (SRC) at the University of Michigan [@cfps_measure]. This system helps the researchers design complex interviews tailored to different members of the household while reducing measurement error and monitoring the quality of interviews. 
+
+In the case of young children considered incapable of completing full surveys, their parents provided responses for them [@cfps_questions]. This naturally leads to biases, but it is not relevant to this analysis because only data on the working population was used.
+
+The direct interactions between respondents and agents may effectively maximize the rate of completion of CFPS surveys, but the forced responses might not accurately reflect the true opinions of the respondents, and the fact that an agent directly observes respondents as they fill out the survey may encourage them to conceal information or select answer choices that are considered ordinary. Disparities may be introduced by phone interviews, as phone calls have different dynamics than face-to-face interactions.
 
 Therefore, while the methods of measurement ensures a high level of professionalism and completion, the responses may be biased. This negatively impacts the dataset's capacity to reflect socioeconomic phenomenon in the real world, including the economic returns to education.
 
@@ -135,7 +139,7 @@ ggplot(all_combined, aes(x = ln_hourly_wage)) +
   # Annotate the mean value on the plot
   annotate(
     "text",
-    x = mean(all_combined$ln_hourly_wage, na.rm = TRUE) - 3, # Position text slightly to the right of the mean line
+    x = mean(all_combined$ln_hourly_wage, na.rm = TRUE) - 3,
     y = Inf, # Position text at the top of the plot
     label = paste("Mean:", round(mean(all_combined$ln_hourly_wage, na.rm = TRUE), 1)),
     vjust = 2, # Vertical adjustment
@@ -201,7 +205,7 @@ ggplot(all_combined, aes(x = years_of_education)) +
   # Annotate the mean value on the plot
   annotate(
     "text",
-    x = mean(all_combined$years_of_education, na.rm = TRUE) + 2.5, # Position text slightly to the right of the mean line
+    x = mean(all_combined$years_of_education, na.rm = TRUE) + 3, # Position text slightly to the right of the mean line
     y = Inf, # Position text at the top of the plot
     label = paste("Mean:", round(mean(all_combined$years_of_education, na.rm = TRUE), 1)),
     vjust = 2, # Vertical adjustment
@@ -311,7 +315,7 @@ ggplot(all_combined, aes(x = pot_work_years)) +
   # Annotate the mean value on the plot
   annotate(
     "text",
-    x = mean(all_combined$pot_work_years, na.rm = TRUE) + 6, # Position text slightly to the right of the mean line
+    x = mean(all_combined$pot_work_years, na.rm = TRUE) + 8, # Position text slightly to the right of the mean line
     y = Inf, # Position text at the top of the plot
     label = paste("Mean:", round(mean(all_combined$pot_work_years, na.rm = TRUE), 1)),
     vjust = 2, # Vertical adjustment
@@ -570,7 +574,7 @@ data <- data.frame(
 kable(
   data,
   format = "latex"
-) %>%
+) |>
   kable_styling(
     latex_options = c("striped", "hold_position", "scale_down"),
     position = "center",
@@ -656,7 +660,7 @@ data <- data.frame(
 kable(
   data,
   format = "latex"
-) %>%
+) |>
   kable_styling(
     latex_options = c("striped", "hold_position", "scale_down"),
     position = "center",
@@ -693,7 +697,7 @@ data <- data.frame(
 kable(
   data,
   format = "latex"
-) %>%
+) |>
   kable_styling(
     latex_options = c("striped", "hold_position", "scale_down"),
     position = "center",
@@ -703,7 +707,7 @@ kable(
 \FloatBarrier
 Significant codes: * = p < 0.05, ** = p < 0.01,  *** = p < 0.001
 
-When directly regressing without matching, the significance of educational returns coefficients remained the same; the coefficients for Q1, Q2 and Q3 of CFPS2012 and the coefficients for Q1 and Q2 of CFPS2010 are the only ones insignificant at the 5% level. It is uncertain why educational returns are insignificant for these family income quartiles, both in the matched data and the unmatched data. It might be caused by the legacy data collection methods or the changes in variable recording that occurred after the 2012 iteration. Despite that, the outcome of the robustness test demonstrates the model's consistency.
+When directly regressing without matching, the significance of educational returns coefficients remained the same; as @tbl-robust shows, the coefficients for Q1, Q2 and Q3 of CFPS2012 and the coefficients for Q1 and Q2 of CFPS2010 are the only ones insignificant at the 5% level. It is uncertain why educational returns are insignificant for these family income quartiles, both in the matched data and the unmatched data. It might be caused by the legacy data collection methods or the changes in variable recording that occurred after the 2012 iteration. Despite that, the outcome of the robustness test demonstrates the model's consistency.
 
 # Discussion {#sec-discussion}
 
@@ -717,7 +721,11 @@ From this research, we learn about the role of socioeconomic background in shapi
 
 ## Weaknesses and next steps
 
-This research has a number of limitations. First, the data from CFPS has poor completion rates for some of the variables. Many individuals from lower income quartiles did not respond to questions such as weekly hours worked or income. This caused the data used in this research to include more individuals from higher quartiles, increasing bias. The second limitation is that the sample changed over time as individuals responded differently in different CFPS iterations. One of the greatest benefits of CFPS is that it follows the same pool of families over time, but the data for this study did not include the same set of individuals throughout different CFPS iterations because respondents left different questions unanswered in different years. Consequently, the sample sizes and the individuals making up the samples were different for each year, making the temporal analysis less conclusive. Finally, this research calculated returns to education using the Miner equation, which has a set of limitations. Besides the problem of linearity, it also assumes that all covariates influencing income are included in the model, which might not be the case. Additionally, the model only provides a general statement on the overall returns to education of different family income quartiles and does not provide insight to the reasons behind the differences. 
+This research has a number of limitations. First, the data from CFPS has poor completion rates for some of the variables. Many individuals from lower income quartiles did not respond to questions such as weekly hours worked or income. This caused the data used in this research to include more individuals from higher quartiles, increasing bias. 
+
+The second limitation is that the sample changed over time as individuals responded differently in different CFPS iterations. One of the greatest benefits of CFPS is that it follows the same pool of families over time, but the data for this study did not include the same set of individuals throughout different CFPS iterations because respondents left different questions unanswered in different years. Consequently, the sample sizes and the individuals making up the samples were different for each year, making the temporal analysis less conclusive. Moreover, the observation that educational returns for some income quartiles became negative or statistically insignificant in the 2012 dataset hints that there may be measurement changes across CFPS iterations. This is a logical speculation, as it's unlikely that educational returns of individuals in the same bracket changed so much over 2-year periods. This will be further explored in @sec-method in the Appendix.
+
+Finally, this research calculated returns to education using the Miner equation, which has a set of limitations. Besides the problem of linearity, it also assumes that all covariates influencing income are included in the model, which might not be the case. Additionally, the model only provides a general statement on the overall returns to education of different family income quartiles and does not provide information to the reasons behind the differences. 
 
 For further research, one may execute further divisions in terms of educational stages and examine whether the difference of returns for various educational stages can explain the difference in overall educational returns between income groups.
 
@@ -727,10 +735,25 @@ For further research, one may execute further divisions in terms of educational 
 
 # Appendix {.unnumbered}
 
-## Survey methodology overview and evaluation
+# Survey Methodology Overview and Evaluation {#sec-method}
 
+CFPS adopts a stratified, multistage probability-proportional-to-size (PPS) sampling approach to ensure national representativeness. The target sample consists of 16,000 households across 25 provinces and regions, effectively representing approximately 95% of China's population [@cfps_manual]. Sampling is conducted in three stages: primary sampling units such as counties, second-stage sampling units such as villages and urban neighborhoods, and third-stage sampling units that are systematically selected households. 
 
-## Idealised methodology
+As previously mentioned in the measurement section of @sec-data, the survey employs a series of detailed questionnaires tailored for different individuals, suited for various levels of analysis [@cfps_measure]. These include: the Community Questionnaire which captures data on infrastructure, demographic trends, economy, and governance within sampled communities; the Household Screening Questionnaire that identifies eligible households and their basic characteristics; the Family Roster Questionnaire that maps relationships and collects demographic and occupational information for all household members, including individuals living apart; the Individual Questionnaires: Separate modules for adults and children, addressing education, health, income, employment, and family dynamics [@cfps_manual]. 
+
+As its name (China Family Panel Studies) suggests, CFPS follows a panel study structure, tracking all "gene members" (baseline individuals and their biological or adopted descendants) over multiple iterations, conducted bi-annually. Changes in family composition due to births, deaths, or household splits are carefully updated through family roster questionnaires in each wave [@cfps_manual]. This longitudinal approach enables the study of dynamic processes such as migration, education, and inter-generational relationships.
+
+To ensure the quality of the data collected, CFPS adopts pre-field mapping, interviewer training, and data cross-verification [@cfps_manual].
+
+Due to its innovative and robust approach, CFPS established itself as the most prominent academic data source for longitudinal social science studies. However, there still exists multiple aspects of imperfection other than those discussed in the main paper.
+
+First, the CFPS excludes certain regions of China due to logistical constraints, such as Xinjiang, Tibet, Inner Mongolia, and Hainan, which limits its national representativeness. These regions have unique cultural, economic, and social dynamics that are underrepresented in the dataset [@cfps_manual]. 
+
+Second, following "gene members" over multiple waves presents unique challenges. Migrant populations, in particular, are difficult to track, and while CATI (Computer-Assisted Telephone Interviewing) helps, migration still led to non-response or partial data collection in subsequent waves, affecting longitudinal data integrity. 
+
+Third, the detailed nature of the questionnaires, especially in later waves, makes it impossible for respondents to complete them in a short sitting. This increases the likelihood of respondent fatigue, leading to incomplete or hurried responses. A study found that an additional hour of survey time increases the probability that a respondent skips a question by 10%–64%, and the total monetary value of aggregated categories such as assets or expenditures declines as the survey proceeds [@JEONG2023102992].
+
+As I looked into the specific questionnaire documents, I found that all CFPS iterations collect data on family-related variables much before personal data [@cfps_questions_2012; @cfps_questions]. This may explain the disparities between the early 2010 and 2012 data and other iterations. Early iterations of CFPS do not record individuals' personal income as a single variable; income is recorded as a sub-component of the different jobs an individual worked [@cfps_questions_2012], and I calculated total personal income from summing the individual values of each job for the purpose of this study. Given that data on jobs were recorded in later stages of the questionnaire, there may be systematic under-reporting of job income due to respondent fatigue. I suspect that the disparities in measurement (having personal income variable in some CFPS iterations and not having it in others), in combination with respondent fatigue, caused the changes in measured educational returns throughout the studied decade.
 
 
 \newpage
